@@ -1,0 +1,38 @@
+# Week 06. 검색 증강 (RAG) — 1부: 기초
+
+> **Part:** 추론과 지식 · **난이도 범례:** 🟢 기초 · 🟡 중급 · 🔴 심화
+
+## 📖 보조읽기 (발표 대상 아님)
+Anthropic — *Effective Context Engineering for AI Agents* (컨텍스트를 유한 자원으로 큐레이션 · 최종프로젝트 직결)
+
+## 🛠 실습 (from-scratch)
+임베딩→유사도→컨텍스트 주입 검색 직접 구현
+
+## 💬 토론 포인트 (교수용 백업 질문)
+언제 검색해야 하는가? 항상 검색이 답인가?
+
+## 발표 논문
+#### 🟡 Retrieval-Augmented Generation for Knowledge-Intensive NLP
+- **출처:** Lewis et al., NeurIPS 2020 · arXiv:2005.11401
+- **발표 필수:** 파라메트릭 vs 비파라메트릭(검색) 지식 결합
+- **선택 심화:** RAG-Sequence vs Token, retriever 공동학습
+- **PDF:** [`W06_RAG-Lewis_2005.11401.pdf`](../../papers/W06_RAG-Lewis_2005.11401.pdf)
+
+#### 🟡 HyDE: Precise Zero-Shot Dense Retrieval without Labels
+- **출처:** Gao et al., ACL 2023 · arXiv:2212.10496
+- **발표 필수:** 가설 문서를 생성해 검색 품질을 올리는 발상
+- **선택 심화:** dense retriever와의 결합
+- **PDF:** [`W06_HyDE_2212.10496.pdf`](../../papers/W06_HyDE_2212.10496.pdf)
+
+## 폴더
+- `theory/` — 이론 강의 자료 (슬라이드·노트)
+- `practice/` — from-scratch 실습 코드
+- `presentation/` — 학생 논문 발표 자료
+
+## 발표 평가 루브릭
+| 항목 | 배점 | 기준 |
+|---|---|---|
+| 핵심 기여 | 30% | 논문의 기여를 한 문장으로 정확히 압축했는가 |
+| 방법 이해 | 25% | 핵심 아이디어·메커니즘을 정확히 설명했는가 (심화는 직관 허용, 수식 생략 가능) |
+| 비판적 분석 | 25% | 가장 약한 가정·한계를 스스로 짚었는가 |
+| 연결·확장 | 20% | 후속 논문 또는 본인/연구실 주제와 연결했는가 |
