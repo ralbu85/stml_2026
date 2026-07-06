@@ -21,3 +21,6 @@ wandb/
 # Secrets
 .env
 *.key
+
+# Paper PDFs (re-downloadable via scripts/fetch_papers.py)
+papers/*.pdf
