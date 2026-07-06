@@ -2,6 +2,9 @@
 
 > **Part:** 에이전트 기초 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+복잡한 과제를 나누고 탐색하는 **계획**. 이론에서 과제 분해, 계획–실행 분리, **트리 탐색(BFS/DFS/MCTS) 직관**을 다루고, 실습에서 트리 분기 추론을 미니 구현한다. Tree of Thoughts·ReWOO로 탐색 비용 대비 성능 이득을 논의한다.
+
 ## 📖 보조읽기 (발표 대상 아님)
 LangChain — *Plan-and-Execute Agents* (계획·실행 분리 하네스 패턴)
 

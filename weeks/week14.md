@@ -2,6 +2,9 @@
 
 > **Part:** 평가와 마무리 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+에이전트를 **어떻게 평가하나**(비판적 시각). 이론에서 능력 평가 vs 회귀 평가, **비용–정확도 Pareto**, 재현성을 다루고, 실습에서 최종 프로젝트 평가 하네스 골격을 만든다. AI Agents That Matter·τ-bench.
+
 ## 📖 보조읽기 (발표 대상 아님)
 LangChain — *Agent Evaluation Readiness Checklist* (능력 평가 vs 회귀 평가 · 최종프로젝트 직결)
 

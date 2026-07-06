@@ -2,6 +2,9 @@
 
 > **Part:** 에이전트 기초 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+에이전트가 자기 출력을 스스로 고치는 **반성 루프**. 이론에서 생성→비평→개선 루프와 **언어 피드백이 gradient 없이 작동하는 원리**를 다루고, 실습에서 실패→피드백→재시도를 ReAct에 붙인다. Reflexion·Self-Refine로 자기반성이 진짜 개선인지 검증한다.
+
 ## 📖 보조읽기 (발표 대상 아님)
 Anthropic — *Demystifying Evals for AI Agents* (검증 루프를 하네스에 내장)
 

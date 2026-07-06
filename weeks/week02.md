@@ -2,6 +2,9 @@
 
 > **Part:** 에이전트 기초 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+에이전트가 외부 세계와 만나는 통로인 **도구**를 다룬다. 이론에서 함수 호출 메커니즘·도구 스키마·에러 설계와 **도구 절벽(tool cliff)** 문제를 짚고, 실습에서 도구 등록·파싱·실행을 직접 구현한다. Toolformer·ToolLLM로 모델이 도구 사용을 스스로 학습하는 방식을 본다.
+
 ## 📖 보조읽기 (발표 대상 아님)
 Anthropic — *Writing Effective Tools for Agents* (도구 설계는 에이전트 UX)
 

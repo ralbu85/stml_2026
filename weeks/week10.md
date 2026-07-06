@@ -2,6 +2,9 @@
 
 > **Part:** 협업과 환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+⭐ **전환점.** 여러 에이전트의 협업과 프레임워크로의 전환. 이론에서 협업 아키텍처(핸드오프·라우터)와 **그래프 실행 모델**을 다루고, 실습에서 직접 짠 멀티에이전트를 **LangGraph로 재구현·비교**한다(from-scratch→프레임워크 분기점). AutoGen·MetaGPT.
+
 ## 📖 보조읽기 (발표 대상 아님)
 LangChain — *Choosing the Right Multi-Agent Architecture* (서브에이전트·핸드오프·라우터 비교)
 

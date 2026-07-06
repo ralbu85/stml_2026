@@ -2,6 +2,9 @@
 
 > **Part:** 추론과 지식 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+외부 지식을 끌어오는 **RAG의 기초**. 이론에서 임베딩·벡터검색, retriever–reader 구조, **컨텍스트 엔지니어링**을 다루고, 실습에서 임베딩→유사도→주입 검색을 직접 만든다 *(최종 프로젝트 부품 1)*. RAG(Lewis)·HyDE.
+
 ## 📖 보조읽기 (발표 대상 아님)
 Anthropic — *Effective Context Engineering for AI Agents* (컨텍스트를 유한 자원으로 큐레이션 · 최종프로젝트 직결)
 

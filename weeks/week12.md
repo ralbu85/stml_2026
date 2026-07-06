@@ -2,6 +2,9 @@
 
 > **Part:** 프런티어 (개념 위주) · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+화면을 보고 클릭하는 **GUI·웹 에이전트**. 이론에서 관찰–행동 루프, **DOM vs 스크린샷**, 벤치마크(WebArena/OSWorld)를 다루고, 실습에서 간단한 웹 태스크 루프를 돌린다. 시각적이라 흥미로운 주. WebArena·Mind2Web.
+
 ## 📖 보조읽기 (발표 대상 아님)
 *OS Agents: A Survey on MLLM-based Agents* (ACL 2025) — 컴퓨터·폰·브라우저 사용 개관
 

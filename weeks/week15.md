@@ -2,6 +2,9 @@
 
 > **Part:** 평가와 마무리 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+**'에이전트가 꼭 필요한가'** 라는 반문. 이론에서 언제 에이전트가 과한지, 프로덕션 하네스, **ACI(에이전트-컴퓨터 인터페이스) 설계**를 다루고, 실습은 최종 프로젝트 통합 구현에 집중. Agentless·SWE-agent.
+
 ## 📖 보조읽기 (발표 대상 아님)
 HumanLayer — *Skill Issue: Harness Engineering* (대부분의 실패는 모델이 아니라 설정)
 

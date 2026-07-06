@@ -2,6 +2,9 @@
 
 > **Part:** 추론과 지식 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+2025–26 에이전트의 토대인 **추론 모델**. 이론에서 CoT→self-consistency→**test-time compute**의 흐름과, RL로 추론이 창발하는 과정(DeepSeek-R1), STaR 부트스트랩을 다룬다. 실습은 self-consistency 비교. 어렵지 않으면서 화제성이 높아 동기부여가 잘 되는 주.
+
 ## 📖 보조읽기 (발표 대상 아님)
 Lilian Weng — *Why We Think* (또는 DeepSeek-R1 해설) — test-time compute 직관
 

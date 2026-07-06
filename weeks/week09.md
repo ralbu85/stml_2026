@@ -2,6 +2,9 @@
 
 > **Part:** 협업과 환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+환경과 상호작용하며 스킬을 쌓는 **평생학습**. 이론에서 스킬 라이브러리 누적, automatic curriculum, 시뮬 환경 상호작용을 다루고, 실습에서 재사용 가능한 스킬 라이브러리를 만든다. Voyager·Generative Agents.
+
 ## 📖 보조읽기 (발표 대상 아님)
 Anthropic — *Effective Harnesses for Long-Running Agents* (장기 과제 패턴)
 

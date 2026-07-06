@@ -2,6 +2,9 @@
 
 > **Part:** 추론과 지식 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
+## 🧭 개요
+검색을 전처리가 아닌 **'도구'로 바꾸는 에이전틱 RAG**. 이론에서 능동 검색(adaptive/self)과 MCP를 다루고, 실습에서 검색을 도구로 노출해 에이전트가 단계별로 호출하게 개조한다 *(최종 프로젝트 부품 2)*. Self-RAG·Adaptive-RAG.
+
 ## 📖 보조읽기 (발표 대상 아님)
 Anthropic — *Code Execution with MCP* (도구 호출 오버헤드를 코드 실행으로 줄이기)
 
