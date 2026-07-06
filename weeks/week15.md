@@ -1,12 +1,12 @@
-# Week 15. 단순함의 힘 — 에이전트가 꼭 필요한가
+# Week 15. 프로덕션·단순함 — 에이전트가 꼭 필요한가
 
-> **Part:** 평가와 마무리 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 학습·품질·운영 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
 **'에이전트가 꼭 필요한가'** 라는 반문. 이론에서 언제 에이전트가 과한지, 프로덕션 하네스, **ACI(에이전트-컴퓨터 인터페이스) 설계**를 다루고, 실습은 최종 프로젝트 통합 구현에 집중. Agentless·SWE-agent.
 
 ## 📖 보조읽기 (발표 대상 아님)
-HumanLayer — *Skill Issue: Harness Engineering* (대부분의 실패는 모델이 아니라 설정)
+HumanLayer — *Skill Issue: Harness Engineering* · MS10
 
 ## 📄 발표 논문
 #### 🟢 Agentless: Demystifying LLM-based SE Agents
@@ -25,7 +25,7 @@ HumanLayer — *Skill Issue: Harness Engineering* (대부분의 실패는 모델
 복잡한 에이전트 vs 단순 파이프라인 — 우리 과제엔 무엇이 맞나?
 
 ## 🛠 실습 (from-scratch)
-최종 프로젝트 구현 집중 (검색·메모리·평가 통합)
+최종 프로젝트 구현 집중 (검색·컨텍스트·메모리·평가 통합)
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week15/` 폴더로 분리한다.
 

@@ -1,31 +1,43 @@
-# Week 08. 메모리 (Memory)
+# Week 08. 컨텍스트 엔지니어링 (하네스) ⭐
 
-> **Part:** 추론과 지식 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-대화·과제를 넘어 정보를 유지하는 **메모리**. 이론에서 단기/장기, **계층적 메모리(OS 비유)**, 검색 기준(최신성·중요도·관련성)을 다루고, 실습에서 메모리 스트림을 구현한다 *(최종 프로젝트 부품 3)*. MemGPT·MemoryBank.
+⭐ 컨텍스트를 유한 자원으로 다루는 **컨텍스트 엔지니어링 = 하네스**. 이론에서 LLM이 긴 컨텍스트를 어떻게(못) 쓰는지와 압축·큐레이션을 다루고, 실습에서 컨텍스트 예산·압축을 하네스에 넣는다. Lost-in-the-Middle·LLMLingua.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Letta (MemGPT) — *Agent Memory Blog* (3계층 메모리)
+Anthropic — *Effective Context Engineering* + HumanLayer — *Skill Issue: Harness Engineering* · MS12
 
 ## 📄 발표 논문
-#### 🟡 MemGPT: Towards LLMs as Operating Systems
-- **출처:** Packer et al., 2023 · arXiv:2310.08560
-- **발표 필수:** 가상메모리 비유의 계층적 메모리(core/archival)
-- **선택 심화:** function-call self-editing, 페이징
-- **PDF:** [`W08_MemGPT_2310.08560.pdf`](../papers/W08_MemGPT_2310.08560.pdf)
+#### 🟡 Lost in the Middle: How LMs Use Long Contexts
+- **출처:** Liu et al., TACL 2024 · arXiv:2307.03172
+- **발표 필수:** LLM이 긴 컨텍스트의 중간 정보를 잘 못 쓰는 현상
+- **선택 심화:** 위치별 성능 곡선, 검색 문서 수 효과
+- **PDF:** [`W08_Lost-in-the-Middle_2307.03172.pdf`](../papers/W08_Lost-in-the-Middle_2307.03172.pdf)
 
-#### 🟡 MemoryBank: Enhancing LLMs with Long-Term Memory
-- **출처:** Zhong et al., AAAI 2024 · arXiv:2305.10250
-- **발표 필수:** 망각 곡선 기반 메모리 갱신·검색
-- **선택 심화:** 사용자 페르소나 유지
-- **PDF:** [`W08_MemoryBank_2305.10250.pdf`](../papers/W08_MemoryBank_2305.10250.pdf)
+#### 🟡 LLMLingua: Compressing Prompts for Accelerated Inference
+- **출처:** Jiang et al., EMNLP 2023 · arXiv:2310.05736
+- **발표 필수:** 프롬프트를 압축해 비용·지연을 줄이면서 성능 유지
+- **선택 심화:** 예산 제어 압축, perplexity 기반 토큰 선택
+- **PDF:** [`W08_LLMLingua_2310.05736.pdf`](../papers/W08_LLMLingua_2310.05736.pdf)
+
+#### 🔴 Agentic Context Engineering (선택읽기·프런티어) *(선택읽기)*
+- **출처:** 2025 · arXiv:2510.04618
+- **발표 필수:** 컨텍스트 자체를 진화시켜 자기개선
+- **선택 심화:** context 업데이트 정책
+- **PDF:** [`W08_opt-Agentic-Context-Engineering_2510.04618.pdf`](../papers/W08_opt-Agentic-Context-Engineering_2510.04618.pdf)
+
+#### 🔴 ReasoningBank (선택읽기·프런티어) *(선택읽기)*
+- **출처:** 2025 · arXiv:2509.25140
+- **발표 필수:** 추론 메모리를 쌓아 에이전트가 진화
+- **선택 심화:** 메모리 항목 추출·재사용
+- **PDF:** [`W08_opt-ReasoningBank_2509.25140.pdf`](../papers/W08_opt-ReasoningBank_2509.25140.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-무엇을 기억하고 무엇을 잊어야 하는가? 메모리 검색의 기준은?
+컨텍스트는 왜 유한 자원인가? 무엇을 넣고 무엇을 버려야 하나?
 
 ## 🛠 실습 (from-scratch)
-메모리 스트림 구현(저장·검색), 외부 메모리 통합
+컨텍스트 예산·압축·큐레이션을 하네스에 내장 (긴 컨텍스트 관리)
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week08/` 폴더로 분리한다.
 

@@ -1,31 +1,31 @@
-# Week 03. 피드백·자기반성 (Reflection)
+# Week 03. 도구 사용 (Tool Use)
 
-> **Part:** 에이전트 기초 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 핵심 디자인 패턴 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트가 자기 출력을 스스로 고치는 **반성 루프**. 이론에서 생성→비평→개선 루프와 **언어 피드백이 gradient 없이 작동하는 원리**를 다루고, 실습에서 실패→피드백→재시도를 ReAct에 붙인다. Reflexion·Self-Refine로 자기반성이 진짜 개선인지 검증한다.
+에이전트가 외부 세계와 만나는 통로인 **도구**. 이론에서 함수 호출·스키마·에러 설계와 **도구 절벽**을 다루고, 실습에서 도구 레지스트리·파싱·실행을 직접 만든다. Toolformer·ToolLLM.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Demystifying Evals for AI Agents* (검증 루프를 하네스에 내장)
+Anthropic — *Writing Effective Tools for Agents* · MS04
 
 ## 📄 발표 논문
-#### 🟡 Reflexion: Language Agents with Verbal RL
-- **출처:** Shinn et al., NeurIPS 2023 · arXiv:2303.11366
-- **발표 필수:** 언어 피드백이 gradient 없이 학습되는 메커니즘
-- **선택 심화:** actor-evaluator-reflection 구조, 메모리 버퍼
-- **PDF:** [`W03_Reflexion_2303.11366.pdf`](../papers/W03_Reflexion_2303.11366.pdf)
+#### 🟡 Toolformer: LMs Can Teach Themselves to Use Tools
+- **출처:** Schick et al., NeurIPS 2023 · arXiv:2302.04761
+- **발표 필수:** self-supervised로 API 호출 위치를 학습하는 방식
+- **선택 심화:** 호출 필터링 손실, 데이터 파이프라인
+- **PDF:** [`W03_Toolformer_2302.04761.pdf`](../papers/W03_Toolformer_2302.04761.pdf)
 
-#### 🟢 Self-Refine: Iterative Refinement with Self-Feedback
-- **출처:** Madaan et al., NeurIPS 2023 · arXiv:2303.17651
-- **발표 필수:** 단일 모델의 생성→비평→개선 반복
-- **선택 심화:** 과제별 개선 폭, 피드백 프롬프트 설계
-- **PDF:** [`W03_Self-Refine_2303.17651.pdf`](../papers/W03_Self-Refine_2303.17651.pdf)
+#### 🟡 ToolLLM: Mastering 16000+ Real-world APIs
+- **출처:** Qin et al., ICLR 2024 · arXiv:2307.16789
+- **발표 필수:** 대규모 실세계 API 학습 프레임과 DFSDT 탐색
+- **선택 심화:** ToolBench 구축, pass/win rate
+- **PDF:** [`W03_ToolLLM_2307.16789.pdf`](../papers/W03_ToolLLM_2307.16789.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-자기반성은 진짜 개선인가, 아니면 같은 오류의 반복인가?
+도구가 많아질수록 좋은가? 도구 절벽(tool cliff)이 생기는 이유는?
 
 ## 🛠 실습 (from-scratch)
-실패→언어 피드백→재시도 루프를 ReAct에 추가
+도구 레지스트리·파싱·실행 직접 구현 (계산기·검색 함수)
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week03/` 폴더로 분리한다.
 

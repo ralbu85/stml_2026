@@ -1,31 +1,31 @@
-# Week 14. 평가와 벤치마크 (Evaluation) — 비판적 시각
+# Week 14. 신뢰·보안 (Trustworthy & Security)
 
-> **Part:** 평가와 마무리 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 학습·품질·운영 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트를 **어떻게 평가하나**(비판적 시각). 이론에서 능력 평가 vs 회귀 평가, **비용–정확도 Pareto**, 재현성을 다루고, 실습에서 최종 프로젝트 평가 하네스 골격을 만든다. AI Agents That Matter·τ-bench.
+행동하는 에이전트의 **신뢰·보안**. 이론에서 **프롬프트 인젝션(직접/간접)**, 신뢰 경계·최소권한, 가드레일을 다루고, 실습에서 내 에이전트에 가드레일을 붙이고 인젝션을 테스트한다. 실전적이라 난이도 부담이 낮다. Indirect Injection·InjecAgent.
 
 ## 📖 보조읽기 (발표 대상 아님)
-LangChain — *Agent Evaluation Readiness Checklist* (능력 평가 vs 회귀 평가 · 최종프로젝트 직결)
+*OWASP Top 10 for LLM Applications* · MS06·18
 
 ## 📄 발표 논문
-#### 🟢 AI Agents That Matter
-- **출처:** Kapoor et al., 2024 · arXiv:2407.01502
-- **발표 필수:** 리더보드의 함정, 비용을 무시한 정확도의 문제
-- **선택 심화:** Pareto(정확도-비용), 재현성
-- **PDF:** [`W14_AI-Agents-That-Matter_2407.01502.pdf`](../papers/W14_AI-Agents-That-Matter_2407.01502.pdf)
+#### 🟡 Not What You've Signed Up For: Indirect Prompt Injection
+- **출처:** Greshake et al., AISec 2023 · arXiv:2302.12173
+- **발표 필수:** 간접 프롬프트 인젝션이 왜 근본적 위협인가
+- **선택 심화:** 실제 공격 시나리오 분류
+- **PDF:** [`W14_Indirect-Prompt-Injection_2302.12173.pdf`](../papers/W14_Indirect-Prompt-Injection_2302.12173.pdf)
 
-#### 🟡 τ-bench: Tool-Agent-User Interaction Benchmark
-- **출처:** Yao et al., ICLR 2025 · arXiv:2406.12045
-- **발표 필수:** 실세계 도메인 도구-에이전트-사용자 상호작용 평가
-- **선택 심화:** pass^k, 일관성 측정
-- **PDF:** [`W14_tau-bench_2406.12045.pdf`](../papers/W14_tau-bench_2406.12045.pdf)
+#### 🟡 InjecAgent: Benchmarking Indirect Injection in Tool Agents
+- **출처:** Zhan et al., ACL 2024 · arXiv:2403.02691
+- **발표 필수:** 도구 사용 에이전트의 인젝션 취약성 측정
+- **선택 심화:** 공격 성공률, 방어 프롬프트 효과
+- **PDF:** [`W14_InjecAgent_2403.02691.pdf`](../papers/W14_InjecAgent_2403.02691.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-무엇을 측정해야 하는가? 우리 RAG 에이전트의 성공 기준은?
+행동하는 에이전트의 가장 위험한 실패는? 어디까지 자동화를 믿을 수 있나?
 
 ## 🛠 실습 (from-scratch)
-최종 프로젝트 설계 + 평가 하네스(정확도·비용·재현성) 골격
+내 에이전트에 가드레일 추가 + 인젝션 공격 테스트
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week14/` 폴더로 분리한다.
 

@@ -1,12 +1,12 @@
 # Week 04. 계획과 탐색 (Planning & Search)
 
-> **Part:** 에이전트 기초 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 핵심 디자인 패턴 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-복잡한 과제를 나누고 탐색하는 **계획**. 이론에서 과제 분해, 계획–실행 분리, **트리 탐색(BFS/DFS/MCTS) 직관**을 다루고, 실습에서 트리 분기 추론을 미니 구현한다. Tree of Thoughts·ReWOO로 탐색 비용 대비 성능 이득을 논의한다.
+복잡한 과제를 나누고 탐색하는 **계획**. 이론에서 과제 분해, 계획–실행 분리, **트리 탐색 직관**을 다루고, 실습에서 트리 분기 추론을 미니 구현한다. Tree of Thoughts·ReWOO.
 
 ## 📖 보조읽기 (발표 대상 아님)
-LangChain — *Plan-and-Execute Agents* (계획·실행 분리 하네스 패턴)
+LangChain — *Plan-and-Execute Agents* · MS07
 
 ## 📄 발표 논문
 #### 🟡 Tree of Thoughts: Deliberate Problem Solving with LLMs
@@ -25,7 +25,7 @@ LangChain — *Plan-and-Execute Agents* (계획·실행 분리 하네스 패턴)
 탐색 비용 대비 성능 이득은 언제 정당한가?
 
 ## 🛠 실습 (from-scratch)
-탐색 기반 추론(트리 분기) 미니 구현
+탐색 기반 추론(트리 분기) 미니 구현, 계획–실행 분리
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week04/` 폴더로 분리한다.
 

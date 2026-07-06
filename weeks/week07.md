@@ -1,12 +1,12 @@
-# Week 07. 검색 증강 (RAG) — 2부: 에이전틱 RAG
+# Week 07. 에이전틱 RAG + 프로토콜 (MCP)
 
-> **Part:** 추론과 지식 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-검색을 전처리가 아닌 **'도구'로 바꾸는 에이전틱 RAG**. 이론에서 능동 검색(adaptive/self)과 MCP를 다루고, 실습에서 검색을 도구로 노출해 에이전트가 단계별로 호출하게 개조한다 *(최종 프로젝트 부품 2)*. Self-RAG·Adaptive-RAG.
+검색을 전처리가 아닌 **'도구'로 바꾸는 에이전틱 RAG**와 **MCP**. 이론에서 능동 검색(adaptive/self)과 프로토콜을 다루고, 실습에서 검색을 도구로 노출해 단계별 호출하게 개조한다 *(최종 프로젝트 부품 2)*. Self-RAG·Adaptive-RAG.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Code Execution with MCP* (도구 호출 오버헤드를 코드 실행으로 줄이기)
+Anthropic — *Code Execution with MCP* · MS05·11
 
 ## 📄 발표 논문
 #### 🟡🔴 Self-RAG: Learning to Retrieve, Generate, and Critique
@@ -25,7 +25,7 @@ Anthropic — *Code Execution with MCP* (도구 호출 오버헤드를 코드 �
 RAG를 도구로 만들면 무엇이 좋아지고 무엇이 어려워지나?
 
 ## 🛠 실습 (from-scratch)
-검색을 '도구'로 노출하고 에이전트가 단계별로 호출하게 개조
+검색을 '도구'로 노출하고 에이전트가 단계별로 호출하게 개조 *(최종 프로젝트 부품 2)*
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week07/` 폴더로 분리한다.
 

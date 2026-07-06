@@ -1,18 +1,18 @@
-# Week 01. 에이전트란 무엇인가 — 추론과 행동의 결합
+# Week 01. 에이전트 개요 + ReAct
 
-> **Part:** 에이전트 기초 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 토대 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트의 정의를 잡는 첫 주. 이론에서 **에이전트 vs 워크플로우**의 경계와 자율성 스펙트럼을 다루고, ReAct의 **추론–행동–관찰 루프**를 개념으로 이해한다. 실습에서 그 루프를 while 문으로 직접 구현하고, ReAct·CoT 두 논문으로 '왜 추론과 행동을 엮으면 좋아지나'를 토론한다.
+에이전트의 정의를 잡고 **하네스(제어 루프)의 최소 형태**를 만드는 첫 주. 이론에서 에이전트 vs 워크플로우, 자율성 스펙트럼, ReAct의 **추론–행동–관찰 루프**를 다루고, 실습에서 그 루프를 while 문으로 직접 구현한다. ReAct·CoT.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Building Effective Agents* (워크플로우 vs 에이전트)
+Anthropic — *Building Effective Agents* (워크플로우 vs 에이전트) · MS01
 
 ## 📄 발표 논문
 #### 🟢 ReAct: Synergizing Reasoning and Acting in LLMs
 - **출처:** Yao et al., ICLR 2023 · arXiv:2210.03629
 - **발표 필수:** Think–Act–Observe 루프 구조와 추론·행동을 엮는 이유
-- **선택 심화:** HotpotQA·ALFWorld 셋업과 프롬프트 구성
+- **선택 심화:** HotpotQA·ALFWorld 셋업
 - **PDF:** [`W01_ReAct_2210.03629.pdf`](../papers/W01_ReAct_2210.03629.pdf)
 
 #### 🟢 Chain-of-Thought Prompting Elicits Reasoning in LLMs
@@ -25,7 +25,7 @@ Anthropic — *Building Effective Agents* (워크플로우 vs 에이전트)
 에이전트와 단순 워크플로우의 경계는? CoT 없는 ReAct는 가능한가?
 
 ## 🛠 실습 (from-scratch)
-환경 세팅, LLM API 단일 호출 → ReAct 루프 골격(while 루프)
+환경 세팅, LLM API 단일 호출 → ReAct 제어 루프 골격(while 루프)
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week01/` 폴더로 분리한다.
 

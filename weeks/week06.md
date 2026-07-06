@@ -1,12 +1,12 @@
 # Week 06. 검색 증강 (RAG) — 1부: 기초
 
-> **Part:** 추론과 지식 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-외부 지식을 끌어오는 **RAG의 기초**. 이론에서 임베딩·벡터검색, retriever–reader 구조, **컨텍스트 엔지니어링**을 다루고, 실습에서 임베딩→유사도→주입 검색을 직접 만든다 *(최종 프로젝트 부품 1)*. RAG(Lewis)·HyDE.
+외부 지식을 끌어오는 **RAG 기초**. 이론에서 임베딩·벡터검색, retriever–reader 구조를 다루고, 실습에서 임베딩→유사도→주입 검색을 직접 만든다 *(최종 프로젝트 부품 1)*. RAG(Lewis)·HyDE.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Effective Context Engineering for AI Agents* (컨텍스트를 유한 자원으로 큐레이션 · 최종프로젝트 직결)
+Anthropic — *Contextual Retrieval* / LlamaIndex RAG 가이드 · MS05
 
 ## 📄 발표 논문
 #### 🟡 Retrieval-Augmented Generation for Knowledge-Intensive NLP
@@ -25,7 +25,7 @@ Anthropic — *Effective Context Engineering for AI Agents* (컨텍스트를 유
 언제 검색해야 하는가? 항상 검색이 답인가?
 
 ## 🛠 실습 (from-scratch)
-임베딩→유사도→컨텍스트 주입 검색 직접 구현
+임베딩→유사도→컨텍스트 주입 검색 직접 구현 *(최종 프로젝트 부품 1)*
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week06/` 폴더로 분리한다.
 

@@ -1,12 +1,12 @@
 # Week 10. 멀티에이전트 + LangGraph 전환점 ⭐
 
-> **Part:** 협업과 환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 협업·환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-⭐ **전환점.** 여러 에이전트의 협업과 프레임워크로의 전환. 이론에서 협업 아키텍처(핸드오프·라우터)와 **그래프 실행 모델**을 다루고, 실습에서 직접 짠 멀티에이전트를 **LangGraph로 재구현·비교**한다(from-scratch→프레임워크 분기점). AutoGen·MetaGPT.
+⭐ **전환점.** 여러 에이전트의 협업과 프레임워크로의 전환. 이론에서 협업 아키텍처(핸드오프·라우터)를 다루고, 실습에서 직접 짠 멀티에이전트를 **LangGraph로 재구현·비교**한다(from-scratch→프레임워크 분기점). AutoGen·MetaGPT.
 
 ## 📖 보조읽기 (발표 대상 아님)
-LangChain — *Choosing the Right Multi-Agent Architecture* (서브에이전트·핸드오프·라우터 비교)
+LangChain — *Choosing the Right Multi-Agent Architecture* · MS02·08
 
 ## 📄 발표 논문
 #### 🟡 AutoGen: Multi-Agent Conversation Framework
@@ -24,13 +24,13 @@ LangChain — *Choosing the Right Multi-Agent Architecture* (서브에이전트�
 #### 🟡 Multiagent Debate (선택읽기) *(선택읽기)*
 - **출처:** Du et al., ICML 2024 · arXiv:2305.14325
 - **발표 필수:** 다중 에이전트 토론이 사실성·추론을 높이는 원리
-- **선택 심화:** 수렴 동역학, 에이전트 수·라운드
+- **선택 심화:** 수렴 동역학
 - **PDF:** [`W10_opt-Multiagent-Debate_2305.14325.pdf`](../papers/W10_opt-Multiagent-Debate_2305.14325.pdf)
 
 #### 🟡 CAMEL: Communicative Agents (선택읽기) *(선택읽기)*
 - **출처:** Li et al., NeurIPS 2023 · arXiv:2303.17760
 - **발표 필수:** 역할극 기반 자율 협력 프레임
-- **선택 심화:** inception prompting, 과제 분해
+- **선택 심화:** inception prompting
 - **PDF:** [`W10_opt-CAMEL_2303.17760.pdf`](../papers/W10_opt-CAMEL_2303.17760.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)

@@ -1,31 +1,31 @@
-# Week 12. 🆕 GUI · 컴퓨터/웹 사용 에이전트
+# Week 12. 에이전트 강화학습 (개념 1주 · 수식 생략)
 
-> **Part:** 프런티어 (개념 위주) · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 학습·품질·운영 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-화면을 보고 클릭하는 **GUI·웹 에이전트**. 이론에서 관찰–행동 루프, **DOM vs 스크린샷**, 벤치마크(WebArena/OSWorld)를 다루고, 실습에서 간단한 웹 태스크 루프를 돌린다. 시각적이라 흥미로운 주. WebArena·Mind2Web.
+에이전트를 **RL로 학습**시키는 관점(1주·수식 생략). 이론에서 보상 설계 직관, RLHF→RLVR, 도구학습 보상을 **직관 수준**으로만 다루고, 실습은 보상 기반 도구선택 시뮬레이션. ReTool. *(Voyager는 스킬 축적 선택읽기)*
 
 ## 📖 보조읽기 (발표 대상 아님)
-*OS Agents: A Survey on MLLM-based Agents* (ACL 2025) — 컴퓨터·폰·브라우저 사용 개관
+Lilian Weng — *Reward Hacking in RL* · Berkeley 후련 강의
 
 ## 📄 발표 논문
-#### 🟡 WebArena: A Realistic Web Environment for Agents
-- **출처:** Zhou et al., ICLR 2024 · arXiv:2307.13854
-- **발표 필수:** 실제 웹 태스크 벤치마크 구성과 왜 어려운가
-- **선택 심화:** 4개 도메인, 성공률 격차
-- **PDF:** [`W12_WebArena_2307.13854.pdf`](../papers/W12_WebArena_2307.13854.pdf)
+#### 🔴 ReTool: RL for Strategic Tool Use in LLMs
+- **출처:** 2025 · arXiv:2504.11536 · *수식 유도 생략 가능*
+- **발표 필수:** 도구 사용 시점·방법을 RL로 최적화하는 핵심 직관
+- **선택 심화:** 코드 인터프리터 통합, outcome 보상
+- **PDF:** [`W12_ReTool_2504.11536.pdf`](../papers/W12_ReTool_2504.11536.pdf)
 
-#### 🟡 Mind2Web: Towards a Generalist Agent for the Web
-- **출처:** Deng et al., NeurIPS 2023 · arXiv:2306.06070
-- **발표 필수:** 실세계 웹사이트 일반화 과제와 데이터
-- **선택 심화:** DOM 후보 선택, cross-website 일반화
-- **PDF:** [`W12_Mind2Web_2306.06070.pdf`](../papers/W12_Mind2Web_2306.06070.pdf)
+#### 🟡 Voyager (선택읽기·스킬 축적/자기개선) *(선택읽기)*
+- **출처:** Wang et al., 2023 · arXiv:2305.16291
+- **발표 필수:** 스킬 라이브러리를 누적하는 평생학습 메커니즘
+- **선택 심화:** automatic curriculum, 코드형 스킬
+- **PDF:** [`W12_opt-Voyager_2305.16291.pdf`](../papers/W12_opt-Voyager_2305.16291.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-텍스트 도구 호출 vs 화면 클릭 — 무엇이 언제 나은가?
+도구 사용을 왜 RL로 배워야 하나? RL 에이전트 vs 프롬프트 에이전트?
 
 ## 🛠 실습 (from-scratch)
-브라우저/도구 환경에서 관찰-행동 루프 (간단한 웹 태스크)
+간단한 보상 기반 도구 선택 시뮬레이션
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week12/` 폴더로 분리한다.
 

@@ -1,31 +1,43 @@
-# Week 09. 체화·평생학습 (Embodied / Lifelong)
+# Week 09. 메모리 (Memory)
 
-> **Part:** 협업과 환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-환경과 상호작용하며 스킬을 쌓는 **평생학습**. 이론에서 스킬 라이브러리 누적, automatic curriculum, 시뮬 환경 상호작용을 다루고, 실습에서 재사용 가능한 스킬 라이브러리를 만든다. Voyager·Generative Agents.
+대화·과제를 넘어 정보를 유지하는 **메모리**. 이론에서 단기/장기, **계층적 메모리(OS 비유)**, 검색 기준(최신성·중요도·관련성)을 다루고, 실습에서 메모리 스트림을 구현한다 *(최종 프로젝트 부품 3)*. MemGPT·Mem0(2025).
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Effective Harnesses for Long-Running Agents* (장기 과제 패턴)
+Letta (MemGPT) — *Agent Memory Blog* (3계층 메모리) · MS13
 
 ## 📄 발표 논문
-#### 🟡 Voyager: An Open-Ended Embodied Agent with LLMs
-- **출처:** Wang et al., 2023 · arXiv:2305.16291
-- **발표 필수:** 스킬 라이브러리를 누적하는 평생학습 메커니즘
-- **선택 심화:** automatic curriculum, 코드형 스킬
-- **PDF:** [`W09_Voyager_2305.16291.pdf`](../papers/W09_Voyager_2305.16291.pdf)
+#### 🟡 MemGPT: Towards LLMs as Operating Systems
+- **출처:** Packer et al., 2023 · arXiv:2310.08560
+- **발표 필수:** 가상메모리 비유의 계층적 메모리(core/archival)
+- **선택 심화:** function-call self-editing, 페이징
+- **PDF:** [`W09_MemGPT_2310.08560.pdf`](../papers/W09_MemGPT_2310.08560.pdf)
 
-#### 🟡 Generative Agents: Interactive Simulacra of Human Behavior
+#### 🟡 Mem0: Production-Ready AI Agents with Long-Term Memory
+- **출처:** 2025 · arXiv:2504.19413
+- **발표 필수:** 장기메모리 파이프라인(추출·갱신·검색)의 실전 설계
+- **선택 심화:** 확장성·지연 분석, 그래프 메모리
+- **PDF:** [`W09_Mem0_2504.19413.pdf`](../papers/W09_Mem0_2504.19413.pdf)
+
+#### 🟡 MemoryBank (선택읽기) *(선택읽기)*
+- **출처:** Zhong et al., AAAI 2024 · arXiv:2305.10250
+- **발표 필수:** 망각 곡선 기반 메모리 갱신·검색
+- **선택 심화:** 사용자 페르소나 유지
+- **PDF:** [`W09_opt-MemoryBank_2305.10250.pdf`](../papers/W09_opt-MemoryBank_2305.10250.pdf)
+
+#### 🟡 Generative Agents (선택읽기·메모리 측면) *(선택읽기)*
 - **출처:** Park et al., UIST 2023 · arXiv:2304.03442
-- **발표 필수:** 메모리·반성·계획을 한 시스템에 통합
-- **선택 심화:** 최신성·중요도·관련성 점수화
-- **PDF:** [`W09_Generative-Agents_2304.03442.pdf`](../papers/W09_Generative-Agents_2304.03442.pdf)
+- **발표 필수:** 최신성·중요도·관련성으로 메모리를 점수화·검색
+- **선택 심화:** memory stream 구조
+- **PDF:** [`W09_opt-Generative-Agents_2304.03442.pdf`](../papers/W09_opt-Generative-Agents_2304.03442.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-누적된 스킬이 항상 도움이 되는가? 망각이 필요한 순간은?
+무엇을 기억하고 무엇을 잊어야 하는가? 메모리 검색의 기준은?
 
 ## 🛠 실습 (from-scratch)
-재사용 가능한 스킬 라이브러리(도구 누적) 구현
+메모리 스트림 구현(저장·검색), 외부 메모리 통합 *(최종 프로젝트 부품 3)*
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week09/` 폴더로 분리한다.
 

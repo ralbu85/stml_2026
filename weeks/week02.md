@@ -1,31 +1,31 @@
-# Week 02. 도구 사용 (Tool Use)
+# Week 02. 추론 모델 (Reasoning / Test-time Compute)
 
-> **Part:** 에이전트 기초 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 토대 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트가 외부 세계와 만나는 통로인 **도구**를 다룬다. 이론에서 함수 호출 메커니즘·도구 스키마·에러 설계와 **도구 절벽(tool cliff)** 문제를 짚고, 실습에서 도구 등록·파싱·실행을 직접 구현한다. Toolformer·ToolLLM로 모델이 도구 사용을 스스로 학습하는 방식을 본다.
+2025–26 에이전트의 토대인 **추론 모델**을 앞쪽에 배치(Berkeley 흐름). 이론에서 CoT→self-consistency→**test-time compute**와 RL로 추론이 창발하는 과정(DeepSeek-R1), STaR 부트스트랩을 다룬다. 실습은 self-consistency 비교. 유명·readable해 동기부여가 좋다.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Writing Effective Tools for Agents* (도구 설계는 에이전트 UX)
+Lilian Weng — *Why We Think* — test-time compute 직관 · Berkeley 추론 강의
 
 ## 📄 발표 논문
-#### 🟡 Toolformer: LMs Can Teach Themselves to Use Tools
-- **출처:** Schick et al., NeurIPS 2023 · arXiv:2302.04761
-- **발표 필수:** self-supervised로 API 호출 위치를 학습하는 방식
-- **선택 심화:** 호출 필터링 손실, 데이터 생성 파이프라인
-- **PDF:** [`W02_Toolformer_2302.04761.pdf`](../papers/W02_Toolformer_2302.04761.pdf)
+#### 🟡 STaR: Self-Taught Reasoner
+- **출처:** Zelikman et al., NeurIPS 2022 · arXiv:2203.14465
+- **발표 필수:** 스스로 만든 추론으로 추론을 부트스트랩하는 아이디어
+- **선택 심화:** rationalization 트릭
+- **PDF:** [`W02_STaR_2203.14465.pdf`](../papers/W02_STaR_2203.14465.pdf)
 
-#### 🟡 ToolLLM: Mastering 16000+ Real-world APIs
-- **출처:** Qin et al., ICLR 2024 · arXiv:2307.16789
-- **발표 필수:** 대규모 실세계 API 학습 프레임과 DFSDT 탐색
-- **선택 심화:** ToolBench 구축, pass/win rate
-- **PDF:** [`W02_ToolLLM_2307.16789.pdf`](../papers/W02_ToolLLM_2307.16789.pdf)
+#### 🟡 DeepSeek-R1: Incentivizing Reasoning via RL
+- **출처:** DeepSeek-AI, 2025 · arXiv:2501.12948
+- **발표 필수:** 순수 RL로 추론이 창발하는 큰 그림('aha moment')
+- **선택 심화:** GRPO, cold-start 데이터
+- **PDF:** [`W02_DeepSeek-R1_2501.12948.pdf`](../papers/W02_DeepSeek-R1_2501.12948.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-도구가 많아질수록 좋은가? 도구 절벽(tool cliff)이 생기는 이유는?
+'더 오래 생각하기'는 왜 성능을 올리나? 언제 과한가?
 
 ## 🛠 실습 (from-scratch)
-도구 등록·파싱·실행 직접 구현 (계산기·검색 함수)
+self-consistency / 다중 샘플 추론 비교
 
 > 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week02/` 폴더로 분리한다.
 
