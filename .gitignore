@@ -24,3 +24,6 @@ wandb/
 
 # Paper PDFs (re-downloadable via scripts/fetch_papers.py)
 papers/*.pdf
+
+# Downloaded reference repos (re-fetch via materials/fetch_materials.sh)
+materials/repos/
