@@ -145,11 +145,8 @@ RUBRIC = ("| 핵심 기여 | 30% | 논문의 기여를 한 문장으로 정확�
 "| 비판적 분석 | 25% | 가장 약한 가정·한계를 스스로 짚었는가 |\n"
 "| 연결·확장 | 20% | 후속 논문 또는 본인/연구실 주제와 연결했는가 |")
 
+os.makedirs(ROOT, exist_ok=True)
 for wk,(part,title,aux,practice,disc,papers) in W.items():
-    d = os.path.join(ROOT, f"week{wk:02d}")
-    for sub in ("theory","practice","presentation"):
-        os.makedirs(os.path.join(d,sub), exist_ok=True)
-        open(os.path.join(d,sub,".gitkeep"),"w").close()
     # paper block
     plines=[]
     for diff,pt,cite,must,deep,pdf,opt in papers:
@@ -158,34 +155,37 @@ for wk,(part,title,aux,practice,disc,papers) in W.items():
             f"- **출처:** {cite}\n"
             f"- **발표 필수:** {must}\n"
             f"- **선택 심화:** {deep}\n"
-            f"- **PDF:** [`{pdf}`](../../papers/{pdf})\n")
+            f"- **PDF:** [`{pdf}`](../papers/{pdf})\n")
     papers_md="\n".join(plines)
     md=f"""# Week {wk:02d}. {title}
 
-> **Part:** {part} · **난이도 범례:** 🟢 기초 · 🟡 중급 · 🔴 심화
+> **Part:** {part} · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 📖 보조읽기 (발표 대상 아님)
 {aux}
 
+## 📄 발표 논문
+{papers_md}
+## 💬 토론 포인트 (교수 백업 질문)
+{disc}
+
 ## 🛠 실습 (from-scratch)
 {practice}
 
-## 💬 토론 포인트 (교수용 백업 질문)
-{disc}
+> 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week{wk:02d}/` 폴더로 분리한다.
 
-## 발표 논문
-{papers_md}
-## 폴더
-- `theory/` — 이론 강의 자료 (슬라이드·노트)
-- `practice/` — from-scratch 실습 코드
-- `presentation/` — 학생 논문 발표 자료
+## 🎤 발표 진행 (요약 · 상세는 [발표 가이드](../docs/presentation-guide.md))
+- 편당 **20분**: 발표 12분(슬라이드 6장 상한·하드 스톱) + 이해검증 6분 + 정리 2분
+- 발표 템플릿 6장: ①한 문장 기여 ②문제·동기 ③핵심 메커니즘(직접 그린 그림) ④결과 1개 ⑤약한 가정·한계 ⑥연결
+- 교수 콜드 질문(슬라이드 끄고): *X 단계 빼면? / 처음부터 구현 첫 3단계? / 실패하는 입력?*
+- 지정 토론자 1명 사전 배정 → 발표 후 2분 반박·보완
 
-## 발표 평가 루브릭
+## 📊 평가 루브릭
 | 항목 | 배점 | 기준 |
 |---|---|---|
 {RUBRIC}
 """
-    open(os.path.join(d,"README.md"),"w").write(md)
-    print(f"week{wk:02d}: {title}")
+    open(os.path.join(ROOT, f"week{wk:02d}.md"),"w").write(md)
+    print(f"week{wk:02d}.md: {title}")
 
 print("\nDONE ->", ROOT)
