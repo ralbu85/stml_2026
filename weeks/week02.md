@@ -24,10 +24,13 @@ Lilian Weng — *Why We Think* — test-time compute 직관 · Berkeley 추론 �
 ## 💬 토론 포인트 (교수 백업 질문)
 '더 오래 생각하기'는 왜 성능을 올리나? 언제 과한가?
 
-## 🛠 실습 (from-scratch)
-self-consistency / 다중 샘플 추론 비교
+## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+*이번 주 주제:* self-consistency / 다중 샘플 추론 비교
 
-> 실습 코드·노트는 이 파일 아래에 이어 적거나, 분량이 커지면 `week02/` 폴더로 분리한다.
+**추가 모듈:** `reasoning.py` — 같은 질문을 N번 샘플→다수결(self-consistency) 토글.
+> ✅ **완료:** 애매한 질문에서 단일 답보다 정확도가 오른다.
+
+> 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 
 ## 🎤 발표 진행 (요약 · 상세는 [발표 가이드](../docs/presentation-guide.md))
 - 편당 **25분**: 발표 15분(슬라이드 6장 상한·하드 스톱) + 이해검증 8분 + 정리 2분

@@ -9,6 +9,7 @@
 
 - [`docs/syllabus.md`](docs/syllabus.md) — **강의계획서(현행판)**: MS/Berkeley 흐름 기반 재구성
 - [`docs/presentation-guide.md`](docs/presentation-guide.md) — **논문 발표 가이드**: 시간 배분·템플릿·이해 검증
+- [`docs/practice-guide.md`](docs/practice-guide.md) — **실습 가이드**: 누적 빌드(문서 QA 에이전트) 주차별 설계
 - [`materials/README.md`](materials/README.md) — 참고자료(MS·Berkeley·HF…) + 주차별 이론 플랜
 - [`papers/README.md`](papers/README.md) — 발표 논문 38편 검증 매니페스트 (전량 arXiv 확인)
 
