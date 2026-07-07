@@ -24,7 +24,9 @@ Lilian Weng — *Reward Hacking in RL* · Berkeley 후련 강의
 ## 💬 토론 포인트 (교수 백업 질문)
 도구 사용을 왜 RL로 배워야 하나? RL 에이전트 vs 프롬프트 에이전트?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** 개념 노트북 (프레임워크 무관)
+
 *이번 주 주제:* 간단한 보상 기반 도구 선택 시뮬레이션
 
 **노트북:** `notebooks/sim_rl.ipynb` — 보상 기반 도구선택 시뮬(앱 통합 X, 개념).

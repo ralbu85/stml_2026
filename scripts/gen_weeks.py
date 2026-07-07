@@ -170,7 +170,7 @@ OVERVIEW = {
 
 # 누적 빌드: 매주 문서 QA 에이전트(docqa-agent)에 모듈 하나 추가. 상세: docs/practice-guide.md
 PRACTICE = {
-1:"**추가 모듈:** `llm.py`·`loop.py` — LLM 단일 호출 래퍼 + ReAct(Thought→Action→Observation) while 루프 골격.\n> ✅ **완료:** 간단한 질문에 루프가 한 바퀴 돌아 답을 낸다.",
+1:"**추가 모듈:** `llm.py`·`loop.py` — (원시 API 1회 호출로 내부 확인 후) **aisuite**로 provider-무관 LLM 래퍼 + ReAct(Thought→Action→Observation) while 루프 골격.\n> ✅ **완료:** 간단한 질문에 루프가 한 바퀴 돌아 답을 낸다.",
 2:"**추가 모듈:** `reasoning.py` — 같은 질문을 N번 샘플→다수결(self-consistency) 토글.\n> ✅ **완료:** 애매한 질문에서 단일 답보다 정확도가 오른다.",
 3:"**추가 모듈:** `tools.py` — 도구 등록(dict)·JSON 액션 파싱·실행(계산기·문자열검색).\n> ✅ **완료:** 루프가 계산기 도구를 실제로 호출해 답한다.",
 4:"**추가 모듈:** `planner.py` — 질문을 하위 단계 리스트로 분해→순차 실행.\n> ✅ **완료:** 2단계 질문을 계획대로 처리한다.",
@@ -204,6 +204,11 @@ for wk,(part,title,aux,practice,disc,papers) in W.items():
             f"- **선택 심화:** {deep}\n"
             f"- **PDF:** [`{pdf}`](../papers/{pdf})\n")
     papers_md="\n".join(plines)
+    if wk<=9:      base_note="**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)"
+    elif wk==10:   base_note="**빌드 베이스:** 🔄 **전환점** — from-scratch 모듈을 **LangGraph 노드로 감싼다**(로직 재사용, 오케스트레이션만 위임)"
+    elif wk==12:   base_note="**빌드 베이스:** 개념 노트북 (프레임워크 무관)"
+    elif wk==16:   base_note="**빌드 베이스:** 최종 통합·발표"
+    else:          base_note="**빌드 베이스:** **LangGraph** 위에서 확장 (W1–9 from-scratch 모듈 재사용)"
     md=f"""# Week {wk:02d}. {title}
 
 > **Part:** {part} · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
@@ -219,7 +224,9 @@ for wk,(part,title,aux,practice,disc,papers) in W.items():
 ## 💬 토론 포인트 (교수 백업 질문)
 {disc}
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+{base_note}
+
 *이번 주 주제:* {practice}
 
 {PRACTICE[wk]}

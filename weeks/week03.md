@@ -24,7 +24,9 @@ Anthropic — *Writing Effective Tools for Agents* · MS04
 ## 💬 토론 포인트 (교수 백업 질문)
 도구가 많아질수록 좋은가? 도구 절벽(tool cliff)이 생기는 이유는?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
+
 *이번 주 주제:* 도구 레지스트리·파싱·실행 직접 구현 (계산기·검색 함수)
 
 **추가 모듈:** `tools.py` — 도구 등록(dict)·JSON 액션 파싱·실행(계산기·문자열검색).

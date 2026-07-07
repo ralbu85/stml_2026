@@ -24,10 +24,12 @@ Anthropic — *Building Effective Agents* (워크플로우 vs 에이전트) · M
 ## 💬 토론 포인트 (교수 백업 질문)
 에이전트와 단순 워크플로우의 경계는? CoT 없는 ReAct는 가능한가?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
+
 *이번 주 주제:* 환경 세팅, LLM API 단일 호출 → ReAct 제어 루프 골격(while 루프)
 
-**추가 모듈:** `llm.py`·`loop.py` — LLM 단일 호출 래퍼 + ReAct(Thought→Action→Observation) while 루프 골격.
+**추가 모듈:** `llm.py`·`loop.py` — (원시 API 1회 호출로 내부 확인 후) **aisuite**로 provider-무관 LLM 래퍼 + ReAct(Thought→Action→Observation) while 루프 골격.
 > ✅ **완료:** 간단한 질문에 루프가 한 바퀴 돌아 답을 낸다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).

@@ -24,7 +24,9 @@ HumanLayer — *Skill Issue: Harness Engineering* · MS10
 ## 💬 토론 포인트 (교수 백업 질문)
 복잡한 에이전트 vs 단순 파이프라인 — 우리 과제엔 무엇이 맞나?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** **LangGraph** 위에서 확장 (W1–9 from-scratch 모듈 재사용)
+
 *이번 주 주제:* 최종 프로젝트 구현 집중 (검색·컨텍스트·메모리·평가 통합)
 
 **통합:** `app.py` — 전체 통합 CLI + 단순 파이프라인 베이스라인과 비교.

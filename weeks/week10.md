@@ -36,7 +36,9 @@ LangChain — *Choosing the Right Multi-Agent Architecture* · MS02·08
 ## 💬 토론 포인트 (교수 백업 질문)
 멀티에이전트가 단일 에이전트보다 정말 나은가? 언제 과한가?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** 🔄 **전환점** — from-scratch 모듈을 **LangGraph 노드로 감싼다**(로직 재사용, 오케스트레이션만 위임)
+
 *이번 주 주제:* 역할 분담 멀티에이전트를 **LangGraph로 재구현·비교** (직접 구현 대비)
 
 **개조:** `graph.py` — 지금까지의 루프를 **LangGraph로 재구현**(+선택 비평 노드).

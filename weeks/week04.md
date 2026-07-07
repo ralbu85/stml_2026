@@ -24,7 +24,9 @@ LangChain — *Plan-and-Execute Agents* · MS07
 ## 💬 토론 포인트 (교수 백업 질문)
 탐색 비용 대비 성능 이득은 언제 정당한가?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
+
 *이번 주 주제:* 탐색 기반 추론(트리 분기) 미니 구현, 계획–실행 분리
 
 **추가 모듈:** `planner.py` — 질문을 하위 단계 리스트로 분해→순차 실행.

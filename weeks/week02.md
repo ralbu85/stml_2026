@@ -24,7 +24,9 @@ Lilian Weng — *Why We Think* — test-time compute 직관 · Berkeley 추론 �
 ## 💬 토론 포인트 (교수 백업 질문)
 '더 오래 생각하기'는 왜 성능을 올리나? 언제 과한가?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
+
 *이번 주 주제:* self-consistency / 다중 샘플 추론 비교
 
 **추가 모듈:** `reasoning.py` — 같은 질문을 N번 샘플→다수결(self-consistency) 토글.

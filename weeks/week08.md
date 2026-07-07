@@ -36,7 +36,9 @@ Anthropic — *Effective Context Engineering* + HumanLayer — *Skill Issue: Har
 ## 💬 토론 포인트 (교수 백업 질문)
 컨텍스트는 왜 유한 자원인가? 무엇을 넣고 무엇을 버려야 하나?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
+
 *이번 주 주제:* 컨텍스트 예산·압축·큐레이션을 하네스에 내장 (긴 컨텍스트 관리)
 
 **추가 모듈:** `context.py` — 토큰 예산 관리(자르기·중요도 정렬·간단 압축).

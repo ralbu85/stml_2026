@@ -24,7 +24,9 @@ Anthropic — *Code Execution with MCP* · MS05·11
 ## 💬 토론 포인트 (교수 백업 질문)
 RAG를 도구로 만들면 무엇이 좋아지고 무엇이 어려워지나?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
+
 *이번 주 주제:* 검색을 '도구'로 노출하고 에이전트가 단계별로 호출하게 개조 *(최종 프로젝트 부품 2)*
 
 **개조:** `retriever`를 `tools.py`에 **검색 도구**로 등록 → 필요할 때만 검색. 📦 *최종 부품*

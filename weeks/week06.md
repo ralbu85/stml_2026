@@ -24,7 +24,9 @@ Anthropic — *Contextual Retrieval* / LlamaIndex RAG 가이드 · MS05
 ## 💬 토론 포인트 (교수 백업 질문)
 언제 검색해야 하는가? 항상 검색이 답인가?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
+
 *이번 주 주제:* 임베딩→유사도→컨텍스트 주입 검색 직접 구현 *(최종 프로젝트 부품 1)*
 
 **추가 모듈:** `retriever.py` + 샘플 문서 — 청킹→임베딩→코사인 top-k 검색. 📦 *최종 부품*

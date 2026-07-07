@@ -40,6 +40,29 @@ app.py           # 통합 CLI                 (W15)
 checkpoints/weekNN/   # 주차별 참조 구현(뒤처진 학생용)
 ```
 
+## 프레임워크 전환 경계 (W10) ★
+
+**"감싸기(wrap), 버리기 아님."** from-scratch로 짠 코드를 W10에서 LangGraph 노드의 '속'으로 재사용한다.
+
+| 구간 | 빌드 베이스 |
+|---|---|
+| **W1–9** | **from-scratch** — `retriever.py`·`memory.py`·`tools.py` 등을 직접 구현 (LLM 호출만 aisuite) |
+| **W10** | 🔄 **전환점** — 위 모듈들을 **LangGraph 노드로 감싼다**. 오케스트레이션·상태만 프레임워크에 위임 |
+| **W11·13·14·15** | **LangGraph 위에서 확장** — 웹도구·가드레일=노드, eval=바깥에서. **W1–9 모듈 그대로 재사용** |
+| **W12** | 개념 노트북 (프레임워크 무관) |
+
+> **왜 후반이 더 쉬워지나:** 멀티에이전트·메모리 연결·웹도구 같은 복잡한 후반 기능은 그래프/상태 모델로 하면 from-scratch보다 간단하다. 힘든 로직은 이미 W1–9에서 손으로 짜서 이해한 상태이므로, W10의 부담은 *LangGraph 기본 문법 1회 학습*뿐이다.
+> **대안:** 프레임워크 의존을 피하려면 W10을 비교용 1회 실습으로만 두고 W11–16을 from-scratch 본선으로 유지할 수 있다(후반 난이도 ↑).
+
+## LLM API 래퍼 — Andrew Ng `aisuite` 채택 ★
+
+`llm.py`는 [**aisuite**](https://github.com/andrewyng/aisuite)(Andrew Ng, 얇은 통합 래퍼)로 감싼다.
+
+- **왜:** `provider:model` 문자열 하나로 OpenAI·Anthropic·Google·**Ollama(로컬·무료)** 를 교체. 학생마다 API 사정이 달라도 코드 동일 → 접근성 ↑.
+- **from-scratch 유지:** aisuite는 **provider 호출 배관만** 감싼다. 에이전트 로직(루프·도구·메모리)은 학생이 직접 구현하므로 철학과 충돌 없음.
+- **주의:** aisuite의 **Agents/tools 레이어는 사용하지 않는다**(그건 W3에서 학생이 직접 만들 부분). **Chat Completions 계층만** 사용.
+- **W1 순서:** 원시 provider API를 1회 호출해 내부를 본 뒤 → aisuite로 감싼다.
+
 ## 주차별 빌드 (📦 = 최종 앱 핵심 부품)
 
 | 주 | 추가 모듈 | 하는 일 | ✅ 완료 기준 |
@@ -63,9 +86,9 @@ checkpoints/weekNN/   # 주차별 참조 구현(뒤처진 학생용)
 
 ## 스택 / 준비물
 
-- **Python 3.10+**, LLM SDK(OpenAI 또는 Anthropic), `numpy`
+- **Python 3.10+**, **`aisuite`**(통합 LLM 래퍼, 키 없으면 Ollama 로컬), `numpy`
 - 6주부터: 임베딩 API (또는 `sentence-transformers` 로컬)
-- 10주: `langgraph` · 11주: `requests`/`beautifulsoup4`
+- 10주: `langgraph` (여기서부터 빌드 베이스) · 11주: `requests`/`beautifulsoup4`
 - `requirements.txt`는 스캐폴드에 포함 예정. API 키는 `.env`(gitignore).
 
 ## 운영 팁

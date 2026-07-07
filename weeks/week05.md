@@ -24,7 +24,9 @@ Anthropic — *Demystifying Evals for AI Agents* · MS09
 ## 💬 토론 포인트 (교수 백업 질문)
 자기반성은 진짜 개선인가, 아니면 같은 오류의 반복인가?
 
-## 🛠 실습 (from-scratch) — 누적 빌드 `docqa-agent`
+## 🛠 실습 — 누적 빌드 `docqa-agent`
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
+
 *이번 주 주제:* 실패→언어 피드백→재시도 루프를 ReAct에 추가
 
 **추가 모듈:** `reflect.py` — 검증 실패 시 언어 피드백을 붙여 재시도(최대 k회).
