@@ -32,7 +32,8 @@
 ## 저장소 구조
 
 ```
-docs/          강의계획서 · 발표 가이드
+docs/          강의계획서 · 발표 가이드 · 이론 개요
+lectures/      주차별 강의 슬라이드(Marp)
 papers/        발표 논문 PDF(gitignore) + 검증 매니페스트
 scripts/       fetch_papers.py(논문 다운로드) · gen_weeks.py(주차 파일 생성)
 weeks/weekNN.md  주차별 한 파일 (필요해지면 weekNN/ 폴더로 확장)

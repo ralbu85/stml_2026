@@ -3,7 +3,7 @@
 > **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-외부 지식을 끌어오는 **RAG 기초**. 이론에서 임베딩·벡터검색, retriever–reader 구조를 다루고, 실습에서 임베딩→유사도→주입 검색을 직접 만든다 *(최종 프로젝트 부품 1)*. RAG(Lewis)·HyDE.
+외부 지식을 끌어오는 **RAG 기초**. 이론에서 임베딩·벡터검색, retriever–reader 구조를 다루고, 실습에서 임베딩→유사도→주입 검색을 직접 만든다 *(최종 프로젝트 부품 1)*. RAG(Lewis)·HyDE. *(보안 복선: 오늘 만든 '문서 입구'가 W14 간접 인젝션의 공격 통로가 된다 — 예고만.)*
 
 ## 📖 보조읽기 (발표 대상 아님)
 Anthropic — *Contextual Retrieval* / LlamaIndex RAG 가이드 · MS05

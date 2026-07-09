@@ -3,7 +3,7 @@
 > **Part:** 협업·환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-화면을 보고 클릭하는 **컴퓨터·웹 에이전트**. 이론에서 관찰–행동 루프, **DOM vs 스크린샷**, 벤치마크(WebArena/OSWorld)를 다루고, 실습에서 간단한 웹/OS 태스크 루프를 돌린다. 시각적이라 흥미로운 주. WebArena·OSWorld(2024).
+화면을 보고 클릭하는 **컴퓨터·웹 에이전트**. 이론에서 관찰–행동 루프, **DOM vs 스크린샷**, 벤치마크(WebArena/OSWorld)를 다루고, 실습에서 간단한 웹/OS 태스크 루프를 돌린다. 시각적이라 흥미로운 주. WebArena·OSWorld(2024). *(보안 복선: 오늘 붙인 웹 도구가 W14 간접 인젝션의 주 통로다 — 예고만.)*
 
 ## 📖 보조읽기 (발표 대상 아님)
 *OS Agents: A Survey on MLLM-based Agents* (ACL 2025) · MS15

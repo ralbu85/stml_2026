@@ -128,6 +128,7 @@
 - 15–27′ 파이프라인 단계별 + **청킹이 품질을 좌우** (크기/오버랩 선택 데모)
 - 27–34′ RAG 원 논문의 위치(2020) + HyDE 아이디어 그림 하나로
 - 34–40′ 연결: 실습 = `retriever.py` — **오늘부터 최종 앱의 심장을 만든다** 강조
+  *(보안 복선 1줄: "오늘 만든 문서 입구가 W14에서 공격 통로가 된다" — 예고만)*
 
 **자료:** `RAG_Techniques`(기초 노트북) · Berkeley `MKA.pdf` · MS lesson 12 일부
 
@@ -170,6 +171,7 @@
 - 15–25′ 예산 관리 전략: 선별·정렬·압축 각각 예시 — LLMLingua 압축 전/후 비교
 - 25–32′ 프로덕션 하네스 사례: 실제 코딩 에이전트의 컨텍스트 구성 뜯어보기
 - 32–35′ 연결: 실습 = 토큰 예산·정렬·압축(`context.py`) — 지난주 검색 결과가 입력
+  **🏁 중간 데모 체크포인트:** W8까지가 from-scratch 단일 에이전트의 완성형 — 실습 말미 '내 에이전트 중간 데모'로 중간 점검을 대신한다
 
 **자료:** Berkeley 관련 강연 · Anthropic context-engineering 자료 · MS lesson 12(context-engineering)
 
@@ -233,6 +235,7 @@
 - 14–22′ 왜 어려운가: grounding, 긴 지평 오류 누적, 동적 페이지
 - 22–27′ 벤치마크 정독: WebArena/OSWorld 수치 읽는 법 — 발표 준비 힌트
 - 27–30′ 연결: 실습 = 웹을 *도구*로 축소해 체험(`tools_web.py` — URL fetch, GUI는 논문으로)
+  *(보안 복선 1줄: "오늘 붙인 웹 도구가 W14 간접 인젝션의 주 통로" — 예고만)*
 
 **자료:** MS browser-use 레슨 · Berkeley `ruslan-multimodal.pdf`·`Multimodal_Agent_caiming.pdf`
 
