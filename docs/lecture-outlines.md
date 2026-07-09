@@ -38,12 +38,12 @@
 3. **R1/RLVR** — 정답 검증 가능한 보상만으로 추론이 *창발*한 이야기 (aha moment)
 4. 에이전트 설계 함의 — 추론모델은 언제 쓰나(비용·지연 트레이드오프)
 
-**진행 개요 (35′)**
+**진행 개요 (37′)** — *RL 사전 지식 없음을 가정*
 - 0–5′ 복습+문제 제기: CoT는 공짜였다 — 더 밀어붙이면?
 - 5–15′ test-time compute 스케일링: 같은 모델, N배 샘플 → 정확도 곡선 보기
-- 15–27′ 학습으로 내재화: STaR 루프 그림 → R1 훈련 스토리(수식 없이 보상 서사로)
-- 27–32′ o1/R1 시대의 에이전트: "루프를 짧게, 생각을 길게"? 비용 표로 비교
-- 32–35′ 연결: 실습 = self-consistency 구현(`reasoning.py`); 발표 = STaR·DeepSeek-R1
+- 15–29′ 학습으로 내재화: STaR 루프 그림 → **RL 3분 입문(강아지 비유·SFT 대조, 수식 0)** → R1 훈련 스토리(보상 서사로)
+- 29–34′ o1/R1 시대의 에이전트: "루프를 짧게, 생각을 길게"? 비용 표로 비교
+- 34–37′ 연결: 실습 = self-consistency 구현(`reasoning.py`); 발표 = STaR·DeepSeek-R1
 
 **자료:** Berkeley `inference_time_techniques_lecture_sp25.pdf`·`llm-reasoning.pdf`·`Jason-Weston-Reasoning.pdf`·`OLMo-Tulu-Reasoning-Hanna.pdf`
 

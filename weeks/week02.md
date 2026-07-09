@@ -3,7 +3,7 @@
 > **Part:** 토대 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-2025–26 에이전트의 토대인 **추론 모델**을 앞쪽에 배치(Berkeley 흐름). 이론에서 CoT→self-consistency→**test-time compute**와 RL로 추론이 창발하는 과정(DeepSeek-R1), STaR 부트스트랩을 다룬다. 실습은 self-consistency 비교. 유명·readable해 동기부여가 좋다.
+2025–26 에이전트의 토대인 **추론 모델**을 앞쪽에 배치(Berkeley 흐름). 이론에서 CoT→self-consistency→**test-time compute**와 RL로 추론이 창발하는 과정(DeepSeek-R1), STaR 부트스트랩을 다룬다. **RL은 사전 지식 없음을 가정** — R1 전에 보상 개념을 비유 수준으로 3분 입문(수식 0). 실습은 self-consistency 비교. 유명·readable해 동기부여가 좋다.
 
 ## 📖 보조읽기 (발표 대상 아님)
 Lilian Weng — *Why We Think* — test-time compute 직관 · Berkeley 추론 강의
