@@ -20,4 +20,5 @@ marp lectures/week01/slides.md --pptx                      # PPTX (강의실 호
 | 주 | 슬라이드 | 상태 |
 |---|---|---|
 | 01 | [week01/slides.md](week01/slides.md) | ✅ 초안 (23장 / 35분) |
-| 02–16 | — | 개요만 (`docs/lecture-outlines.md`) |
+| 02 | [week02/slides.md](week02/slides.md) | ✅ 초안 (24장 / 35분) |
+| 03–16 | — | 개요만 (`docs/lecture-outlines.md`) |
