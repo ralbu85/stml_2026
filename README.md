@@ -33,6 +33,7 @@
 
 ```
 docs/          강의계획서 · 발표 가이드 · 이론 개요
+labs/          실습 스캐폴드(docqa-agent 누적 빌드: 빈칸+테스트+체크포인트)
 lectures/      주차별 강의 슬라이드(Marp)
 papers/        발표 논문 PDF(gitignore) + 검증 매니페스트
 scripts/       fetch_papers.py(논문 다운로드) · gen_weeks.py(주차 파일 생성)

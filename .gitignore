@@ -15,6 +15,7 @@ env/
 *.log
 outputs/
 checkpoints/
+!labs/checkpoints/
 *.ckpt
 wandb/
 

@@ -1,0 +1,7 @@
+# LLM 호출: 얇은 통합 래퍼 (provider:model 문자열로 교체)
+aisuite[openai,anthropic,ollama]
+python-dotenv
+pytest
+requests            # W1 원시 API 데모 · W11 웹 도구
+# numpy             # W6(임베딩 코사인 유사도)부터 주석 해제
+# langgraph         # W10부터
