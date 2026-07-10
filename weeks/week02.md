@@ -1,36 +1,36 @@
-# Week 02. 추론 모델 (Reasoning / Test-time Compute)
+# Week 02. CoT → ReAct — 추론과 행동의 결합
 
 > **Part:** 토대 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-2025–26 에이전트의 토대인 **추론 모델**을 앞쪽에 배치(Berkeley 흐름). 이론에서 CoT→self-consistency→**test-time compute**와 RL로 추론이 창발하는 과정(DeepSeek-R1), STaR 부트스트랩을 다룬다. **RL은 사전 지식 없음을 가정** — R1 전에 보상 개념을 비유 수준으로 3분 입문(수식 0). 실습은 self-consistency 비교. 유명·readable해 동기부여가 좋다.
+**하네스(제어 루프)의 최소 형태**를 만드는 주. 이론에서 CoT(생각의 외부화)→Act-only→**ReAct의 추론–행동–관찰 루프** 계보를 다루고 트레이스를 라이브로 읽는다. 실습에서 그 루프를 while 문으로 직접 구현한다. **학생 발표 시작** — ReAct·CoT.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Lilian Weng — *Why We Think* — test-time compute 직관 · Berkeley 추론 강의
+Lilian Weng — *LLM Powered Autonomous Agents* · Berkeley 에이전트 역사 강의
 
 ## 📄 발표 논문
-#### 🟡 STaR: Self-Taught Reasoner
-- **출처:** Zelikman et al., NeurIPS 2022 · arXiv:2203.14465
-- **발표 필수:** 스스로 만든 추론으로 추론을 부트스트랩하는 아이디어
-- **선택 심화:** rationalization 트릭
-- **PDF:** [`W02_STaR_2203.14465.pdf`](../papers/W02_STaR_2203.14465.pdf)
+#### 🟢 ReAct: Synergizing Reasoning and Acting in LLMs
+- **출처:** Yao et al., ICLR 2023 · arXiv:2210.03629
+- **발표 필수:** Think–Act–Observe 루프 구조와 추론·행동을 엮는 이유
+- **선택 심화:** HotpotQA·ALFWorld 셋업
+- **PDF:** [`W02_ReAct_2210.03629.pdf`](../papers/W02_ReAct_2210.03629.pdf)
 
-#### 🟡 DeepSeek-R1: Incentivizing Reasoning via RL
-- **출처:** DeepSeek-AI, 2025 · arXiv:2501.12948
-- **발표 필수:** 순수 RL로 추론이 창발하는 큰 그림('aha moment')
-- **선택 심화:** GRPO, cold-start 데이터
-- **PDF:** [`W02_DeepSeek-R1_2501.12948.pdf`](../papers/W02_DeepSeek-R1_2501.12948.pdf)
+#### 🟢 Chain-of-Thought Prompting Elicits Reasoning in LLMs
+- **출처:** Wei et al., NeurIPS 2022 · arXiv:2201.11903
+- **발표 필수:** CoT 핵심 아이디어와 추론 창발 조건
+- **선택 심화:** 규모별 창발 곡선, self-consistency
+- **PDF:** [`W02_Chain-of-Thought_2201.11903.pdf`](../papers/W02_Chain-of-Thought_2201.11903.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-'더 오래 생각하기'는 왜 성능을 올리나? 언제 과한가?
+CoT 없는 ReAct는 가능한가? 추론과 행동을 섞으면 왜 둘 다 좋아지나?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* ReAct 제어 루프(while) 완성 → self-consistency / 다중 샘플 추론 비교
+*이번 주 주제:* ReAct(Thought→Action→Observation) while 루프 직접 구현
 
-**추가 모듈:** `loop.py` — ReAct(Thought→Action→Observation) while 루프 골격 *(W1 이론에서 배운 것을 구현)* · `reasoning.py` — 같은 질문을 N번 샘플→다수결(self-consistency).
-> ✅ **완료:** ① 간단한 질문에 루프가 한 바퀴 돌아 답을 낸다 ② 애매한 질문에서 단일 답보다 정확도가 오른다.
+**추가 모듈:** `loop.py` — ReAct(Thought→Action→Observation) while 루프 골격. W1 이론에서 본 루프를 직접 짠다.
+> ✅ **완료:** 간단한 질문에 루프가 한 바퀴 돌아 답을 낸다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

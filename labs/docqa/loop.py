@@ -9,7 +9,7 @@
     Thought: <추론>
     Final Answer: <답>                                ← 답을 확정할 때
 
-W2에는 아직 도구가 없다(dispatch가 자리만 지킨다). W3의 tools.py가 그 자리를 채운다.
+W2에는 아직 도구가 없다(dispatch가 자리만 지킨다). W4의 tools.py가 그 자리를 채운다.
 """
 
 import json
@@ -49,7 +49,7 @@ def parse_step(text: str):
 def dispatch(tool: str, tool_input: str) -> str:
     """도구 실행 자리. (제공됨)
 
-    W3부터: tools.py 레지스트리에 등록된 도구가 있으면 실제로 실행한다.
+    W4부터: tools.py 레지스트리에 등록된 도구가 있으면 실제로 실행한다.
     등록된 게 없으면(W2 상태) 예전 스텁 그대로.
     """
     from . import tools
@@ -73,7 +73,7 @@ def react_loop(question: str, llm_fn=None, max_steps: int = 5, verbose: bool = T
 
     from . import tools
     system = SYSTEM_PROMPT
-    if tools.TOOLS:  # W3부터: 등록된 도구 목록을 모델에게 알린다 (파이프라인 ①)
+    if tools.TOOLS:  # W4부터: 등록된 도구 목록을 모델에게 알린다 (파이프라인 ①)
         system += "\n\n" + tools.tool_list_prompt()
 
     messages = [

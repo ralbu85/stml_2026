@@ -1,7 +1,7 @@
 # 머신러닝 특론 — LLM 에이전트 (2026)
 
 **논문 읽기와 함께 만들기** · 16주 · 주당 논문 2편 발표 + 매주 from-scratch 실습
-**대상:** 부산대/부경대 대학원 · **최종 산출물:** RAG 문서 QA 에이전트
+**대상:** 부산대/부경대 대학원 · **최종 산출물:** 연구보조 검색·종합 에이전트 (수업 논문 코퍼스 기반 RAG)
 
 매주 3시간: **이론 · 실습 · 논문발표** 병행. 난이도 범례: 🟢 기초 · 🟡 중급 · 🔴 심화
 
@@ -20,14 +20,14 @@
 
 | 주 | 주제 | | 주 | 주제 |
 |---|---|---|---|---|
-| [01](weeks/week01.md) | 에이전트 개요 + ReAct | | [09](weeks/week09.md) | 메모리 |
-| [02](weeks/week02.md) | 추론 모델 | | [10](weeks/week10.md) | 멀티에이전트 + LangGraph ⭐ |
-| [03](weeks/week03.md) | 도구 사용 | | [11](weeks/week11.md) | 컴퓨터/웹 사용 |
-| [04](weeks/week04.md) | 계획과 탐색 | | [12](weeks/week12.md) | 에이전트 강화학습 |
-| [05](weeks/week05.md) | 자기반성·메타인지 | | [13](weeks/week13.md) | 평가·벤치마크 |
-| [06](weeks/week06.md) | RAG 1부: 기초 | | [14](weeks/week14.md) | 신뢰·보안 |
-| [07](weeks/week07.md) | 에이전틱 RAG + MCP | | [15](weeks/week15.md) | 프로덕션·단순함 |
-| [08](weeks/week08.md) | 컨텍스트 엔지니어링(하네스) ⭐ | | [16](weeks/week16.md) | 최종 발표 |
+| [01](weeks/week01.md) | 강의소개 · 에이전트 개요 | | [09](weeks/week09.md) | 컨텍스트 엔지니어링(하네스) ⭐ |
+| [02](weeks/week02.md) | CoT → ReAct | | [10](weeks/week10.md) | 메모리 |
+| [03](weeks/week03.md) | 추론 모델 | | [11](weeks/week11.md) | 멀티에이전트 + LangGraph ⭐ |
+| [04](weeks/week04.md) | 도구 사용 | | [12](weeks/week12.md) | 컴퓨터/웹 사용 |
+| [05](weeks/week05.md) | 계획과 탐색 | | [13](weeks/week13.md) | 평가·벤치마크 |
+| [06](weeks/week06.md) | 자기반성·메타인지 | | [14](weeks/week14.md) | 신뢰·보안 |
+| [07](weeks/week07.md) | RAG 1부: 기초 | | [15](weeks/week15.md) | 프로덕션·단순함 |
+| [08](weeks/week08.md) | 에이전틱 RAG + MCP | | [16](weeks/week16.md) | 최종 발표 |
 
 ## 저장소 구조
 

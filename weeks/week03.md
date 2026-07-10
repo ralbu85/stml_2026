@@ -1,36 +1,36 @@
-# Week 03. 도구 사용 (Tool Use)
+# Week 03. 추론 모델 (Reasoning / Test-time Compute)
 
-> **Part:** 핵심 디자인 패턴 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 토대 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트가 외부 세계와 만나는 통로인 **도구**. 이론에서 함수 호출·스키마·에러 설계와 **도구 절벽**을 다루고, 실습에서 도구 레지스트리·파싱·실행을 직접 만든다. Toolformer·ToolLLM.
+2025–26 에이전트의 토대인 **추론 모델**을 앞쪽에 배치(Berkeley 흐름). 이론에서 CoT→self-consistency→**test-time compute**와 RL로 추론이 창발하는 과정(DeepSeek-R1), STaR 부트스트랩을 다룬다. **RL은 사전 지식 없음을 가정** — R1 전에 보상 개념을 비유 수준으로 3분 입문(수식 0). 실습은 self-consistency 비교. 유명·readable해 동기부여가 좋다.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Writing Effective Tools for Agents* · MS04
+Lilian Weng — *Why We Think* — test-time compute 직관 · Berkeley 추론 강의
 
 ## 📄 발표 논문
-#### 🟡 Toolformer: LMs Can Teach Themselves to Use Tools
-- **출처:** Schick et al., NeurIPS 2023 · arXiv:2302.04761
-- **발표 필수:** self-supervised로 API 호출 위치를 학습하는 방식
-- **선택 심화:** 호출 필터링 손실, 데이터 파이프라인
-- **PDF:** [`W03_Toolformer_2302.04761.pdf`](../papers/W03_Toolformer_2302.04761.pdf)
+#### 🟡 STaR: Self-Taught Reasoner
+- **출처:** Zelikman et al., NeurIPS 2022 · arXiv:2203.14465
+- **발표 필수:** 스스로 만든 추론으로 추론을 부트스트랩하는 아이디어
+- **선택 심화:** rationalization 트릭
+- **PDF:** [`W03_STaR_2203.14465.pdf`](../papers/W03_STaR_2203.14465.pdf)
 
-#### 🟡 ToolLLM: Mastering 16000+ Real-world APIs
-- **출처:** Qin et al., ICLR 2024 · arXiv:2307.16789
-- **발표 필수:** 대규모 실세계 API 학습 프레임과 DFSDT 탐색
-- **선택 심화:** ToolBench 구축, pass/win rate
-- **PDF:** [`W03_ToolLLM_2307.16789.pdf`](../papers/W03_ToolLLM_2307.16789.pdf)
+#### 🟡 DeepSeek-R1: Incentivizing Reasoning via RL
+- **출처:** DeepSeek-AI, 2025 · arXiv:2501.12948
+- **발표 필수:** 순수 RL로 추론이 창발하는 큰 그림('aha moment')
+- **선택 심화:** GRPO, cold-start 데이터
+- **PDF:** [`W03_DeepSeek-R1_2501.12948.pdf`](../papers/W03_DeepSeek-R1_2501.12948.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-도구가 많아질수록 좋은가? 도구 절벽(tool cliff)이 생기는 이유는?
+'더 오래 생각하기'는 왜 성능을 올리나? 언제 과한가?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 도구 레지스트리·파싱·실행 직접 구현 (계산기·검색 함수)
+*이번 주 주제:* self-consistency / 다중 샘플 추론 비교
 
-**추가 모듈:** `tools.py` — 도구 등록(dict)·JSON 액션 파싱·실행(계산기·문자열검색).
-> ✅ **완료:** 루프가 계산기 도구를 실제로 호출해 답한다.
+**추가 모듈:** `reasoning.py` — 같은 질문을 N번 샘플→다수결(self-consistency) 토글.
+> ✅ **완료:** 애매한 질문에서 단일 답보다 정확도가 오른다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

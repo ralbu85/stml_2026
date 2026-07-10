@@ -1,48 +1,48 @@
-# Week 10. 멀티에이전트 + LangGraph 전환점 ⭐
+# Week 10. 메모리 (Memory)
 
-> **Part:** 협업·환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-⭐ **전환점.** 여러 에이전트의 협업과 프레임워크로의 전환. 이론에서 협업 아키텍처(핸드오프·라우터)를 다루고, 실습에서 직접 짠 멀티에이전트를 **LangGraph로 재구현·비교**한다(from-scratch→프레임워크 분기점). AutoGen·MetaGPT.
+대화·과제를 넘어 정보를 유지하는 **메모리**. 이론에서 단기/장기, **계층적 메모리(OS 비유)**, 검색 기준(최신성·중요도·관련성)을 다루고, 실습에서 메모리 스트림을 구현한다 *(최종 프로젝트 부품 3)*. MemGPT·Mem0(2025).
 
 ## 📖 보조읽기 (발표 대상 아님)
-LangChain — *Choosing the Right Multi-Agent Architecture* · MS02·08
+Letta (MemGPT) — *Agent Memory Blog* (3계층 메모리) · MS13
 
 ## 📄 발표 논문
-#### 🟡 AutoGen: Multi-Agent Conversation Framework
-- **출처:** Wu et al., COLM 2024 · arXiv:2308.08155
-- **발표 필수:** 대화 기반 멀티에이전트 추상화와 역할 분담
-- **선택 심화:** conversable agent, human-in-the-loop
-- **PDF:** [`W10_AutoGen_2308.08155.pdf`](../papers/W10_AutoGen_2308.08155.pdf)
+#### 🟡 MemGPT: Towards LLMs as Operating Systems
+- **출처:** Packer et al., 2023 · arXiv:2310.08560
+- **발표 필수:** 가상메모리 비유의 계층적 메모리(core/archival)
+- **선택 심화:** function-call self-editing, 페이징
+- **PDF:** [`W10_MemGPT_2310.08560.pdf`](../papers/W10_MemGPT_2310.08560.pdf)
 
-#### 🟡 MetaGPT: Meta Programming for Multi-Agent Collaboration
-- **출처:** Hong et al., ICLR 2024 · arXiv:2308.00352
-- **발표 필수:** SOP(표준운영절차)를 코드화한 협업 구조
-- **선택 심화:** 역할별 산출물 스키마
-- **PDF:** [`W10_MetaGPT_2308.00352.pdf`](../papers/W10_MetaGPT_2308.00352.pdf)
+#### 🟡 Mem0: Production-Ready AI Agents with Long-Term Memory
+- **출처:** 2025 · arXiv:2504.19413
+- **발표 필수:** 장기메모리 파이프라인(추출·갱신·검색)의 실전 설계
+- **선택 심화:** 확장성·지연 분석, 그래프 메모리
+- **PDF:** [`W10_Mem0_2504.19413.pdf`](../papers/W10_Mem0_2504.19413.pdf)
 
-#### 🟡 Multiagent Debate (선택읽기) *(선택읽기)*
-- **출처:** Du et al., ICML 2024 · arXiv:2305.14325
-- **발표 필수:** 다중 에이전트 토론이 사실성·추론을 높이는 원리
-- **선택 심화:** 수렴 동역학
-- **PDF:** [`W10_opt-Multiagent-Debate_2305.14325.pdf`](../papers/W10_opt-Multiagent-Debate_2305.14325.pdf)
+#### 🟡 MemoryBank (선택읽기) *(선택읽기)*
+- **출처:** Zhong et al., AAAI 2024 · arXiv:2305.10250
+- **발표 필수:** 망각 곡선 기반 메모리 갱신·검색
+- **선택 심화:** 사용자 페르소나 유지
+- **PDF:** [`W10_opt-MemoryBank_2305.10250.pdf`](../papers/W10_opt-MemoryBank_2305.10250.pdf)
 
-#### 🟡 CAMEL: Communicative Agents (선택읽기) *(선택읽기)*
-- **출처:** Li et al., NeurIPS 2023 · arXiv:2303.17760
-- **발표 필수:** 역할극 기반 자율 협력 프레임
-- **선택 심화:** inception prompting
-- **PDF:** [`W10_opt-CAMEL_2303.17760.pdf`](../papers/W10_opt-CAMEL_2303.17760.pdf)
+#### 🟡 Generative Agents (선택읽기·메모리 측면) *(선택읽기)*
+- **출처:** Park et al., UIST 2023 · arXiv:2304.03442
+- **발표 필수:** 최신성·중요도·관련성으로 메모리를 점수화·검색
+- **선택 심화:** memory stream 구조
+- **PDF:** [`W10_opt-Generative-Agents_2304.03442.pdf`](../papers/W10_opt-Generative-Agents_2304.03442.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-멀티에이전트가 단일 에이전트보다 정말 나은가? 언제 과한가?
+무엇을 기억하고 무엇을 잊어야 하는가? 메모리 검색의 기준은?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
-**빌드 베이스:** 🔄 **전환점** — from-scratch 모듈을 **LangGraph 노드로 감싼다**(로직 재사용, 오케스트레이션만 위임)
+**빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 역할 분담 멀티에이전트를 **LangGraph로 재구현·비교** (직접 구현 대비)
+*이번 주 주제:* 메모리 스트림 구현(저장·검색), 외부 메모리 통합 *(최종 프로젝트 부품 3)*
 
-**개조:** `graph.py` — 지금까지의 루프를 **LangGraph로 재구현**(+선택 비평 노드).
-> ✅ **완료:** from-scratch 버전과 동일 동작을 그래프로 재현·비교한다.
+**추가 모듈:** `memory.py` — 단기(대화 이력)+장기(파일 저장·검색). 📦 *최종 부품*
+> ✅ **완료:** 이전 세션에 말한 정보를 다음 세션에서 기억한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

@@ -1,4 +1,4 @@
-"""W3 — 도구 레지스트리·실행.
+"""W4 — 도구 레지스트리·실행.
 
 W2에서 `loop.py`의 `dispatch()`가 지키던 빈자리를 오늘 채운다.
 레지스트리는 그냥 dict다 — 이름 → (함수, 설명).
@@ -16,7 +16,7 @@ import operator
 from pathlib import Path
 
 TOOLS: dict = {}          # name -> {"fn": callable, "description": str}
-OBS_MAX_CHARS = 500       # 관찰이 컨텍스트를 삼키지 않게 자른다 (W8 복선)
+OBS_MAX_CHARS = 500       # 관찰이 컨텍스트를 삼키지 않게 자른다 (W9 복선)
 
 
 def register(name: str, description: str, fn) -> None:
@@ -41,10 +41,10 @@ def run_tool(name: str, tool_input: str) -> str:
       2) 실행 예외  → "(도구 '<name>' 실행 오류: <예외 메시지>)"
       3) 정상 결과  → str(결과), 단 OBS_MAX_CHARS 넘으면 자르고 " ...(잘림)" 붙임
 
-    TODO(W3): 8~12줄.
+    TODO(W4): 8~12줄.
       힌트: TOOLS[name]["fn"](tool_input) 을 try/except Exception 으로 감싼다.
     """
-    raise NotImplementedError("TODO(W3): run_tool() 을 구현하세요")
+    raise NotImplementedError("TODO(W4): run_tool() 을 구현하세요")
 
 
 # ── 기본 도구 1: 계산기 ─────────────────────────────────────
@@ -82,12 +82,12 @@ def calculator(expression: str) -> str:
       (힌트: float인데 .is_integer() 면 int로 바꿔서 str)
     - 잘못된 식이면 예외가 나는데, 잡지 마라 — run_tool() 이 관찰로 바꿔준다.
 
-    TODO(W3): 3~5줄.
+    TODO(W4): 3~5줄.
     """
-    raise NotImplementedError("TODO(W3): calculator() 를 구현하세요")
+    raise NotImplementedError("TODO(W4): calculator() 를 구현하세요")
 
 
-# ── 기본 도구 2: 문서 검색 (원시적 — W6에서 임베딩으로 대체) ──
+# ── 기본 도구 2: 문서 검색 (원시적 — W7에서 임베딩으로 대체) ──
 
 _DOC_PATH = Path(__file__).resolve().parents[1] / "data" / "sample_doc.txt"
 
@@ -96,7 +96,7 @@ def text_search(query: str) -> str:
     """샘플 문서에서 query가 포함된 줄을 찾는다 (최대 3줄). (제공됨)
 
     단순 부분 문자열 매칭 — 동의어·의미 검색이 안 되는 게 보이면 성공.
-    그 갈증이 W6(임베딩 검색)의 동기가 된다.
+    그 갈증이 W7(임베딩 검색)의 동기가 된다.
     """
     query = query.strip()
     if not query:

@@ -25,7 +25,7 @@ LangChain — *Agent Evaluation Readiness Checklist* · Berkeley 평가 강의
 무엇을 측정해야 하는가? 우리 RAG 에이전트의 성공 기준은?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
-**빌드 베이스:** **LangGraph** 위에서 확장 (W1–9 from-scratch 모듈 재사용)
+**빌드 베이스:** **LangGraph** 위에서 확장 (W1–10 from-scratch 모듈 재사용)
 
 *이번 주 주제:* 최종 프로젝트 설계 + 평가 하네스(정확도·비용·재현성) 골격
 

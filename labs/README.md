@@ -1,6 +1,7 @@
-# docqa-agent 실습 스캐폴드
+# docqa-agent 실습 스캐폴드 — 연구보조 검색·종합 에이전트
 
-한 학기 동안 **하나의 문서 QA 에이전트**를 매주 모듈 하나씩 쌓아 완성한다.
+한 학기 동안 **연구보조 에이전트**(논문을 검색해 읽고 종합·답변)를 매주 모듈 하나씩 쌓아 완성한다.
+코퍼스는 이 수업의 발표 논문 PDF(`papers/`) — 발표 준비하면서 자기 에이전트를 실제로 쓰게 된다.
 설계 배경·전체 주차 계획은 [실습 가이드](../docs/practice-guide.md) 참고.
 
 > **원칙:** 밑바닥부터 다 짜지 않는다 — 스캐폴드의 `TODO` 빈칸(주당 핵심 함수 1~2개)만 채운다.
@@ -41,10 +42,10 @@ ollama pull llama3.2
 | 주 | 파일 | 채울 함수 | ✅ 완료 기준 |
 |---|---|---|---|
 | 1 | (환경 세팅) + `docqa/llm.py` | `chat()` | 원시 HTTP와 aisuite 래퍼 양쪽으로 호출이 된다 (`test_week01.py` 통과) |
-| 2 | `docqa/loop.py` | `parse_step()` | 루프가 한 바퀴 돌아 Final Answer를 낸다 |
-| 2 | `docqa/reasoning.py` | `majority_vote()` · `self_consistency()` | 애매한 질문에서 단일 답보다 정확도 ↑ (`test_week02.py` 통과) |
-| 3 | `docqa/tools.py` | `run_tool()` · `calculator()` | 루프가 계산기를 **실제 호출**해 답한다 (`test_week03.py` 통과) |
-| 4+ | *(다음 주 배포)* | | |
+| 2 | `docqa/loop.py` | `parse_step()` | 루프가 한 바퀴 돌아 Final Answer를 낸다 (`test_week02.py` 통과) |
+| 3 | `docqa/reasoning.py` | `majority_vote()` · `self_consistency()` | 애매한 질문에서 단일 답보다 정확도 ↑ (`test_week03.py` 통과) |
+| 4 | `docqa/tools.py` | `run_tool()` · `calculator()` | 루프가 계산기를 **실제 호출**해 답한다 (`test_week04.py` 통과) |
+| 5+ | *(다음 주 배포)* | | |
 
 W1은 빈칸을 채우기 전에 `demos/week01_raw_api.py`를 먼저 실행해 **원시 HTTP 호출의 내부**(우리가 감싸려는 것의 정체)를 눈으로 확인한다.
 
@@ -67,9 +68,9 @@ labs/
   docqa/            # 매주 자라는 에이전트 패키지 ← 여기의 빈칸을 채운다
     llm.py          #  W1  LLM 호출 래퍼 (aisuite)
     loop.py         #  W2  ReAct 제어 루프
-    reasoning.py    #  W2  self-consistency
-    tools.py        #  W3  도구 레지스트리·실행 (계산기·문서검색)
-  data/             # 실습용 샘플 문서 (W3 text_search → W6 임베딩 검색으로 발전)
+    reasoning.py    #  W3  self-consistency
+    tools.py        #  W4  도구 레지스트리·실행 (계산기·문서검색)
+  data/             # 실습용 샘플 문서 (W4 text_search → W7 임베딩 검색으로 발전)
   tests/            # 오프라인 테스트 (가짜 LLM — 키 불필요)
   demos/            # 진짜 LLM으로 돌리는 주차별 데모
   checkpoints/      # 주차별 참조 구현 (각 주 종료 후 공개)

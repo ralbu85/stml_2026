@@ -1,48 +1,48 @@
-# Week 09. 메모리 (Memory)
+# Week 09. 컨텍스트 엔지니어링 (하네스) ⭐
 
 > **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-대화·과제를 넘어 정보를 유지하는 **메모리**. 이론에서 단기/장기, **계층적 메모리(OS 비유)**, 검색 기준(최신성·중요도·관련성)을 다루고, 실습에서 메모리 스트림을 구현한다 *(최종 프로젝트 부품 3)*. MemGPT·Mem0(2025).
+⭐ 컨텍스트를 유한 자원으로 다루는 **컨텍스트 엔지니어링 = 하네스**. 이론에서 LLM이 긴 컨텍스트를 어떻게(못) 쓰는지와 압축·큐레이션을 다루고, 실습에서 컨텍스트 예산·압축을 하네스에 넣는다. Lost-in-the-Middle·LLMLingua. **🏁 중간 데모 체크포인트:** 여기까지가 from-scratch 단일 에이전트의 완성형(루프+도구+계획+반성+RAG+컨텍스트) — 실습 말미에 각자 **'내 에이전트 중간 데모'**(문서 QA를 예산 내 수행)로 중간 점검을 대신한다.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Letta (MemGPT) — *Agent Memory Blog* (3계층 메모리) · MS13
+Anthropic — *Effective Context Engineering* + HumanLayer — *Skill Issue: Harness Engineering* · MS12
 
 ## 📄 발표 논문
-#### 🟡 MemGPT: Towards LLMs as Operating Systems
-- **출처:** Packer et al., 2023 · arXiv:2310.08560
-- **발표 필수:** 가상메모리 비유의 계층적 메모리(core/archival)
-- **선택 심화:** function-call self-editing, 페이징
-- **PDF:** [`W09_MemGPT_2310.08560.pdf`](../papers/W09_MemGPT_2310.08560.pdf)
+#### 🟡 Lost in the Middle: How LMs Use Long Contexts
+- **출처:** Liu et al., TACL 2024 · arXiv:2307.03172
+- **발표 필수:** LLM이 긴 컨텍스트의 중간 정보를 잘 못 쓰는 현상
+- **선택 심화:** 위치별 성능 곡선, 검색 문서 수 효과
+- **PDF:** [`W09_Lost-in-the-Middle_2307.03172.pdf`](../papers/W09_Lost-in-the-Middle_2307.03172.pdf)
 
-#### 🟡 Mem0: Production-Ready AI Agents with Long-Term Memory
-- **출처:** 2025 · arXiv:2504.19413
-- **발표 필수:** 장기메모리 파이프라인(추출·갱신·검색)의 실전 설계
-- **선택 심화:** 확장성·지연 분석, 그래프 메모리
-- **PDF:** [`W09_Mem0_2504.19413.pdf`](../papers/W09_Mem0_2504.19413.pdf)
+#### 🟡 LLMLingua: Compressing Prompts for Accelerated Inference
+- **출처:** Jiang et al., EMNLP 2023 · arXiv:2310.05736
+- **발표 필수:** 프롬프트를 압축해 비용·지연을 줄이면서 성능 유지
+- **선택 심화:** 예산 제어 압축, perplexity 기반 토큰 선택
+- **PDF:** [`W09_LLMLingua_2310.05736.pdf`](../papers/W09_LLMLingua_2310.05736.pdf)
 
-#### 🟡 MemoryBank (선택읽기) *(선택읽기)*
-- **출처:** Zhong et al., AAAI 2024 · arXiv:2305.10250
-- **발표 필수:** 망각 곡선 기반 메모리 갱신·검색
-- **선택 심화:** 사용자 페르소나 유지
-- **PDF:** [`W09_opt-MemoryBank_2305.10250.pdf`](../papers/W09_opt-MemoryBank_2305.10250.pdf)
+#### 🔴 Agentic Context Engineering (선택읽기·프런티어) *(선택읽기)*
+- **출처:** 2025 · arXiv:2510.04618
+- **발표 필수:** 컨텍스트 자체를 진화시켜 자기개선
+- **선택 심화:** context 업데이트 정책
+- **PDF:** [`W09_opt-Agentic-Context-Engineering_2510.04618.pdf`](../papers/W09_opt-Agentic-Context-Engineering_2510.04618.pdf)
 
-#### 🟡 Generative Agents (선택읽기·메모리 측면) *(선택읽기)*
-- **출처:** Park et al., UIST 2023 · arXiv:2304.03442
-- **발표 필수:** 최신성·중요도·관련성으로 메모리를 점수화·검색
-- **선택 심화:** memory stream 구조
-- **PDF:** [`W09_opt-Generative-Agents_2304.03442.pdf`](../papers/W09_opt-Generative-Agents_2304.03442.pdf)
+#### 🔴 ReasoningBank (선택읽기·프런티어) *(선택읽기)*
+- **출처:** 2025 · arXiv:2509.25140
+- **발표 필수:** 추론 메모리를 쌓아 에이전트가 진화
+- **선택 심화:** 메모리 항목 추출·재사용
+- **PDF:** [`W09_opt-ReasoningBank_2509.25140.pdf`](../papers/W09_opt-ReasoningBank_2509.25140.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-무엇을 기억하고 무엇을 잊어야 하는가? 메모리 검색의 기준은?
+컨텍스트는 왜 유한 자원인가? 무엇을 넣고 무엇을 버려야 하나?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 메모리 스트림 구현(저장·검색), 외부 메모리 통합 *(최종 프로젝트 부품 3)*
+*이번 주 주제:* 컨텍스트 예산·압축·큐레이션을 하네스에 내장 (긴 컨텍스트 관리)
 
-**추가 모듈:** `memory.py` — 단기(대화 이력)+장기(파일 저장·검색). 📦 *최종 부품*
-> ✅ **완료:** 이전 세션에 말한 정보를 다음 세션에서 기억한다.
+**추가 모듈:** `context.py` — 토큰 예산 관리(자르기·중요도 정렬·간단 압축).
+> ✅ **완료:** 문서가 많아도 예산 내에서 답 품질을 유지한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

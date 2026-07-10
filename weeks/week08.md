@@ -1,48 +1,36 @@
-# Week 08. 컨텍스트 엔지니어링 (하네스) ⭐
+# Week 08. 에이전틱 RAG + 프로토콜 (MCP)
 
 > **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-⭐ 컨텍스트를 유한 자원으로 다루는 **컨텍스트 엔지니어링 = 하네스**. 이론에서 LLM이 긴 컨텍스트를 어떻게(못) 쓰는지와 압축·큐레이션을 다루고, 실습에서 컨텍스트 예산·압축을 하네스에 넣는다. Lost-in-the-Middle·LLMLingua. **🏁 중간 데모 체크포인트:** 여기까지가 from-scratch 단일 에이전트의 완성형(루프+도구+계획+반성+RAG+컨텍스트) — 실습 말미에 각자 **'내 에이전트 중간 데모'**(문서 QA를 예산 내 수행)로 중간 점검을 대신한다.
+검색을 전처리가 아닌 **'도구'로 바꾸는 에이전틱 RAG**와 **MCP**. 이론에서 능동 검색(adaptive/self)과 프로토콜을 다루고, 실습에서 검색을 도구로 노출해 단계별 호출하게 개조한다 *(최종 프로젝트 부품 2)*. Self-RAG·Adaptive-RAG.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Effective Context Engineering* + HumanLayer — *Skill Issue: Harness Engineering* · MS12
+Anthropic — *Code Execution with MCP* · MS05·11
 
 ## 📄 발표 논문
-#### 🟡 Lost in the Middle: How LMs Use Long Contexts
-- **출처:** Liu et al., TACL 2024 · arXiv:2307.03172
-- **발표 필수:** LLM이 긴 컨텍스트의 중간 정보를 잘 못 쓰는 현상
-- **선택 심화:** 위치별 성능 곡선, 검색 문서 수 효과
-- **PDF:** [`W08_Lost-in-the-Middle_2307.03172.pdf`](../papers/W08_Lost-in-the-Middle_2307.03172.pdf)
+#### 🟡🔴 Self-RAG: Learning to Retrieve, Generate, and Critique
+- **출처:** Asai et al., ICLR 2024 · arXiv:2310.11511
+- **발표 필수:** reflection token으로 검색 여부·품질을 스스로 판단
+- **선택 심화:** critic 학습, segment beam search
+- **PDF:** [`W08_Self-RAG_2310.11511.pdf`](../papers/W08_Self-RAG_2310.11511.pdf)
 
-#### 🟡 LLMLingua: Compressing Prompts for Accelerated Inference
-- **출처:** Jiang et al., EMNLP 2023 · arXiv:2310.05736
-- **발표 필수:** 프롬프트를 압축해 비용·지연을 줄이면서 성능 유지
-- **선택 심화:** 예산 제어 압축, perplexity 기반 토큰 선택
-- **PDF:** [`W08_LLMLingua_2310.05736.pdf`](../papers/W08_LLMLingua_2310.05736.pdf)
-
-#### 🔴 Agentic Context Engineering (선택읽기·프런티어) *(선택읽기)*
-- **출처:** 2025 · arXiv:2510.04618
-- **발표 필수:** 컨텍스트 자체를 진화시켜 자기개선
-- **선택 심화:** context 업데이트 정책
-- **PDF:** [`W08_opt-Agentic-Context-Engineering_2510.04618.pdf`](../papers/W08_opt-Agentic-Context-Engineering_2510.04618.pdf)
-
-#### 🔴 ReasoningBank (선택읽기·프런티어) *(선택읽기)*
-- **출처:** 2025 · arXiv:2509.25140
-- **발표 필수:** 추론 메모리를 쌓아 에이전트가 진화
-- **선택 심화:** 메모리 항목 추출·재사용
-- **PDF:** [`W08_opt-ReasoningBank_2509.25140.pdf`](../papers/W08_opt-ReasoningBank_2509.25140.pdf)
+#### 🟡 Adaptive-RAG: Adapting Retrieval to Query Complexity
+- **출처:** Jeong et al., NAACL 2024 · arXiv:2403.14403
+- **발표 필수:** 질의 난이도에 따라 검색 전략을 바꾸는 에이전틱 구조
+- **선택 심화:** complexity classifier
+- **PDF:** [`W08_Adaptive-RAG_2403.14403.pdf`](../papers/W08_Adaptive-RAG_2403.14403.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-컨텍스트는 왜 유한 자원인가? 무엇을 넣고 무엇을 버려야 하나?
+RAG를 도구로 만들면 무엇이 좋아지고 무엇이 어려워지나?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 컨텍스트 예산·압축·큐레이션을 하네스에 내장 (긴 컨텍스트 관리)
+*이번 주 주제:* 검색을 '도구'로 노출하고 에이전트가 단계별로 호출하게 개조 *(최종 프로젝트 부품 2)*
 
-**추가 모듈:** `context.py` — 토큰 예산 관리(자르기·중요도 정렬·간단 압축).
-> ✅ **완료:** 문서가 많아도 예산 내에서 답 품질을 유지한다.
+**개조:** `retriever`를 `tools.py`에 **검색 도구**로 등록 → 필요할 때만 검색. 📦 *최종 부품*
+> ✅ **완료:** 상식 질문은 검색 안 하고 문서 질문만 검색한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

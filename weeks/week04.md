@@ -1,36 +1,42 @@
-# Week 04. 계획과 탐색 (Planning & Search)
+# Week 04. 도구 사용 (Tool Use)
 
 > **Part:** 핵심 디자인 패턴 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-복잡한 과제를 나누고 탐색하는 **계획**. 이론에서 과제 분해, 계획–실행 분리, **트리 탐색 직관**을 다루고, 실습에서 트리 분기 추론을 미니 구현한다. Tree of Thoughts·ReWOO.
+에이전트가 외부 세계와 만나는 통로인 **도구**. 이론에서 함수 호출·스키마·에러 설계와 **도구 절벽**을 다루고, 실습에서 도구 레지스트리·파싱·실행을 직접 만든다. Toolformer·ToolLLM.
 
 ## 📖 보조읽기 (발표 대상 아님)
-LangChain — *Plan-and-Execute Agents* · MS07
+Anthropic — *Writing Effective Tools for Agents* · MS04
 
 ## 📄 발표 논문
-#### 🟡 Tree of Thoughts: Deliberate Problem Solving with LLMs
-- **출처:** Yao et al., NeurIPS 2023 · arXiv:2305.10601
-- **발표 필수:** 사고를 트리로 분기·탐색(BFS/DFS)하는 발상
-- **선택 심화:** 상태 평가 함수, Game of 24
-- **PDF:** [`W04_Tree-of-Thoughts_2305.10601.pdf`](../papers/W04_Tree-of-Thoughts_2305.10601.pdf)
+#### 🟡 Toolformer: LMs Can Teach Themselves to Use Tools
+- **출처:** Schick et al., NeurIPS 2023 · arXiv:2302.04761
+- **발표 필수:** self-supervised로 API 호출 위치를 학습하는 방식
+- **선택 심화:** 호출 필터링 손실, 데이터 파이프라인
+- **PDF:** [`W04_Toolformer_2302.04761.pdf`](../papers/W04_Toolformer_2302.04761.pdf)
 
-#### 🟡 ReWOO: Decoupling Reasoning from Observations
-- **출처:** Xu et al., 2023 · arXiv:2305.18323
-- **발표 필수:** 계획을 관찰과 분리해 토큰·호출을 줄이는 구조
-- **선택 심화:** planner/worker/solver 모듈 분해
-- **PDF:** [`W04_ReWOO_2305.18323.pdf`](../papers/W04_ReWOO_2305.18323.pdf)
+#### 🟡 ToolLLM: Mastering 16000+ Real-world APIs
+- **출처:** Qin et al., ICLR 2024 · arXiv:2307.16789
+- **발표 필수:** 대규모 실세계 API 학습 프레임과 DFSDT 탐색
+- **선택 심화:** ToolBench 구축, pass/win rate
+- **PDF:** [`W04_ToolLLM_2307.16789.pdf`](../papers/W04_ToolLLM_2307.16789.pdf)
+
+#### 🔴 ReTool: RL for Strategic Tool Use (선택읽기·RL 보강) *(선택읽기)*
+- **출처:** 2025 · arXiv:2504.11536
+- **발표 필수:** 도구 사용 시점·방법을 RL로 최적화하는 핵심 직관
+- **선택 심화:** 코드 인터프리터 통합, outcome 보상
+- **PDF:** [`W04_opt-ReTool_2504.11536.pdf`](../papers/W04_opt-ReTool_2504.11536.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-탐색 비용 대비 성능 이득은 언제 정당한가?
+도구가 많아질수록 좋은가? 도구 절벽(tool cliff)이 생기는 이유는?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 탐색 기반 추론(트리 분기) 미니 구현, 계획–실행 분리
+*이번 주 주제:* 도구 레지스트리·파싱·실행 직접 구현 (계산기·검색 함수)
 
-**추가 모듈:** `planner.py` — 질문을 하위 단계 리스트로 분해→순차 실행.
-> ✅ **완료:** 2단계 질문을 계획대로 처리한다.
+**추가 모듈:** `tools.py` — 도구 등록(dict)·JSON 액션 파싱·실행(계산기·문자열검색).
+> ✅ **완료:** 루프가 계산기 도구를 실제로 호출해 답한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

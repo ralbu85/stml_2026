@@ -1,7 +1,7 @@
-"""W2 데모 ② — 단일 답 vs self-consistency(N표 다수결) 비교.
+"""W3 데모 — 단일 답 vs self-consistency(N표 다수결) 비교.
 
-실행: python demos/week02_selfconsistency.py "질문" [N]
-✅ W2 완료 기준 ②: 애매한 질문에서 단일 답보다 다수결 정확도가 높다.
+실행: python demos/week03_selfconsistency.py "질문" [N]
+✅ W3 완료 기준: 애매한 질문에서 단일 답보다 다수결 정확도가 높다.
 
 관전 포인트: 표 분포. 5표가 4:1로 갈리면 — 단일 호출이었다면
 5번 중 1번은 틀린 답을 받았다는 뜻이다.

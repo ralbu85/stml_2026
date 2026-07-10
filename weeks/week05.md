@@ -1,36 +1,36 @@
-# Week 05. 자기반성·메타인지 (Reflection)
+# Week 05. 계획과 탐색 (Planning & Search)
 
 > **Part:** 핵심 디자인 패턴 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-자기 출력을 스스로 고치는 **반성·메타인지**. 이론에서 생성→비평→개선 루프와 **언어 피드백이 gradient 없이 작동하는 원리**를 다루고, 실습에서 실패→피드백→재시도를 루프에 붙인다. Reflexion·Self-Refine.
+복잡한 과제를 나누고 탐색하는 **계획**. 이론에서 과제 분해, 계획–실행 분리, **트리 탐색 직관**을 다루고, 실습에서 트리 분기 추론을 미니 구현한다. Tree of Thoughts·ReWOO.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Demystifying Evals for AI Agents* · MS09
+LangChain — *Plan-and-Execute Agents* · MS07
 
 ## 📄 발표 논문
-#### 🟡 Reflexion: Language Agents with Verbal RL
-- **출처:** Shinn et al., NeurIPS 2023 · arXiv:2303.11366
-- **발표 필수:** 언어 피드백이 gradient 없이 학습되는 메커니즘
-- **선택 심화:** actor-evaluator-reflection 구조
-- **PDF:** [`W05_Reflexion_2303.11366.pdf`](../papers/W05_Reflexion_2303.11366.pdf)
+#### 🟡 Tree of Thoughts: Deliberate Problem Solving with LLMs
+- **출처:** Yao et al., NeurIPS 2023 · arXiv:2305.10601
+- **발표 필수:** 사고를 트리로 분기·탐색(BFS/DFS)하는 발상
+- **선택 심화:** 상태 평가 함수, Game of 24
+- **PDF:** [`W05_Tree-of-Thoughts_2305.10601.pdf`](../papers/W05_Tree-of-Thoughts_2305.10601.pdf)
 
-#### 🟢 Self-Refine: Iterative Refinement with Self-Feedback
-- **출처:** Madaan et al., NeurIPS 2023 · arXiv:2303.17651
-- **발표 필수:** 단일 모델의 생성→비평→개선 반복
-- **선택 심화:** 과제별 개선 폭, 피드백 프롬프트 설계
-- **PDF:** [`W05_Self-Refine_2303.17651.pdf`](../papers/W05_Self-Refine_2303.17651.pdf)
+#### 🟡 ReWOO: Decoupling Reasoning from Observations
+- **출처:** Xu et al., 2023 · arXiv:2305.18323
+- **발표 필수:** 계획을 관찰과 분리해 토큰·호출을 줄이는 구조
+- **선택 심화:** planner/worker/solver 모듈 분해
+- **PDF:** [`W05_ReWOO_2305.18323.pdf`](../papers/W05_ReWOO_2305.18323.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-자기반성은 진짜 개선인가, 아니면 같은 오류의 반복인가?
+탐색 비용 대비 성능 이득은 언제 정당한가?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 실패→언어 피드백→재시도 루프를 ReAct에 추가
+*이번 주 주제:* 탐색 기반 추론(트리 분기) 미니 구현, 계획–실행 분리
 
-**추가 모듈:** `reflect.py` — 검증 실패 시 언어 피드백을 붙여 재시도(최대 k회).
-> ✅ **완료:** 처음 틀린 답을 재시도로 고친다.
+**추가 모듈:** `planner.py` — 질문을 하위 단계 리스트로 분해→순차 실행.
+> ✅ **완료:** 2단계 질문을 계획대로 처리한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

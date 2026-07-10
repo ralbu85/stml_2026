@@ -1,19 +1,31 @@
-# Week 12. 에이전트 강화학습 (개념 1주 · 수식 생략)
+# Week 12. 컴퓨터/웹 사용 에이전트 (Computer Use)
 
-> **Part:** 학습·품질·운영 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 협업·환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트를 **RL로 학습**시키는 관점(1주·수식 생략). 이론에서 보상 설계 직관, RLHF→RLVR, 도구학습 보상을 **직관 수준**으로만 다루고, 실습은 보상 기반 도구선택 시뮬레이션. ReTool. *(Voyager는 스킬 축적 선택읽기)*
+화면을 보고 클릭하는 **컴퓨터·웹 에이전트**. 이론에서 관찰–행동 루프, **DOM vs 스크린샷**, 벤치마크(WebArena/OSWorld)를 다루고, 실습에서 간단한 웹/OS 태스크 루프를 돌린다. 시각적이라 흥미로운 주. WebArena·OSWorld(2024). *(보안 복선: 오늘 붙인 웹 도구가 W14 간접 인젝션의 주 통로다 — 예고만.)*
 
 ## 📖 보조읽기 (발표 대상 아님)
-Lilian Weng — *Reward Hacking in RL* · Berkeley 후련 강의
+*OS Agents: A Survey on MLLM-based Agents* (ACL 2025) · MS15
 
 ## 📄 발표 논문
-#### 🔴 ReTool: RL for Strategic Tool Use in LLMs
-- **출처:** 2025 · arXiv:2504.11536 · *수식 유도 생략 가능*
-- **발표 필수:** 도구 사용 시점·방법을 RL로 최적화하는 핵심 직관
-- **선택 심화:** 코드 인터프리터 통합, outcome 보상
-- **PDF:** [`W12_ReTool_2504.11536.pdf`](../papers/W12_ReTool_2504.11536.pdf)
+#### 🟡 WebArena: A Realistic Web Environment for Agents
+- **출처:** Zhou et al., ICLR 2024 · arXiv:2307.13854
+- **발표 필수:** 실제 웹 태스크 벤치마크 구성과 왜 어려운가
+- **선택 심화:** 4개 도메인, 성공률 격차
+- **PDF:** [`W12_WebArena_2307.13854.pdf`](../papers/W12_WebArena_2307.13854.pdf)
+
+#### 🟡 OSWorld: Benchmarking Multimodal Agents in Real Computer Environments
+- **출처:** Xie et al., NeurIPS 2024 · arXiv:2404.07972
+- **발표 필수:** 실제 데스크톱 OS에서 멀티모달 에이전트를 실행 기반으로 평가
+- **선택 심화:** 369 태스크, 스크린샷–행동 인터페이스
+- **PDF:** [`W12_OSWorld_2404.07972.pdf`](../papers/W12_OSWorld_2404.07972.pdf)
+
+#### 🟡 Mind2Web (선택읽기) *(선택읽기)*
+- **출처:** Deng et al., NeurIPS 2023 · arXiv:2306.06070
+- **발표 필수:** 실세계 웹사이트 일반화 과제와 데이터
+- **선택 심화:** DOM 후보 선택
+- **PDF:** [`W12_opt-Mind2Web_2306.06070.pdf`](../papers/W12_opt-Mind2Web_2306.06070.pdf)
 
 #### 🟡 Voyager (선택읽기·스킬 축적/자기개선) *(선택읽기)*
 - **출처:** Wang et al., 2023 · arXiv:2305.16291
@@ -22,15 +34,15 @@ Lilian Weng — *Reward Hacking in RL* · Berkeley 후련 강의
 - **PDF:** [`W12_opt-Voyager_2305.16291.pdf`](../papers/W12_opt-Voyager_2305.16291.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-도구 사용을 왜 RL로 배워야 하나? RL 에이전트 vs 프롬프트 에이전트?
+텍스트 도구 호출 vs 화면 클릭 — 무엇이 언제 나은가?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
-**빌드 베이스:** 개념 노트북 (프레임워크 무관)
+**빌드 베이스:** **LangGraph** 위에서 확장 (W1–10 from-scratch 모듈 재사용)
 
-*이번 주 주제:* 간단한 보상 기반 도구 선택 시뮬레이션
+*이번 주 주제:* 브라우저/OS 환경에서 관찰-행동 루프 (간단한 웹/데스크톱 태스크)
 
-**노트북:** `notebooks/sim_rl.ipynb` — 보상 기반 도구선택 시뮬(앱 통합 X, 개념).
-> ✅ **완료:** 보상 피드백으로 도구 선택이 개선되는 것을 관찰한다.
+**추가 모듈:** `tools_web.py` — URL fetch/간단 웹검색 도구(관찰-행동).
+> ✅ **완료:** 웹에서 정보를 가져와 답한다(간단 버전).
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

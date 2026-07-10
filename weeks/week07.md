@@ -1,36 +1,36 @@
-# Week 07. 에이전틱 RAG + 프로토콜 (MCP)
+# Week 07. 검색 증강 (RAG) — 1부: 기초
 
 > **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-검색을 전처리가 아닌 **'도구'로 바꾸는 에이전틱 RAG**와 **MCP**. 이론에서 능동 검색(adaptive/self)과 프로토콜을 다루고, 실습에서 검색을 도구로 노출해 단계별 호출하게 개조한다 *(최종 프로젝트 부품 2)*. Self-RAG·Adaptive-RAG.
+외부 지식을 끌어오는 **RAG 기초**. 이론에서 임베딩·벡터검색, retriever–reader 구조를 다루고, 실습에서 임베딩→유사도→주입 검색을 직접 만든다 *(최종 프로젝트 부품 1)*. RAG(Lewis)·HyDE. *(보안 복선: 오늘 만든 '문서 입구'가 W14 간접 인젝션의 공격 통로가 된다 — 예고만.)*
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Code Execution with MCP* · MS05·11
+Anthropic — *Contextual Retrieval* / LlamaIndex RAG 가이드 · MS05
 
 ## 📄 발표 논문
-#### 🟡🔴 Self-RAG: Learning to Retrieve, Generate, and Critique
-- **출처:** Asai et al., ICLR 2024 · arXiv:2310.11511
-- **발표 필수:** reflection token으로 검색 여부·품질을 스스로 판단
-- **선택 심화:** critic 학습, segment beam search
-- **PDF:** [`W07_Self-RAG_2310.11511.pdf`](../papers/W07_Self-RAG_2310.11511.pdf)
+#### 🟡 Retrieval-Augmented Generation for Knowledge-Intensive NLP
+- **출처:** Lewis et al., NeurIPS 2020 · arXiv:2005.11401
+- **발표 필수:** 파라메트릭 vs 비파라메트릭(검색) 지식 결합
+- **선택 심화:** RAG-Sequence vs Token, retriever 공동학습
+- **PDF:** [`W07_RAG-Lewis_2005.11401.pdf`](../papers/W07_RAG-Lewis_2005.11401.pdf)
 
-#### 🟡 Adaptive-RAG: Adapting Retrieval to Query Complexity
-- **출처:** Jeong et al., NAACL 2024 · arXiv:2403.14403
-- **발표 필수:** 질의 난이도에 따라 검색 전략을 바꾸는 에이전틱 구조
-- **선택 심화:** complexity classifier
-- **PDF:** [`W07_Adaptive-RAG_2403.14403.pdf`](../papers/W07_Adaptive-RAG_2403.14403.pdf)
+#### 🟡 HyDE: Precise Zero-Shot Dense Retrieval without Labels
+- **출처:** Gao et al., ACL 2023 · arXiv:2212.10496
+- **발표 필수:** 가설 문서를 생성해 검색 품질을 올리는 발상
+- **선택 심화:** dense retriever와의 결합
+- **PDF:** [`W07_HyDE_2212.10496.pdf`](../papers/W07_HyDE_2212.10496.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-RAG를 도구로 만들면 무엇이 좋아지고 무엇이 어려워지나?
+언제 검색해야 하는가? 항상 검색이 답인가?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 검색을 '도구'로 노출하고 에이전트가 단계별로 호출하게 개조 *(최종 프로젝트 부품 2)*
+*이번 주 주제:* 임베딩→유사도→컨텍스트 주입 검색 직접 구현 *(최종 프로젝트 부품 1)*
 
-**개조:** `retriever`를 `tools.py`에 **검색 도구**로 등록 → 필요할 때만 검색. 📦 *최종 부품*
-> ✅ **완료:** 상식 질문은 검색 안 하고 문서 질문만 검색한다.
+**추가 모듈:** `retriever.py` + 샘플 문서 — 청킹→임베딩→코사인 top-k 검색. 📦 *최종 부품*
+> ✅ **완료:** 문서 속 사실을 물으면 관련 청크로 답한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

@@ -1,36 +1,36 @@
-# Week 06. 검색 증강 (RAG) — 1부: 기초
+# Week 06. 자기반성·메타인지 (Reflection)
 
-> **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 핵심 디자인 패턴 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-외부 지식을 끌어오는 **RAG 기초**. 이론에서 임베딩·벡터검색, retriever–reader 구조를 다루고, 실습에서 임베딩→유사도→주입 검색을 직접 만든다 *(최종 프로젝트 부품 1)*. RAG(Lewis)·HyDE. *(보안 복선: 오늘 만든 '문서 입구'가 W14 간접 인젝션의 공격 통로가 된다 — 예고만.)*
+자기 출력을 스스로 고치는 **반성·메타인지**. 이론에서 생성→비평→개선 루프와 **언어 피드백이 gradient 없이 작동하는 원리**를 다루고, 실습에서 실패→피드백→재시도를 루프에 붙인다. Reflexion·Self-Refine.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Contextual Retrieval* / LlamaIndex RAG 가이드 · MS05
+Anthropic — *Demystifying Evals for AI Agents* · MS09
 
 ## 📄 발표 논문
-#### 🟡 Retrieval-Augmented Generation for Knowledge-Intensive NLP
-- **출처:** Lewis et al., NeurIPS 2020 · arXiv:2005.11401
-- **발표 필수:** 파라메트릭 vs 비파라메트릭(검색) 지식 결합
-- **선택 심화:** RAG-Sequence vs Token, retriever 공동학습
-- **PDF:** [`W06_RAG-Lewis_2005.11401.pdf`](../papers/W06_RAG-Lewis_2005.11401.pdf)
+#### 🟡 Reflexion: Language Agents with Verbal RL
+- **출처:** Shinn et al., NeurIPS 2023 · arXiv:2303.11366
+- **발표 필수:** 언어 피드백이 gradient 없이 학습되는 메커니즘
+- **선택 심화:** actor-evaluator-reflection 구조
+- **PDF:** [`W06_Reflexion_2303.11366.pdf`](../papers/W06_Reflexion_2303.11366.pdf)
 
-#### 🟡 HyDE: Precise Zero-Shot Dense Retrieval without Labels
-- **출처:** Gao et al., ACL 2023 · arXiv:2212.10496
-- **발표 필수:** 가설 문서를 생성해 검색 품질을 올리는 발상
-- **선택 심화:** dense retriever와의 결합
-- **PDF:** [`W06_HyDE_2212.10496.pdf`](../papers/W06_HyDE_2212.10496.pdf)
+#### 🟢 Self-Refine: Iterative Refinement with Self-Feedback
+- **출처:** Madaan et al., NeurIPS 2023 · arXiv:2303.17651
+- **발표 필수:** 단일 모델의 생성→비평→개선 반복
+- **선택 심화:** 과제별 개선 폭, 피드백 프롬프트 설계
+- **PDF:** [`W06_Self-Refine_2303.17651.pdf`](../papers/W06_Self-Refine_2303.17651.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-언제 검색해야 하는가? 항상 검색이 답인가?
+자기반성은 진짜 개선인가, 아니면 같은 오류의 반복인가?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 임베딩→유사도→컨텍스트 주입 검색 직접 구현 *(최종 프로젝트 부품 1)*
+*이번 주 주제:* 실패→언어 피드백→재시도 루프를 ReAct에 추가
 
-**추가 모듈:** `retriever.py` + 샘플 문서 — 청킹→임베딩→코사인 top-k 검색. 📦 *최종 부품*
-> ✅ **완료:** 문서 속 사실을 물으면 관련 청크로 답한다.
+**추가 모듈:** `reflect.py` — 검증 실패 시 언어 피드백을 붙여 재시도(최대 k회).
+> ✅ **완료:** 처음 틀린 답을 재시도로 고친다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

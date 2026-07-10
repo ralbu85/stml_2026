@@ -1,42 +1,48 @@
-# Week 11. 컴퓨터/웹 사용 에이전트 (Computer Use)
+# Week 11. 멀티에이전트 + LangGraph 전환점 ⭐
 
 > **Part:** 협업·환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-화면을 보고 클릭하는 **컴퓨터·웹 에이전트**. 이론에서 관찰–행동 루프, **DOM vs 스크린샷**, 벤치마크(WebArena/OSWorld)를 다루고, 실습에서 간단한 웹/OS 태스크 루프를 돌린다. 시각적이라 흥미로운 주. WebArena·OSWorld(2024). *(보안 복선: 오늘 붙인 웹 도구가 W14 간접 인젝션의 주 통로다 — 예고만.)*
+⭐ **전환점.** 여러 에이전트의 협업과 프레임워크로의 전환. 이론에서 협업 아키텍처(핸드오프·라우터)를 다루고, 실습에서 직접 짠 멀티에이전트를 **LangGraph로 재구현·비교**한다(from-scratch→프레임워크 분기점). AutoGen·MetaGPT.
 
 ## 📖 보조읽기 (발표 대상 아님)
-*OS Agents: A Survey on MLLM-based Agents* (ACL 2025) · MS15
+LangChain — *Choosing the Right Multi-Agent Architecture* · MS02·08
 
 ## 📄 발표 논문
-#### 🟡 WebArena: A Realistic Web Environment for Agents
-- **출처:** Zhou et al., ICLR 2024 · arXiv:2307.13854
-- **발표 필수:** 실제 웹 태스크 벤치마크 구성과 왜 어려운가
-- **선택 심화:** 4개 도메인, 성공률 격차
-- **PDF:** [`W11_WebArena_2307.13854.pdf`](../papers/W11_WebArena_2307.13854.pdf)
+#### 🟡 AutoGen: Multi-Agent Conversation Framework
+- **출처:** Wu et al., COLM 2024 · arXiv:2308.08155
+- **발표 필수:** 대화 기반 멀티에이전트 추상화와 역할 분담
+- **선택 심화:** conversable agent, human-in-the-loop
+- **PDF:** [`W11_AutoGen_2308.08155.pdf`](../papers/W11_AutoGen_2308.08155.pdf)
 
-#### 🟡 OSWorld: Benchmarking Multimodal Agents in Real Computer Environments
-- **출처:** Xie et al., NeurIPS 2024 · arXiv:2404.07972
-- **발표 필수:** 실제 데스크톱 OS에서 멀티모달 에이전트를 실행 기반으로 평가
-- **선택 심화:** 369 태스크, 스크린샷–행동 인터페이스
-- **PDF:** [`W11_OSWorld_2404.07972.pdf`](../papers/W11_OSWorld_2404.07972.pdf)
+#### 🟡 MetaGPT: Meta Programming for Multi-Agent Collaboration
+- **출처:** Hong et al., ICLR 2024 · arXiv:2308.00352
+- **발표 필수:** SOP(표준운영절차)를 코드화한 협업 구조
+- **선택 심화:** 역할별 산출물 스키마
+- **PDF:** [`W11_MetaGPT_2308.00352.pdf`](../papers/W11_MetaGPT_2308.00352.pdf)
 
-#### 🟡 Mind2Web (선택읽기) *(선택읽기)*
-- **출처:** Deng et al., NeurIPS 2023 · arXiv:2306.06070
-- **발표 필수:** 실세계 웹사이트 일반화 과제와 데이터
-- **선택 심화:** DOM 후보 선택
-- **PDF:** [`W11_opt-Mind2Web_2306.06070.pdf`](../papers/W11_opt-Mind2Web_2306.06070.pdf)
+#### 🟡 Multiagent Debate (선택읽기) *(선택읽기)*
+- **출처:** Du et al., ICML 2024 · arXiv:2305.14325
+- **발표 필수:** 다중 에이전트 토론이 사실성·추론을 높이는 원리
+- **선택 심화:** 수렴 동역학
+- **PDF:** [`W11_opt-Multiagent-Debate_2305.14325.pdf`](../papers/W11_opt-Multiagent-Debate_2305.14325.pdf)
+
+#### 🟡 CAMEL: Communicative Agents (선택읽기) *(선택읽기)*
+- **출처:** Li et al., NeurIPS 2023 · arXiv:2303.17760
+- **발표 필수:** 역할극 기반 자율 협력 프레임
+- **선택 심화:** inception prompting
+- **PDF:** [`W11_opt-CAMEL_2303.17760.pdf`](../papers/W11_opt-CAMEL_2303.17760.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-텍스트 도구 호출 vs 화면 클릭 — 무엇이 언제 나은가?
+멀티에이전트가 단일 에이전트보다 정말 나은가? 언제 과한가?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
-**빌드 베이스:** **LangGraph** 위에서 확장 (W1–9 from-scratch 모듈 재사용)
+**빌드 베이스:** 🔄 **전환점** — from-scratch 모듈을 **LangGraph 노드로 감싼다**(로직 재사용, 오케스트레이션만 위임)
 
-*이번 주 주제:* 브라우저/OS 환경에서 관찰-행동 루프 (간단한 웹/데스크톱 태스크)
+*이번 주 주제:* 역할 분담 멀티에이전트를 **LangGraph로 재구현·비교** (직접 구현 대비)
 
-**추가 모듈:** `tools_web.py` — URL fetch/간단 웹검색 도구(관찰-행동).
-> ✅ **완료:** 웹에서 정보를 가져와 답한다(간단 버전).
+**개조:** `graph.py` — 지금까지의 루프를 **LangGraph로 재구현**(+선택 비평 노드).
+> ✅ **완료:** from-scratch 버전과 동일 동작을 그래프로 재현·비교한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

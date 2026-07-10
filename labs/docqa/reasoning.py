@@ -1,4 +1,4 @@
-"""W2 — Self-consistency (Wang et al., 2022).
+"""W3 — Self-consistency (Wang et al., 2022).
 
 같은 질문을 temperature>0 으로 N번 샘플링해 **서로 다른 추론 경로**를 얻고,
 최종 답만 뽑아 **다수결**한다. 추론 경로는 달라도 옳은 답은 한 점으로 모인다.
@@ -44,10 +44,10 @@ def majority_vote(answers: list[str | None]) -> str | None:
     - normalize() 를 거친 뒤 센다.
     - 동률이면 먼저 나온 답이 이긴다. 유효 표가 없으면 None.
 
-    TODO(W2): 4~6줄. 힌트: collections.Counter 와 .most_common(1).
+    TODO(W3): 4~6줄. 힌트: collections.Counter 와 .most_common(1).
       (Counter 는 동률일 때 먼저 들어온 키를 앞에 준다.)
     """
-    raise NotImplementedError("TODO(W2): majority_vote() 를 구현하세요")
+    raise NotImplementedError("TODO(W3): majority_vote() 를 구현하세요")
 
 
 def self_consistency(question: str, n: int = 5, llm_fn=None, temperature: float = 0.8):
@@ -59,10 +59,10 @@ def self_consistency(question: str, n: int = 5, llm_fn=None, temperature: float 
     Returns:
         (다수결 답, 전체 답 리스트) — 리스트는 표 분포를 보여주는 데 쓴다.
 
-    TODO(W2): 6~9줄.
+    TODO(W3): 6~9줄.
       1) llm_fn 이 None 이면 docqa.llm.chat 으로 감싼다 (loop.py의 방식 참고).
       2) n번 반복: COT_PROMPT.format(question=...) 을 user 메시지로 보내고
          extract_answer() 로 답을 뽑아 리스트에 모은다. (temperature 를 그대로 전달!)
       3) (majority_vote(리스트), 리스트) 반환.
     """
-    raise NotImplementedError("TODO(W2): self_consistency() 를 구현하세요")
+    raise NotImplementedError("TODO(W3): self_consistency() 를 구현하세요")

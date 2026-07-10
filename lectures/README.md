@@ -19,7 +19,8 @@ marp lectures/week01/slides.md --pptx                      # PPTX (강의실 호
 
 | 주 | 슬라이드 | 상태 |
 |---|---|---|
-| 01 | [week01/slides.md](week01/slides.md) | ✅ 초안 (32장 / 40분 · 폼팩터 4형태 + 현장 노트 포함) |
-| 02 | [week02/slides.md](week02/slides.md) | ✅ 초안 (26장 / 39분 · RL 입문 + 현장 노트 포함) |
-| 03 | [week03/slides.md](week03/slides.md) | ✅ 초안 (27장 / 35분 · function calling 해부 + 현장 노트 포함) |
-| 04–16 | — | 개요만 (`docs/lecture-outlines.md`) |
+| 01 | [week01/slides.md](week01/slides.md) | ✅ 초안 (19장 / 25분 · 개요·폼팩터·현장 노트 — OT 뒤에 진행) |
+| 02 | [week02/slides.md](week02/slides.md) | ✅ 초안 (20장 / 35분 · CoT→ReAct 계보 + 트레이스 리딩) |
+| 03 | [week03/slides.md](week03/slides.md) | ✅ 초안 (26장 / 39분 · 추론 모델 — RL 입문 + 현장 노트 포함) |
+| 04 | [week04/slides.md](week04/slides.md) | ✅ 초안 (27장 / 35분 · 도구 — function calling 해부 + 현장 노트 포함) |
+| 05–16 | — | 개요만 (`docs/lecture-outlines.md`) |
