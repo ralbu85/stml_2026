@@ -27,10 +27,10 @@ Lilian Weng — *Why We Think* — test-time compute 직관 · Berkeley 추론 �
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* self-consistency / 다중 샘플 추론 비교
+*이번 주 주제:* ReAct 제어 루프(while) 완성 → self-consistency / 다중 샘플 추론 비교
 
-**추가 모듈:** `reasoning.py` — 같은 질문을 N번 샘플→다수결(self-consistency) 토글.
-> ✅ **완료:** 애매한 질문에서 단일 답보다 정확도가 오른다.
+**추가 모듈:** `loop.py` — ReAct(Thought→Action→Observation) while 루프 골격 *(W1 이론에서 배운 것을 구현)* · `reasoning.py` — 같은 질문을 N번 샘플→다수결(self-consistency).
+> ✅ **완료:** ① 간단한 질문에 루프가 한 바퀴 돌아 답을 낸다 ② 애매한 질문에서 단일 답보다 정확도가 오른다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

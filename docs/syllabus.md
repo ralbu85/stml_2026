@@ -22,8 +22,8 @@
 | 주 | 주제 | 발표 논문 (난이도) | 실습(📦=최종 부품) | 대응 |
 |---|---|---|---|---|
 | **토대** |
-| 1 | 에이전트 개요 + ReAct | ReAct🟢 · CoT🟢 | ReAct 제어 루프 골격 | MS01 |
-| 2 | 추론 모델(test-time) | STaR🟡 · DeepSeek-R1🟡 | self-consistency 비교 | Bk 추론 |
+| 1 | 강의소개 · 에이전트 개요 + ReAct | 학생 발표 없음 (CoT🟢 교수 시연 · ReAct🟢 강의) | 환경 세팅 + LLM 래퍼 | MS01 |
+| 2 | 추론 모델(test-time) | STaR🟡 · DeepSeek-R1🟡 | ReAct 루프 + self-consistency | Bk 추론 |
 | **핵심 디자인 패턴** |
 | 3 | 도구 사용 | Toolformer🟡 · ToolLLM🟡 | 도구 레지스트리·실행 | MS04 |
 | 4 | 계획과 탐색 | Tree of Thoughts🟡 · ReWOO🟡 | 트리 분기 미니 | MS07 |

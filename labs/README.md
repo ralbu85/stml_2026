@@ -33,15 +33,15 @@ ollama pull llama3.2
    ```
 3. 테스트가 통과하면 **데모**로 진짜 LLM과 돌려본다:
    ```bash
-   python demos/week01_react.py "서울에서 부산까지 KTX로 몇 시간 걸려?"
+   python demos/week02_react.py "서울에서 부산까지 KTX로 몇 시간 걸려?"
    ```
 
 ## 3. 주차별 빈칸 · 완료 기준 (진행분)
 
 | 주 | 파일 | 채울 함수 | ✅ 완료 기준 |
 |---|---|---|---|
-| 1 | `docqa/llm.py` | `chat()` | aisuite로 provider 무관 호출이 된다 |
-| 1 | `docqa/loop.py` | `parse_step()` | 루프가 한 바퀴 돌아 Final Answer를 낸다 (`test_week01.py` 통과) |
+| 1 | (환경 세팅) + `docqa/llm.py` | `chat()` | 원시 HTTP와 aisuite 래퍼 양쪽으로 호출이 된다 (`test_week01.py` 통과) |
+| 2 | `docqa/loop.py` | `parse_step()` | 루프가 한 바퀴 돌아 Final Answer를 낸다 |
 | 2 | `docqa/reasoning.py` | `majority_vote()` · `self_consistency()` | 애매한 질문에서 단일 답보다 정확도 ↑ (`test_week02.py` 통과) |
 | 3+ | *(다음 주 배포)* | | |
 
@@ -65,7 +65,7 @@ cp checkpoints/week01/*.py docqa/
 labs/
   docqa/            # 매주 자라는 에이전트 패키지 ← 여기의 빈칸을 채운다
     llm.py          #  W1  LLM 호출 래퍼 (aisuite)
-    loop.py         #  W1  ReAct 제어 루프
+    loop.py         #  W2  ReAct 제어 루프
     reasoning.py    #  W2  self-consistency
   tests/            # 오프라인 테스트 (가짜 LLM — 키 불필요)
   demos/            # 진짜 LLM으로 돌리는 주차별 데모

@@ -1,59 +1,73 @@
-"""W1 오프라인 테스트 — API 키 불필요 (가짜 LLM 주입).
+"""W1 오프라인 테스트 — API 키·aisuite 설치 없이 chat() 배선을 검증한다.
 
+가짜 aisuite 클라이언트를 docqa.llm._client 에 주입한다.
 실행: pytest tests/test_week01.py -v
 """
 
-from docqa.loop import parse_step, react_loop
+import pytest
+
+import docqa.llm as llm
 
 
-# ── parse_step ──────────────────────────────────────────────
+class _FakeCompletions:
+    def __init__(self, owner):
+        self._owner = owner
 
-def test_parse_final_answer():
-    out = "Thought: 계산이 끝났다.\nFinal Answer: 42"
-    assert parse_step(out) == ("final", "42")
+    def create(self, **kwargs):
+        self._owner.last_kwargs = kwargs
 
+        class _Msg:
+            content = "pong"
 
-def test_parse_action_json():
-    out = 'Thought: 계산기가 필요하다.\nAction: {"tool": "calculator", "input": "400/1400"}'
-    assert parse_step(out) == ("action", "calculator", "400/1400")
+        class _Choice:
+            message = _Msg()
 
+        class _Resp:
+            choices = [_Choice()]
 
-def test_parse_neither_on_free_text():
-    kind, _ = parse_step("음... 잘 모르겠는데요.")
-    assert kind == "neither"
-
-
-def test_parse_broken_json_is_neither():
-    kind, _ = parse_step('Action: {"tool": calculator}')  # 따옴표 없는 JSON
-    assert kind == "neither"
+        return _Resp()
 
 
-# ── react_loop ──────────────────────────────────────────────
-
-def test_loop_reaches_final_answer():
-    script = iter([
-        'Thought: 도구를 써 보자.\nAction: {"tool": "calculator", "input": "1+1"}',
-        "Thought: 도구가 없으니 직접 답한다.\nFinal Answer: 2",
-    ])
-    fake_llm = lambda messages: next(script)
-    assert react_loop("1+1은?", llm_fn=fake_llm, verbose=False) == "2"
+class _FakeChat:
+    def __init__(self, owner):
+        self.completions = _FakeCompletions(owner)
 
 
-def test_loop_feeds_observation_back():
-    """행동 다음 턴의 user 메시지가 Observation: 으로 시작해야 한다."""
-    last_user = []
+class FakeClient:
+    """aisuite Client와 같은 모양: client.chat.completions.create(...)"""
 
-    def fake_llm(messages):
-        last_user.append(messages[-1]["content"])
-        if len(last_user) == 1:
-            return 'Action: {"tool": "search", "input": "kt x"}'
-        return "Final Answer: ok"
-
-    react_loop("q", llm_fn=fake_llm, verbose=False)
-    assert last_user[1].startswith("Observation:")
+    def __init__(self):
+        self.last_kwargs = None
+        self.chat = _FakeChat(self)
 
 
-def test_loop_stops_at_max_steps():
-    fake_llm = lambda messages: "Thought: 계속 생각만 한다."  # 영원히 답 없음
-    result = react_loop("q", llm_fn=fake_llm, max_steps=3, verbose=False)
-    assert "최대 스텝" in result
+@pytest.fixture
+def fake_client():
+    client = FakeClient()
+    llm._client = client          # _get_client() 가 이걸 그대로 돌려준다
+    yield client
+    llm._client = None
+
+
+def test_chat_returns_first_choice_content(fake_client):
+    out = llm.chat([{"role": "user", "content": "ping"}])
+    assert out == "pong"
+
+
+def test_chat_uses_default_model_when_none(fake_client, monkeypatch):
+    monkeypatch.setenv("DOCQA_MODEL", "openai:gpt-4o-mini")
+    llm.chat([{"role": "user", "content": "ping"}])
+    assert fake_client.last_kwargs["model"] == "openai:gpt-4o-mini"
+
+
+def test_chat_respects_explicit_model_and_temperature(fake_client):
+    llm.chat([{"role": "user", "content": "ping"}], model="ollama:llama3.2", temperature=0.7)
+    assert fake_client.last_kwargs["model"] == "ollama:llama3.2"
+    assert fake_client.last_kwargs["temperature"] == 0.7
+
+
+def test_ask_builds_system_and_user_messages(fake_client):
+    llm.ask("안녕", system="너는 조교다")
+    messages = fake_client.last_kwargs["messages"]
+    assert messages[0] == {"role": "system", "content": "너는 조교다"}
+    assert messages[1] == {"role": "user", "content": "안녕"}

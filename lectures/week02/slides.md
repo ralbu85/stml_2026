@@ -23,7 +23,7 @@ style: |
 머신러닝 특론 — LLM 에이전트 · 2026
 
 <!--
-[강의 전 준비] 데모: 지난주 loop.py에 애매한 산수 문제를 3번 던져 답이 오락가락하는 화면(라이브 or 캡처).
+[강의 전 준비] 데모: 지난주 만든 llm.py(chat)에 애매한 산수 문제를 3번 던져 답이 오락가락하는 화면(라이브 or 캡처). temperature 0.8로.
 이론 35분. 지난주 "CoT는 프롬프트만 바꿨는데 3배"의 후속편.
 -->
 
@@ -37,7 +37,7 @@ style: |
 | 5–15 | Test-time compute | 추론 시점에 계산을 더 쓰면? (다수결) |
 | 15–29 | 학습으로 내재화 | 생각하는 법 자체를 가르칠 수 있나? (STaR→**RL 3분 입문**→R1) |
 | 29–36 | 설계 함의 + **현장 노트** | 추론 모델, 루프에서 언제·어떻게 쓰나? |
-| 36–39 | 오늘의 연결 | 실습 `reasoning.py` · 발표 STaR/R1 |
+| 36–39 | 오늘의 연결 | 실습 `loop.py`+`reasoning.py` · 발표 STaR/R1 |
 
 **큰 그림:** 생각을 늘리는 두 갈래 — **① 추론할 때 더** (앞 15분) vs **② 학습으로 몸에 배게** (뒤 14분)
 
@@ -55,9 +55,9 @@ style: |
 
 ---
 
-# 지난주 루프의 민낯
+# 지난주 만든 두뇌의 민낯
 
-지난주 만든 `loop.py`에 같은 질문을 **세 번** 던지면:
+지난주 만든 `llm.py`의 `chat()`에 같은 질문을 **세 번** 던지면:
 
 ```
 Q: 서로 다른 두 주사위의 눈의 합이 8일 확률은?
@@ -422,10 +422,15 @@ aisuite 덕분에 문자열 하나로 모델을 바꿔가며 실험 가능하다
 
 ---
 
-# 오후 실습: `reasoning.py`
+# 오후 실습: `loop.py` + `reasoning.py`
+
+**1부 — ReAct 루프 완성 (`loop.py`):** 지난주 이론의 그 while 루프를 직접 짠다.
+채울 곳: `parse_step()` (Final Answer / Action JSON 판정) — 루프 본체는 스캐폴드 제공.
+
+**2부 — self-consistency (`reasoning.py`):**
 
 ```python
-def self_consistent(question, n=5):
+def self_consistency(question, n=5):
     answers = []
     for _ in range(n):
         path = llm(cot_prompt(question), temperature=0.8)  # ① 경로 샘플
@@ -433,8 +438,7 @@ def self_consistent(question, n=5):
     return majority_vote(answers)                          # ③ 다수결
 ```
 
-- 채울 곳 **2곳**: ②의 답 추출, ③의 다수결 — 루프·프롬프트는 스캐폴드 제공
-- ✅ 완료 기준: 애매한 질문 묶음에서 **N=1보다 N=5가 정확** (지난주 오락가락이 사라짐)
+- ✅ 완료 기준: ① 루프가 한 바퀴 돌아 답 ② 애매한 질문에서 **N=1보다 N=5가 정확**
 - 함께 기록: **호출 수·토큰 비용** — "5배 낼 가치가 있었나"까지가 오늘 실습
 
 **발표 2편:** STaR(스스로 가르치기의 원전) · DeepSeek-R1(그 아이디어의 2025년 종착지)

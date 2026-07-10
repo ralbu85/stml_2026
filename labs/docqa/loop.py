@@ -1,4 +1,4 @@
-"""W1 — ReAct 제어 루프 (하네스의 최소 형태).
+"""W2 — ReAct 제어 루프 (하네스의 최소 형태).
 
 모델에게 매 턴 아래 형식을 강제하고, 하네스(우리 코드)가 Observation을 채워
 다시 모델에게 보내는 while 루프가 에이전트의 뼈대다.
@@ -9,7 +9,7 @@
     Thought: <추론>
     Final Answer: <답>                                ← 답을 확정할 때
 
-W1에는 아직 도구가 없다(dispatch가 자리만 지킨다). W3의 tools.py가 그 자리를 채운다.
+W2에는 아직 도구가 없다(dispatch가 자리만 지킨다). W3의 tools.py가 그 자리를 채운다.
 """
 
 import json
@@ -37,17 +37,17 @@ def parse_step(text: str):
         ("action", 도구이름, 입력문자열)  — "Action:" 뒤 JSON 객체가 파싱되면
         ("neither", 원문)                 — 둘 다 아니거나 JSON이 깨졌으면
 
-    TODO(W1): 8~12줄.
+    TODO(W2): 8~12줄.
       힌트 1) re.search(r"Final Answer:\\s*(.+)", text, re.S) — 답은 .strip() 해서 반환.
       힌트 2) re.search(r"Action:\\s*(\\{.*?\\})", text, re.S) 로 JSON 부분을 뽑아
               json.loads() → obj["tool"], obj["input"].
       힌트 3) json.JSONDecodeError 가 나면 ("neither", text).
     """
-    raise NotImplementedError("TODO(W1): parse_step() 을 구현하세요")
+    raise NotImplementedError("TODO(W2): parse_step() 을 구현하세요")
 
 
 def dispatch(tool: str, tool_input: str) -> str:
-    """도구 실행 자리. W1에는 도구가 없다 — W3에서 tools.py가 교체한다. (제공됨)"""
+    """도구 실행 자리. W2에는 도구가 없다 — W3에서 tools.py가 교체한다. (제공됨)"""
     return (
         f"(아직 '{tool}' 도구가 없습니다. "
         "아는 범위에서 추론해 Final Answer를 내세요.)"

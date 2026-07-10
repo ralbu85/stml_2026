@@ -1,7 +1,8 @@
-"""W1 데모 ①  — 래퍼를 만들기 전에, 원시 HTTP 호출의 '내부'를 본다.
+"""W1 데모 — 래퍼를 만들기 전에, 원시 HTTP 호출의 '내부'를 본다.
 
 LLM API는 결국 JSON을 실어 나르는 HTTP POST 하나다.
 이걸 눈으로 확인한 뒤에 aisuite로 감싼다 (같은 일을 한 줄로).
+✅ W1 완료 기준: 원시 HTTP와 aisuite 래퍼(직접 채운 chat()) 양쪽으로 호출이 된다.
 
 실행: python demos/week01_raw_api.py
 (OPENAI_API_KEY 필요 — 없으면 aisuite 파트만 Ollama로 실행됨)

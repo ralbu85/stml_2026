@@ -20,7 +20,7 @@
 ```
 docqa/
   llm.py         # LLM 호출 래퍼            (W1)
-  loop.py        # ReAct 제어 루프          (W1)
+  loop.py        # ReAct 제어 루프          (W2)
   reasoning.py   # self-consistency         (W2)
   tools.py       # 도구 레지스트리·실행     (W3) → 검색도구 등록 (W7)
   planner.py     # 계획 분해                (W4)
@@ -67,8 +67,8 @@ checkpoints/weekNN/   # 주차별 참조 구현(뒤처진 학생용)
 
 | 주 | 추가 모듈 | 하는 일 | ✅ 완료 기준 |
 |---|---|---|---|
-| 1 | `llm.py`·`loop.py` | ReAct while 루프 골격 | 간단한 질문에 루프가 한 바퀴 돌아 답 |
-| 2 | `reasoning.py` | self-consistency(N샘플 다수결) | 애매한 질문 정확도 ↑ |
+| 1 | `llm.py` | 환경 세팅 + 원시 API 1회 → aisuite 래퍼 | 원시 HTTP·래퍼 양쪽으로 호출 성공 |
+| 2 | `loop.py`·`reasoning.py` | ReAct while 루프 + self-consistency | 루프가 한 바퀴 돌아 답 · 애매한 질문 정확도 ↑ |
 | 3 | `tools.py` | 도구 등록·파싱·실행(계산기 등) | 루프가 계산기 도구를 실제 호출 |
 | 4 | `planner.py` | 질문→하위 단계 분해·실행 | 2단계 질문을 계획대로 처리 |
 | 5 | `reflect.py` | 실패→피드백→재시도 | 처음 틀린 답을 재시도로 교정 |

@@ -22,7 +22,7 @@
 - 5–15′ 정의와 스펙트럼: 고정 파이프라인 ↔ 완전 자율, "LLM이 제어 흐름을 결정하는가"
 - 15–25′ CoT → ReAct 계보: 추론만 / 행동만 / 둘을 교차 — 세 가지 비교 표
 - 25–32′ ReAct 트레이스 한 편을 **라이브로 같이 읽기** (HotpotQA 예시)
-- 32–35′ 연결: 오늘 실습 = 이 루프를 while문으로 직접 구현(`loop.py`); 발표 = ReAct·CoT 원 논문
+- 32–35′ 연결: 오늘 실습 = 환경 세팅 + LLM 래퍼(`llm.py`), 루프 구현은 W2; 발표 = 교수 시연(CoT), 학생 발표는 W2부터
 
 **자료:** Berkeley `intro.pdf`·`llm_agent_history.pdf` · MS lesson 01·03 · HF unit1
 
@@ -43,7 +43,7 @@
 - 5–15′ test-time compute 스케일링: 같은 모델, N배 샘플 → 정확도 곡선 보기
 - 15–29′ 학습으로 내재화: STaR 루프 그림 → **RL 3분 입문(강아지 비유·SFT 대조, 수식 0)** → R1 훈련 스토리(보상 서사로)
 - 29–34′ o1/R1 시대의 에이전트: "루프를 짧게, 생각을 길게"? 비용 표로 비교
-- 34–37′ 연결: 실습 = self-consistency 구현(`reasoning.py`); 발표 = STaR·DeepSeek-R1
+- 34–37′ 연결: 실습 = ReAct 루프 완성(`loop.py`) + self-consistency(`reasoning.py`); 발표 = STaR·DeepSeek-R1
 
 **자료:** Berkeley `inference_time_techniques_lecture_sp25.pdf`·`llm-reasoning.pdf`·`Jason-Weston-Reasoning.pdf`·`OLMo-Tulu-Reasoning-Hanna.pdf`
 
