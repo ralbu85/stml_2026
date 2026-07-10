@@ -47,7 +47,14 @@ def parse_step(text: str):
 
 
 def dispatch(tool: str, tool_input: str) -> str:
-    """도구 실행 자리. W2에는 도구가 없다 — W3에서 tools.py가 교체한다. (제공됨)"""
+    """도구 실행 자리. (제공됨)
+
+    W3부터: tools.py 레지스트리에 등록된 도구가 있으면 실제로 실행한다.
+    등록된 게 없으면(W2 상태) 예전 스텁 그대로.
+    """
+    from . import tools
+    if tools.TOOLS:
+        return tools.run_tool(tool, tool_input)
     return (
         f"(아직 '{tool}' 도구가 없습니다. "
         "아는 범위에서 추론해 Final Answer를 내세요.)"
@@ -64,8 +71,13 @@ def react_loop(question: str, llm_fn=None, max_steps: int = 5, verbose: bool = T
         from . import llm
         llm_fn = lambda messages: llm.chat(messages, temperature=0.0)
 
+    from . import tools
+    system = SYSTEM_PROMPT
+    if tools.TOOLS:  # W3부터: 등록된 도구 목록을 모델에게 알린다 (파이프라인 ①)
+        system += "\n\n" + tools.tool_list_prompt()
+
     messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": system},
         {"role": "user", "content": f"Question: {question}"},
     ]
 

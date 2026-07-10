@@ -43,7 +43,8 @@ ollama pull llama3.2
 | 1 | (환경 세팅) + `docqa/llm.py` | `chat()` | 원시 HTTP와 aisuite 래퍼 양쪽으로 호출이 된다 (`test_week01.py` 통과) |
 | 2 | `docqa/loop.py` | `parse_step()` | 루프가 한 바퀴 돌아 Final Answer를 낸다 |
 | 2 | `docqa/reasoning.py` | `majority_vote()` · `self_consistency()` | 애매한 질문에서 단일 답보다 정확도 ↑ (`test_week02.py` 통과) |
-| 3+ | *(다음 주 배포)* | | |
+| 3 | `docqa/tools.py` | `run_tool()` · `calculator()` | 루프가 계산기를 **실제 호출**해 답한다 (`test_week03.py` 통과) |
+| 4+ | *(다음 주 배포)* | | |
 
 W1은 빈칸을 채우기 전에 `demos/week01_raw_api.py`를 먼저 실행해 **원시 HTTP 호출의 내부**(우리가 감싸려는 것의 정체)를 눈으로 확인한다.
 
@@ -67,6 +68,8 @@ labs/
     llm.py          #  W1  LLM 호출 래퍼 (aisuite)
     loop.py         #  W2  ReAct 제어 루프
     reasoning.py    #  W2  self-consistency
+    tools.py        #  W3  도구 레지스트리·실행 (계산기·문서검색)
+  data/             # 실습용 샘플 문서 (W3 text_search → W6 임베딩 검색으로 발전)
   tests/            # 오프라인 테스트 (가짜 LLM — 키 불필요)
   demos/            # 진짜 LLM으로 돌리는 주차별 데모
   checkpoints/      # 주차별 참조 구현 (각 주 종료 후 공개)

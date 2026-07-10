@@ -21,4 +21,5 @@ marp lectures/week01/slides.md --pptx                      # PPTX (강의실 호
 |---|---|---|
 | 01 | [week01/slides.md](week01/slides.md) | ✅ 초안 (31장 / 40분 · 현장 노트 포함) |
 | 02 | [week02/slides.md](week02/slides.md) | ✅ 초안 (26장 / 39분 · RL 입문 + 현장 노트 포함) |
-| 03–16 | — | 개요만 (`docs/lecture-outlines.md`) |
+| 03 | [week03/slides.md](week03/slides.md) | ✅ 초안 (27장 / 35분 · function calling 해부 + 현장 노트 포함) |
+| 04–16 | — | 개요만 (`docs/lecture-outlines.md`) |
