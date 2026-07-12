@@ -73,7 +73,7 @@ RL은 사전 지식 없음을 가정 — 중간에 개념만 3분 입문(수식 
 
 # Self-Consistency — 여러 번 생각하고 다수결
 
-핵심 아이디어(Wang et al., 2022): 같은 질문을 **여러 번 샘플링**해 최종 답만 모아 **다수결**한다.
+**Self-Consistency** = 같은 질문을 여러 번 샘플링해 나온 **최종 답들의 다수결**을 취하는 기법 (Wang et al., 2022).
 
 ```
              ┌→ 경로 A … 답 X
@@ -93,9 +93,9 @@ RL은 사전 지식 없음을 가정 — 중간에 개념만 3분 입문(수식 
 
 ---
 
-# 일반화 — test-time compute 스케일링
+# 일반화 — test-time compute
 
-self-consistency는 한 예일 뿐. **추론 시점에 계산을 더 써서 성능을 올리는** 방법군 전체를 이렇게 부른다:
+**test-time compute** = 학습(가중치)은 그대로 두고, **추론 시점에 계산을 더 써서** 성능을 올리는 접근. self-consistency는 그 한 예일 뿐 — 방법군 전체는:
 
 | 방법 | 계산을 더 쓰는 방식 |
 |---|---|
@@ -140,7 +140,7 @@ self-consistency는 한 예일 뿐. **추론 시점에 계산을 더 써서 성�
 
 # STaR — 스스로 만든 풀이로 스스로 배운다
 
-**Self-Taught Reasoner** (Zelikman et al., 2022):
+**STaR (Self-Taught Reasoner)** = 모델이 스스로 만든 풀이 중 **정답을 맞힌 것만 걸러 재학습**하는 부트스트랩 방법 (Zelikman et al., 2022).
 
 ```
 ① 풀이 생성: 문제마다 CoT로 풀게 한다
