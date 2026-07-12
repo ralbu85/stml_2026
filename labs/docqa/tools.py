@@ -106,6 +106,23 @@ def text_search(query: str) -> str:
     return "\n".join(hits) if hits else f"(문서에서 '{query}'를 찾지 못함)"
 
 
+# ── W8: 검색을 도구로 — 두 모듈(retriever·tools)이 처음 만난다 ──
+
+def register_search(retriever) -> None:
+    """W7의 Retriever를 'search_papers' 도구로 등록한다.
+
+    이걸로 "매번 검색"(워크플로우)이 "필요할 때만 검색"(에이전트)이 된다 —
+    W1 미니체크 3번의 답. 검색할지 말지는 이제 모델이 description을 읽고 정한다.
+
+    TODO(W8): 4~7줄.
+      1) fn: 질문 문자열 → retriever.query(q, k=3) 결과를 "\\n---\\n"으로 join.
+      2) register("search_papers", <설명>, fn).
+         설명에는 반드시 "언제 쓰나"(수업 논문 내용 질문)와
+         "언제 안 쓰나"(일반 상식·계산에는 사용 금지)를 둘 다 적어라 — W4 체크리스트.
+    """
+    raise NotImplementedError("TODO(W8): register_search() 를 구현하세요")
+
+
 def register_defaults() -> None:
     """기본 도구 2종을 등록한다. (제공됨 — 데모·실전에서 호출)"""
     register(

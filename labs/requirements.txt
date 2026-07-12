@@ -2,6 +2,7 @@
 aisuite[openai,anthropic,ollama]
 python-dotenv
 pytest
-requests            # W1 원시 API 데모 · W11 웹 도구
-# numpy             # W6(임베딩 코사인 유사도)부터 주석 해제
-# langgraph         # W10부터
+requests            # W1 원시 API 데모 · W12 웹 도구
+numpy               # W7 임베딩·코사인 유사도
+# langgraph         # W11부터 주석 해제 (프레임워크 전환점)
+# sentence-transformers  # (선택) W7에서 hash_embed 대신 진짜 임베딩을 쓰려면
