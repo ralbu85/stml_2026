@@ -23,4 +23,15 @@ marp lectures/week01/slides.md --pptx                      # PPTX (강의실 호
 | 02 | [week02/slides.md](week02/slides.md) | ✅ 초안 (20장 / 35분 · CoT→ReAct 계보 + 트레이스 리딩) |
 | 03 | [week03/slides.md](week03/slides.md) | ✅ 초안 (26장 / 39분 · 추론 모델 — RL 입문 + 현장 노트 포함) |
 | 04 | [week04/slides.md](week04/slides.md) | ✅ 초안 (27장 / 35분 · 도구 — function calling 해부 + 현장 노트 포함) |
-| 05–16 | — | 개요만 (`docs/lecture-outlines.md`) |
+| 05 | [week05/slides.md](week05/slides.md) | ✅ 초안 (22장 / 35분 · 계획과 탐색 — ToT·ReWOO + 현장 노트 포함) |
+| 06 | [week06/slides.md](week06/slides.md) | ✅ 초안 (22장 / 35분 · 자기반성 — Self-Refine·Reflexion + 오라클 반전 카드 + 현장 노트 포함) |
+| 07 | [week07/slides.md](week07/slides.md) | ✅ 초안 (21장 / 35분 · RAG 기초 — 임베딩·코사인 유사도·파이프라인 + 현장 노트 포함) |
+| 08 | [week08/slides.md](week08/slides.md) | ✅ 초안 (22장 / 35분 · 에이전틱 RAG + MCP — Self-RAG·Adaptive-RAG + 현장 노트 포함) |
+| 09 | [week09/slides.md](week09/slides.md) | ✅ 초안 (22장 / 35분 · 컨텍스트 엔지니어링 ⭐ — Lost in the Middle·LLMLingua + 현장 노트·🏁 중간 데모 포함) |
+| 10 | [week10/slides.md](week10/slides.md) | ✅ 초안 (22장 / 30분 · 메모리 — MemGPT·Mem0 + 현장 노트 포함) |
+| 11 | [week11/slides.md](week11/slides.md) | ✅ 초안 (22장 / 40분 · 멀티에이전트 + LangGraph 전환점 ⭐ — 감싸기 원칙 + 현장 노트 포함) |
+| 12 | [week12/slides.md](week12/slides.md) | ✅ 초안 (22장 / 35분 · 컴퓨터/웹 사용 — DOM vs 스크린샷·WebArena·OSWorld + 현장 노트 포함) |
+| 13 | [week13/slides.md](week13/slides.md) | ✅ 초안 (22장 / 35분 · 평가 — Pareto·pass^k, W3/W4/W12 복선 회수 + 현장 노트 포함) |
+| 14 | [week14/slides.md](week14/slides.md) | ✅ 초안 (22장 / 35분 · 신뢰·보안 — 간접 인젝션·trifecta·방어 4계층 + 현장 노트 포함) |
+| 15 | [week15/slides.md](week15/slides.md) | ✅ 초안 (22장 / 35분 · 프로덕션·단순함 — Agentless·SWE-agent + 폼팩터 회귀 + 현장 노트 포함) |
+| 16 | [week16/slides.md](week16/slides.md) | ✅ 초안 (11장 / 15분 · 학기 회고 + 최종 발표 운영 — 발표 주) |
