@@ -19,10 +19,10 @@ marp lectures/week01/slides.md --pptx                      # PPTX (강의실 호
 
 | 주 | 슬라이드 | 상태 |
 |---|---|---|
-| 01 | [week01/slides.md](week01/slides.md) | ✅ 초안 (19장 / 25분 · 개요·폼팩터·현장 노트 — OT 뒤에 진행) |
-| 02 | [week02/slides.md](week02/slides.md) | ✅ 초안 (20장 / 35분 · CoT→ReAct 계보 + 트레이스 리딩) |
-| 03 | [week03/slides.md](week03/slides.md) | ✅ 초안 (26장 / 39분 · 추론 모델 — RL 입문 + 현장 노트 포함) |
-| 04 | [week04/slides.md](week04/slides.md) | ✅ 초안 (27장 / 35분 · 도구 — function calling 해부 + 현장 노트 포함) |
+| 01 | [week01/slides.md](week01/slides.md) | ✅ 개념중심 (16장 / 25분 · 정의·자율성 스펙트럼·폼팩터) |
+| 02 | [week02/slides.md](week02/slides.md) | ✅ 개념중심 (17장 / 35분 · CoT→ReAct 계보 + 트레이스 리딩) |
+| 03 | [week03/slides.md](week03/slides.md) | ✅ 개념중심 (17장 / 35분 · 추론 두 갈래 — test-time·STaR·R1) |
+| 04 | [week04/slides.md](week04/slides.md) | ✅ 개념중심 (18장 / 35분 · 함수호출 원리·도구 정의·학습) |
 | 05 | [week05/slides.md](week05/slides.md) | ✅ 초안 (22장 / 35분 · 계획과 탐색 — ToT·ReWOO + 현장 노트 포함) |
 | 06 | [week06/slides.md](week06/slides.md) | ✅ 초안 (22장 / 35분 · 자기반성 — Self-Refine·Reflexion + 오라클 반전 카드 + 현장 노트 포함) |
 | 07 | [week07/slides.md](week07/slides.md) | ✅ 초안 (21장 / 35분 · RAG 기초 — 임베딩·코사인 유사도·파이프라인 + 현장 노트 포함) |
