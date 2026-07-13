@@ -17,21 +17,24 @@ marp lectures/week01/slides.md --pptx                      # PPTX (강의실 호
 
 ## 현황
 
-| 주 | 슬라이드 | 상태 |
+**2026-07-13 전면 초기화** — v4 순서 확정 후 16덱 전부 스텁 상태로 리셋(직전 상태는 git `079ab0a`).
+재작성 기준: [`docs/lecture-outlines.md`](../docs/lecture-outlines.md)(주차 개요) · [`docs/style-guide.md`](../docs/style-guide.md)(집필 규정).
+
+| 주 | 주제 | 상태 |
 |---|---|---|
-| 01 | [week01/slides.md](week01/slides.md) | ✅ 개념중심 (16장 / 25분 · 정의·자율성 스펙트럼·폼팩터) |
-| 02 | [week02/slides.md](week02/slides.md) | ✅ 개념중심 (프롬프팅과 추론 — messages·few-shot·CoT·test-time compute·추론 모델 사용 관점) |
-| 03 | [week03/slides.md](week03/slides.md) | ✅ 개념중심 (도구 사용 — 함수호출 원리·도구 정의·학습) |
-| 04 | [week04/slides.md](week04/slides.md) | ✅ 개념중심 (에이전트 루프 — ReAct 계보·트레이스 리딩·미니 evalset) |
-| 05 | [week05/slides.md](week05/slides.md) | ✅ 초안 (RAG 기초 — 임베딩·코사인 유사도·파이프라인 + 현장 노트 포함) |
-| 06 | [week06/slides.md](week06/slides.md) | ✅ 초안 (에이전틱 RAG + MCP — Self-RAG·Adaptive-RAG + 현장 노트 포함) |
-| 07 | [week07/slides.md](week07/slides.md) | ✅ 초안 (계획과 탐색 — ToT·ReWOO + 현장 노트 포함) |
-| 08 | [week08/slides.md](week08/slides.md) | ✅ 초안 (자기반성 — Self-Refine·Reflexion + 오라클 반전 카드 + 현장 노트 포함) |
-| 09 | [week09/slides.md](week09/slides.md) | ✅ 초안 (22장 / 35분 · 컨텍스트 엔지니어링 ⭐ — Lost in the Middle·LLMLingua + 현장 노트·🏁 중간 데모 포함) |
-| 10 | [week10/slides.md](week10/slides.md) | ✅ 초안 (22장 / 30분 · 메모리 — MemGPT·Mem0 + 현장 노트 포함) |
-| 11 | [week11/slides.md](week11/slides.md) | ✅ 초안 (22장 / 40분 · 멀티에이전트 + LangGraph 전환점 ⭐ — 감싸기 원칙 + 현장 노트 포함) |
-| 12 | [week12/slides.md](week12/slides.md) | ✅ 초안 (22장 / 35분 · 컴퓨터/웹 사용 — DOM vs 스크린샷·WebArena·OSWorld + 현장 노트 포함) |
-| 13 | [week13/slides.md](week13/slides.md) | ✅ 초안 (22장 / 35분 · 평가 — Pareto·pass^k, W2/W3/W12 복선 회수 + 현장 노트 포함) |
-| 14 | [week14/slides.md](week14/slides.md) | ✅ 초안 (22장 / 35분 · 신뢰·보안 — 간접 인젝션·trifecta·방어 4계층 + 현장 노트 포함) |
-| 15 | [week15/slides.md](week15/slides.md) | ✅ 초안 (22장 / 35분 · 프로덕션·단순함 — Agentless·SWE-agent + 폼팩터 회귀 + 현장 노트 포함) |
-| 16 | [week16/slides.md](week16/slides.md) | ✅ 초안 (11장 / 15분 · 학기 회고 + 최종 발표 운영 — 발표 주) |
+| 01 | 강의소개 · 에이전트 개요 | ⬜ 스텁 — 재작성 예정 |
+| 02 | 프롬프팅과 추론 | ⬜ 스텁 — 재작성 예정 |
+| 03 | 도구 사용 | ⬜ 스텁 — 재작성 예정 |
+| 04 | 에이전트 루프 (ReAct) | ⬜ 스텁 — 재작성 예정 |
+| 05 | RAG 1부: 기초 | ⬜ 스텁 — 재작성 예정 |
+| 06 | 에이전틱 RAG + MCP | ⬜ 스텁 — 재작성 예정 |
+| 07 | 계획과 탐색 | ⬜ 스텁 — 재작성 예정 |
+| 08 | 자기반성·메타인지 | ⬜ 스텁 — 재작성 예정 |
+| 09 | 컨텍스트 엔지니어링 ⭐ | ⬜ 스텁 — 재작성 예정 |
+| 10 | 메모리 | ⬜ 스텁 — 재작성 예정 |
+| 11 | 멀티에이전트 + LangGraph ⭐ | ⬜ 스텁 — 재작성 예정 |
+| 12 | 컴퓨터/웹 사용 | ⬜ 스텁 — 재작성 예정 |
+| 13 | 평가·벤치마크 | ⬜ 스텁 — 재작성 예정 |
+| 14 | 신뢰·보안 | ⬜ 스텁 — 재작성 예정 |
+| 15 | 프로덕션·단순함 | ⬜ 스텁 — 재작성 예정 |
+| 16 | 최종 발표 | ⬜ 스텁 — 재작성 예정 |
