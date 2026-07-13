@@ -34,7 +34,7 @@ ollama pull llama3.2
    ```
 3. 테스트가 통과하면 **데모**로 진짜 LLM과 돌려본다:
    ```bash
-   python demos/week02_react.py "서울에서 부산까지 KTX로 몇 시간 걸려?"
+   python demos/week04_react.py "서울에서 부산까지 KTX로 몇 시간 걸려?"
    ```
 
 ## 3. 주차별 빈칸 · 완료 기준 (진행분)
@@ -42,13 +42,13 @@ ollama pull llama3.2
 | 주 | 파일 | 채울 함수 | ✅ 완료 기준 |
 |---|---|---|---|
 | 1 | (환경 세팅) + `docqa/llm.py` | `chat()` | 원시 HTTP와 aisuite 래퍼 양쪽으로 호출이 된다 (`test_week01.py` 통과) |
-| 2 | `docqa/loop.py` | `parse_step()` | 루프가 한 바퀴 돌아 Final Answer를 낸다 (`test_week02.py` 통과) |
-| 3 | `docqa/reasoning.py` | `majority_vote()` · `self_consistency()` | 애매한 질문에서 단일 답보다 정확도 ↑ (`test_week03.py` 통과) |
-| 4 | `docqa/tools.py` | `run_tool()` · `calculator()` | 루프가 계산기를 **실제 호출**해 답한다 (`test_week04.py` 통과) |
-| 5 | `docqa/planner.py` | `parse_steps()` · `run_plan()` | 2단계 질문을 계획대로 처리 (`test_week05.py`) |
-| 6 | `docqa/reflect.py` | `reflect_retry()` | 처음 틀린 답을 재시도로 교정 (`test_week06.py`) |
-| 7 | `docqa/retriever.py` 📦 | `cosine_topk()` · `Retriever.query()` | 논문 속 사실을 관련 청크로 답 (`test_week07.py`) |
-| 8 | `docqa/tools.py` 📦 | `register_search()` | 논문 질문만 검색한다 (`test_week08.py`) |
+| 2 | `docqa/reasoning.py` | `majority_vote()` · `self_consistency()` | 애매한 질문에서 단일 답보다 정확도 ↑ (`test_week02.py` 통과) |
+| 3 | `docqa/tools.py` | `run_tool()` · `calculator()` | 호출 의도(JSON)→파싱→실행→재주입 단발 왕복 성공 (`test_week03.py` 통과) |
+| 4 | `docqa/loop.py` | `parse_step()` | 루프가 계산기를 **실제 호출**해 답한다 + 미니 evalset 5문항 (`test_week04.py` 통과) |
+| 5 | `docqa/retriever.py` 📦 | `cosine_topk()` · `Retriever.query()` | 논문 속 사실을 관련 청크로 답 (`test_week05.py`) |
+| 6 | `docqa/tools.py` 📦 | `register_search()` | 논문 질문만 검색한다 (`test_week06.py`) |
+| 7 | `docqa/planner.py` | `parse_steps()` · `run_plan()` | 2단계 검색 질문을 계획대로 처리 (`test_week07.py`) |
+| 8 | `docqa/reflect.py` | `reflect_retry()` | 처음 틀린 답을 재시도로 교정 (`test_week08.py`) |
 | 9 | `docqa/context.py` | `fit_budget()` | 예산 내 선별 + 양끝 배치 (`test_week09.py`) + 🏁 중간 데모 |
 | 10 | `docqa/memory.py` 📦 | `remember()` · `recall()` | 이전 세션 정보를 기억 (`test_week10.py`) |
 | 11 | `docqa/graph.py` 🔄 | `build_graph()` | from-scratch와 동일 동작을 그래프로 (`test_week11.py`, langgraph 필요) |
@@ -78,12 +78,12 @@ cp checkpoints/week01/*.py docqa/
 labs/
   docqa/            # 매주 자라는 에이전트 패키지 ← 여기의 빈칸을 채운다
     llm.py          #  W1  LLM 호출 래퍼 (aisuite)
-    loop.py         #  W2  ReAct 제어 루프
-    reasoning.py    #  W3  self-consistency
-    tools.py        #  W4  도구 레지스트리·실행 (+ W8 검색 도구 등록)
-    planner.py      #  W5  계획 분해·실행
-    reflect.py      #  W6  실패→피드백→재시도
-    retriever.py    #  W7  청킹→임베딩→코사인 top-k 📦
+    reasoning.py    #  W2  CoT·self-consistency
+    tools.py        #  W3  도구 레지스트리·실행 (+ W6 검색 도구 등록)
+    loop.py         #  W4  ReAct 제어 루프
+    retriever.py    #  W5  청킹→임베딩→코사인 top-k 📦
+    planner.py      #  W7  계획 분해·실행
+    reflect.py      #  W8  실패→피드백→재시도
     context.py      #  W9  토큰 예산·양끝 배치
     memory.py       #  W10 단기+장기 메모리 📦
     graph.py        #  W11 LangGraph 전환점 🔄

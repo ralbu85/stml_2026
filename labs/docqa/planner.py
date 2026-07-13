@@ -1,4 +1,4 @@
-"""W5 — 계획 분해 (plan-and-execute).
+"""W7 — 계획 분해 (plan-and-execute).
 
 질문을 하위 단계 리스트로 분해하고(계획), 단계를 순서대로 실행한다(실행).
 ReAct(한 발씩)와 달리 계획을 먼저 다 세운다 — ReWOO의 아이디어.
@@ -30,9 +30,9 @@ def parse_steps(text: str) -> list[str]:
     "1. ..." / "2) ..." 형식 모두 허용. 번호 목록이 하나도 없으면
     전체 텍스트를 단계 1개짜리 계획으로 취급한다.
 
-    TODO(W5): 3~5줄. 힌트: re.findall(r"^\\s*\\d+[.)]\\s*(.+)$", text, re.M)
+    TODO(W7): 3~5줄. 힌트: re.findall(r"^\\s*\\d+[.)]\\s*(.+)$", text, re.M)
     """
-    raise NotImplementedError("TODO(W5): parse_steps() 를 구현하세요")
+    raise NotImplementedError("TODO(W7): parse_steps() 를 구현하세요")
 
 
 def make_plan(question: str, llm_fn=None) -> list[str]:
@@ -52,6 +52,6 @@ def run_plan(question: str, plan: list[str] | None = None, llm_fn=None, verbose:
       (앞 단계 결과가 뒤 단계의 재료 — 이게 없으면 계획이 무의미)
     - notes 형식 예: "1. <step>: <result>" 줄들의 누적.
 
-    TODO(W5): 7~10줄.
+    TODO(W7): 7~10줄.
     """
-    raise NotImplementedError("TODO(W5): run_plan() 을 구현하세요")
+    raise NotImplementedError("TODO(W7): run_plan() 을 구현하세요")

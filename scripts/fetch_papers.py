@@ -5,23 +5,23 @@ OUT = "/workspace/BALAB_Prof/Lecture_STML_2026/papers"
 os.makedirs(OUT, exist_ok=True)
 
 # (week, required?, slug, arxiv_id, expected keyword substring in real title [lowercase])
-# 흐름: MS ai-agents-for-beginners + Berkeley LLM Agents 재구성 (docs/syllabus.md 참고)
+# 순서: 개념 의존성 기준 v4 재조정 (docs/syllabus.md 참고)
 PAPERS = [
- (2,True ,"ReAct","2210.03629","react"),
  (2,True ,"Chain-of-Thought","2201.11903","chain-of-thought prompting elicits"),
- (3,True ,"STaR","2203.14465","bootstrapping reasoning"),
- (3,True ,"DeepSeek-R1","2501.12948","incentivizing reasoning"),
- (4,True ,"Toolformer","2302.04761","toolformer"),
- (4,True ,"ToolLLM","2307.16789","toolllm"),
- (4,False,"opt-ReTool","2504.11536","retool"),
- (5,True ,"Tree-of-Thoughts","2305.10601","tree of thoughts"),
- (5,True ,"ReWOO","2305.18323","decoupling reasoning from observations"),
- (6,True ,"Reflexion","2303.11366","reflexion"),
- (6,True ,"Self-Refine","2303.17651","self-refine"),
- (7,True ,"RAG-Lewis","2005.11401","retrieval-augmented generation for knowledge-intensive"),
- (7,True ,"HyDE","2212.10496","precise zero-shot dense retrieval"),
- (8,True ,"Self-RAG","2310.11511","self-rag"),
- (8,True ,"Adaptive-RAG","2403.14403","adaptive-rag"),
+ (3,True ,"Toolformer","2302.04761","toolformer"),
+ (3,True ,"ToolLLM","2307.16789","toolllm"),
+ (3,False,"opt-ReTool","2504.11536","retool"),
+ (4,True ,"ReAct","2210.03629","react"),
+ (4,True ,"DeepSeek-R1","2501.12948","incentivizing reasoning"),
+ (4,False,"opt-STaR","2203.14465","bootstrapping reasoning"),
+ (5,True ,"RAG-Lewis","2005.11401","retrieval-augmented generation for knowledge-intensive"),
+ (5,True ,"HyDE","2212.10496","precise zero-shot dense retrieval"),
+ (6,True ,"Adaptive-RAG","2403.14403","adaptive-rag"),
+ (6,True ,"Self-RAG","2310.11511","self-rag"),
+ (7,True ,"Tree-of-Thoughts","2305.10601","tree of thoughts"),
+ (7,True ,"ReWOO","2305.18323","decoupling reasoning from observations"),
+ (8,True ,"Reflexion","2303.11366","reflexion"),
+ (8,True ,"Self-Refine","2303.17651","self-refine"),
  (9,True ,"Lost-in-the-Middle","2307.03172","lost in the middle"),
  (9,True ,"LLMLingua","2310.05736","llmlingua"),
  (9,False,"opt-Agentic-Context-Engineering","2510.04618","agentic context engineering"),

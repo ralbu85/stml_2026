@@ -1,4 +1,4 @@
-"""W7 — 검색기 📦 (최종 앱의 심장): 청킹 → 임베딩 → 코사인 top-k.
+"""W5 — 검색기 📦 (최종 앱의 중심 부품): 청킹 → 임베딩 → 코사인 top-k.
 
 기본 임베딩은 hash_embed(문자 n-gram 해싱) — 오프라인·의존성 0으로 배관을
 검증하기 위한 것이다. 의미 검색 품질이 필요하면 embed_fn에 임베딩 API
@@ -42,10 +42,10 @@ def cosine_topk(query_vec: np.ndarray, doc_vecs: np.ndarray, k: int = 3) -> list
     doc_vecs: (N, D) 행렬. 학기 유일의 수식이 이 함수다:
         cos(q, d) = q·d / (|q||d|)
 
-    TODO(W7): 4~6줄.
+    TODO(W5): 4~6줄.
       힌트: 분모 0 방지엔 아주 작은 수(1e-9)를 더한다. np.argsort(-sims)[:k].
     """
-    raise NotImplementedError("TODO(W7): cosine_topk() 를 구현하세요")
+    raise NotImplementedError("TODO(W5): cosine_topk() 를 구현하세요")
 
 
 class Retriever:
@@ -67,6 +67,6 @@ class Retriever:
     def query(self, question: str, k: int = 3) -> list[str]:
         """질문과 가장 가까운 청크 k개를 반환한다 — 질의 단계.
 
-        TODO(W7): 2~3줄. 질문을 임베딩 → cosine_topk → 해당 청크 리스트.
+        TODO(W5): 2~3줄. 질문을 임베딩 → cosine_topk → 해당 청크 리스트.
         """
-        raise NotImplementedError("TODO(W7): Retriever.query() 를 구현하세요")
+        raise NotImplementedError("TODO(W5): Retriever.query() 를 구현하세요")

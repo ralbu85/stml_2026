@@ -1,34 +1,36 @@
-"""W7 오프라인 테스트 — retriever. 실행: pytest tests/test_week07.py -v"""
+"""W7 오프라인 테스트 — planner. 실행: pytest tests/test_week07.py -v"""
 
-import numpy as np
-
-from docqa.retriever import Retriever, chunk_text, cosine_topk
+from docqa.planner import parse_steps, run_plan
 
 
-def test_chunk_overlap():
-    chunks = chunk_text("a" * 1000, size=400, overlap=80)
-    assert len(chunks) >= 3
-    assert all(len(c) <= 400 for c in chunks)
+def test_parse_numbered_dots():
+    assert parse_steps("1. 검색한다\n2. 종합한다") == ["검색한다", "종합한다"]
 
 
-def test_cosine_topk_orders_by_similarity():
-    q = np.array([1.0, 0.0])
-    docs = np.array([[0.0, 1.0],    # 직교 (유사도 0)
-                     [1.0, 0.0],    # 동일 방향 (유사도 1)
-                     [1.0, 1.0]])   # 45도
-    assert cosine_topk(q, docs, k=2) == [1, 2]
+def test_parse_numbered_parens_and_indent():
+    assert parse_steps("  1) A\n  2) B\n  3) C") == ["A", "B", "C"]
 
 
-def test_cosine_topk_ignores_magnitude():
-    q = np.array([1.0, 0.0])
-    docs = np.array([[100.0, 0.0], [0.9, 0.1]])
-    assert cosine_topk(q, docs, k=1) == [0]  # 길이가 아니라 방향
+def test_parse_fallback_whole_text():
+    assert parse_steps("그냥 바로 답한다") == ["그냥 바로 답한다"]
 
 
-def test_retriever_finds_relevant_chunk():
-    r = Retriever()  # 기본 hash_embed — 오프라인
-    r.add("ReAct는 추론과 행동을 교차시키는 프롬프트 기법이다. " * 5)
-    r.add("김치찌개 레시피: 돼지고기와 묵은지를 볶는다. " * 5)
-    r.build()
-    top = r.query("ReAct 프롬프트 기법", k=1)
-    assert "ReAct" in top[0]
+def test_run_plan_returns_last_step_output():
+    plan = ["ReAct 논문의 벤치마크를 찾는다", "종합해 최종 답을 쓴다"]
+    outs = iter(["HotpotQA와 ALFWorld", "최종: HotpotQA·ALFWorld에서 평가했다"])
+    fake_llm = lambda messages: next(outs)
+    result = run_plan("ReAct는 어디서 평가됐나?", plan=plan, llm_fn=fake_llm, verbose=False)
+    assert result == "최종: HotpotQA·ALFWorld에서 평가했다"
+
+
+def test_run_plan_passes_notes_forward():
+    """2번째 단계 프롬프트에 1번째 단계의 결과가 들어 있어야 한다."""
+    plan = ["단계A", "단계B"]
+    prompts = []
+
+    def fake_llm(messages):
+        prompts.append(messages[-1]["content"])
+        return f"결과{len(prompts)}"
+
+    run_plan("q", plan=plan, llm_fn=fake_llm, verbose=False)
+    assert "결과1" in prompts[1]  # 앞 결과가 뒤 단계의 재료

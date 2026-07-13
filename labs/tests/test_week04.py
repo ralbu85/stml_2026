@@ -1,13 +1,14 @@
-"""W4 오프라인 테스트 — API 키 불필요.
+"""W4 오프라인 테스트 — API 키 불필요 (가짜 LLM 주입).
 
-W4 빈칸: tools.run_tool() · tools.calculator()
+W4 빈칸: loop.parse_step()
 실행: pytest tests/test_week04.py -v
+후반 테스트는 W3의 tools.py(run_tool·calculator)가 완성되어 있어야 통과한다.
 """
 
 import pytest
 
 from docqa import tools
-from docqa.loop import react_loop
+from docqa.loop import parse_step, react_loop
 
 
 @pytest.fixture(autouse=True)
@@ -18,55 +19,60 @@ def clean_registry():
     tools.TOOLS.clear()
 
 
-# ── run_tool: 에러도 Observation이다 ────────────────────────
+# ── parse_step ──────────────────────────────────────────────
 
-def test_run_tool_calls_registered_fn():
-    tools.register("echo", "그대로 돌려준다", lambda x: f"echo: {x}")
-    assert tools.run_tool("echo", "hi") == "echo: hi"
-
-
-def test_run_tool_unknown_lists_available():
-    tools.register("calculator", "계산", lambda x: x)
-    obs = tools.run_tool("calculater", "1+1")  # 모델이 낸 오타
-    assert "calculater" in obs and "calculator" in obs  # 가용 목록을 알려줘야 모델이 고친다
+def test_parse_final_answer():
+    out = "Thought: 계산이 끝났다.\nFinal Answer: 42"
+    assert parse_step(out) == ("final", "42")
 
 
-def test_run_tool_wraps_exceptions():
-    def boom(x):
-        raise RuntimeError("연결 실패")
-    tools.register("flaky", "가끔 죽는 도구", boom)
-    obs = tools.run_tool("flaky", "x")       # 예외가 밖으로 나오면 루프가 죽는다
-    assert "오류" in obs and "연결 실패" in obs
+def test_parse_action_json():
+    out = 'Thought: 계산기가 필요하다.\nAction: {"tool": "calculator", "input": "400/1400"}'
+    assert parse_step(out) == ("action", "calculator", "400/1400")
 
 
-def test_run_tool_truncates_long_output():
-    tools.register("dump", "장문 출력", lambda x: "x" * 10_000)
-    obs = tools.run_tool("dump", "")
-    assert len(obs) <= tools.OBS_MAX_CHARS + 20
-    assert "잘림" in obs
+def test_parse_neither_on_free_text():
+    kind, _ = parse_step("음... 잘 모르겠는데요.")
+    assert kind == "neither"
 
 
-# ── calculator ──────────────────────────────────────────────
-
-def test_calculator_precedence():
-    assert tools.calculator("2+3*4") == "14"
-
-
-def test_calculator_float():
-    assert tools.calculator("400/1400").startswith("0.2857")
+def test_parse_broken_json_is_neither():
+    kind, _ = parse_step('Action: {"tool": calculator}')  # 따옴표 없는 JSON
+    assert kind == "neither"
 
 
-def test_calculator_integer_valued_division():
-    assert tools.calculator("10/2") == "5"  # 5.0이 아니라 5
+# ── react_loop ──────────────────────────────────────────────
+
+def test_loop_reaches_final_answer():
+    script = iter([
+        'Thought: 도구를 써 보자.\nAction: {"tool": "calculator", "input": "1+1"}',
+        "Thought: 등록된 도구가 없으니 직접 답한다.\nFinal Answer: 2",
+    ])
+    fake_llm = lambda messages: next(script)
+    assert react_loop("1+1은?", llm_fn=fake_llm, verbose=False) == "2"
 
 
-def test_calculator_rejects_code_via_run_tool():
-    tools.register_defaults()
-    obs = tools.run_tool("calculator", "__import__('os').system('ls')")
-    assert "오류" in obs  # 실행되지 않고 관찰로 돌아온다
+def test_loop_feeds_observation_back():
+    """행동 다음 턴의 user 메시지가 Observation: 으로 시작해야 한다."""
+    last_user = []
+
+    def fake_llm(messages):
+        last_user.append(messages[-1]["content"])
+        if len(last_user) == 1:
+            return 'Action: {"tool": "search", "input": "ktx"}'
+        return "Final Answer: ok"
+
+    react_loop("q", llm_fn=fake_llm, verbose=False)
+    assert last_user[1].startswith("Observation:")
 
 
-# ── 루프 통합: 계산기를 실제로 호출해 답한다 ────────────────
+def test_loop_stops_at_max_steps():
+    fake_llm = lambda messages: "Thought: 계속 생각만 한다."  # 영원히 답 없음
+    result = react_loop("q", llm_fn=fake_llm, max_steps=3, verbose=False)
+    assert "최대 스텝" in result
+
+
+# ── 루프 × 도구 결합: 첫 완전한 에이전트 ────────────────────
 
 def test_loop_calls_calculator_end_to_end():
     tools.register_defaults()
@@ -93,4 +99,4 @@ def test_loop_system_prompt_lists_tools():
         return "Final Answer: ok"
 
     react_loop("q", llm_fn=fake_llm, verbose=False)
-    assert "calculator" in captured["system"]  # 파이프라인 ①: 도구를 모델에게 알렸다
+    assert "calculator" in captured["system"]  # W3 파이프라인 ①: 도구를 모델에게 알렸다

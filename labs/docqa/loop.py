@@ -1,4 +1,4 @@
-"""W2 — ReAct 제어 루프 (하네스의 최소 형태).
+"""W4 — ReAct 제어 루프 (하네스의 최소 형태).
 
 모델에게 매 턴 아래 형식을 강제하고, 하네스(우리 코드)가 Observation을 채워
 다시 모델에게 보내는 while 루프가 에이전트의 뼈대다.
@@ -9,7 +9,8 @@
     Thought: <추론>
     Final Answer: <답>                                ← 답을 확정할 때
 
-W2에는 아직 도구가 없다(dispatch가 자리만 지킨다). W4의 tools.py가 그 자리를 채운다.
+Action의 실행은 W3에서 만든 tools.py 레지스트리가 담당한다.
+추론(W2)과 도구(W3)가 이 루프에서 결합해 첫 완전한 에이전트가 된다.
 """
 
 import json
@@ -37,20 +38,20 @@ def parse_step(text: str):
         ("action", 도구이름, 입력문자열)  — "Action:" 뒤 JSON 객체가 파싱되면
         ("neither", 원문)                 — 둘 다 아니거나 JSON이 깨졌으면
 
-    TODO(W2): 8~12줄.
+    TODO(W4): 8~12줄.
       힌트 1) re.search(r"Final Answer:\\s*(.+)", text, re.S) — 답은 .strip() 해서 반환.
       힌트 2) re.search(r"Action:\\s*(\\{.*?\\})", text, re.S) 로 JSON 부분을 뽑아
               json.loads() → obj["tool"], obj["input"].
       힌트 3) json.JSONDecodeError 가 나면 ("neither", text).
     """
-    raise NotImplementedError("TODO(W2): parse_step() 을 구현하세요")
+    raise NotImplementedError("TODO(W4): parse_step() 을 구현하세요")
 
 
 def dispatch(tool: str, tool_input: str) -> str:
-    """도구 실행 자리. (제공됨)
+    """도구 실행. (제공됨)
 
-    W4부터: tools.py 레지스트리에 등록된 도구가 있으면 실제로 실행한다.
-    등록된 게 없으면(W2 상태) 예전 스텁 그대로.
+    W3의 tools.py 레지스트리에 등록된 도구를 실행한다.
+    등록 전에 호출되면 스텁 문구를 관찰로 돌려준다.
     """
     from . import tools
     if tools.TOOLS:
@@ -73,7 +74,7 @@ def react_loop(question: str, llm_fn=None, max_steps: int = 5, verbose: bool = T
 
     from . import tools
     system = SYSTEM_PROMPT
-    if tools.TOOLS:  # W4부터: 등록된 도구 목록을 모델에게 알린다 (파이프라인 ①)
+    if tools.TOOLS:  # 등록된 도구 목록을 모델에게 알린다 (W3 파이프라인 ①)
         system += "\n\n" + tools.tool_list_prompt()
 
     messages = [

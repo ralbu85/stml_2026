@@ -1,43 +1,48 @@
-"""W6 오프라인 테스트 — reflect. 실행: pytest tests/test_week06.py -v"""
+"""W6 오프라인 테스트 — 검색을 도구로. 실행: pytest tests/test_week06.py -v"""
 
-from docqa.reflect import reflect_retry
+import pytest
 
-
-def _verify_equals(expected):
-    def verify(answer):
-        ok = answer.strip() == expected
-        return ok, "" if ok else f"오답. 기대값과 다르다 (힌트: 숫자만 답하라)"
-    return verify
+from docqa import tools
 
 
-def test_pass_on_first_try():
-    answer_fn = lambda q, fb, prev: "42"
-    ans, attempts = reflect_retry("q", answer_fn, _verify_equals("42"), verbose=False)
-    assert ans == "42" and attempts == 1
+class FakeRetriever:
+    def query(self, q, k=3):
+        return [f"청크1({q})", "청크2", "청크3"][:k]
 
 
-def test_retry_with_feedback_fixes_answer():
-    def answer_fn(q, feedback, prev):
-        return "정답은 42입니다" if feedback is None else "42"  # 피드백 받으면 형식 교정
-    ans, attempts = reflect_retry("q", answer_fn, _verify_equals("42"), verbose=False)
-    assert ans == "42" and attempts == 2
+@pytest.fixture(autouse=True)
+def clean_registry():
+    tools.TOOLS.clear()
+    yield
+    tools.TOOLS.clear()
 
 
-def test_feedback_and_prev_answer_are_passed():
-    seen = []
-
-    def answer_fn(q, feedback, prev):
-        seen.append((feedback, prev))
-        return "wrong"
-
-    reflect_retry("q", answer_fn, _verify_equals("42"), max_retries=2, verbose=False)
-    assert seen[0] == (None, None)          # 첫 시도
-    assert seen[1][0] and seen[1][1] == "wrong"  # 재시도엔 피드백+이전 답
+def test_search_tool_registered():
+    tools.register_search(FakeRetriever())
+    assert "search_papers" in tools.TOOLS
 
 
-def test_gives_up_after_budget():
-    calls = []
-    answer_fn = lambda q, fb, prev: (calls.append(1), "wrong")[1]
-    ans, attempts = reflect_retry("q", answer_fn, _verify_equals("42"), max_retries=3, verbose=False)
-    assert ans == "wrong"                    # 예외 없이 마지막 답 반환
-    assert len(calls) == 4                   # 첫 시도 1 + 재시도 3
+def test_search_tool_returns_joined_chunks():
+    tools.register_search(FakeRetriever())
+    obs = tools.run_tool("search_papers", "ReAct 결과")
+    assert "청크1(ReAct 결과)" in obs and "---" in obs
+
+
+def test_description_says_when_not_to_use():
+    """도구 정의가 곧 프롬프트 — '안 쓰나'까지 적었는지 (W3 체크리스트)."""
+    tools.register_search(FakeRetriever())
+    desc = tools.TOOLS["search_papers"]["description"]
+    assert any(w in desc for w in ["안 쓰", "사용 금지", "쓰지 마"])
+
+
+def test_loop_system_prompt_includes_search(monkeypatch):
+    from docqa.loop import react_loop
+    tools.register_search(FakeRetriever())
+    captured = {}
+
+    def fake_llm(messages):
+        captured["system"] = messages[0]["content"]
+        return "Final Answer: ok"
+
+    react_loop("q", llm_fn=fake_llm, verbose=False)
+    assert "search_papers" in captured["system"]

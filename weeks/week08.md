@@ -1,36 +1,36 @@
-# Week 08. 에이전틱 RAG + 프로토콜 (MCP)
+# Week 08. 자기반성·메타인지 (Reflection)
 
-> **Part:** 지식·컨텍스트·기억 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 단일 에이전트 고도화 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-검색을 전처리가 아닌 **'도구'로 바꾸는 에이전틱 RAG**와 **MCP**. 이론에서 능동 검색(adaptive/self)과 프로토콜을 다루고, 실습에서 검색을 도구로 노출해 단계별 호출하게 개조한다 *(최종 프로젝트 부품 2)*. Self-RAG·Adaptive-RAG.
+자기 출력을 스스로 고치는 **반성·메타인지**. 계획(W7)을 세워도 첫 시도는 틀린다 — 이론에서 생성→비평→개선 루프와 **언어 피드백이 gradient 없이 작동하는 원리**를 다루고, 실습에서 검색 실패→피드백→재시도를 루프에 붙인다. Reflexion·Self-Refine.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Code Execution with MCP* · MS05·11
+Anthropic — *Demystifying Evals for AI Agents* · MS09
 
 ## 📄 발표 논문
-#### 🟡🔴 Self-RAG: Learning to Retrieve, Generate, and Critique
-- **출처:** Asai et al., ICLR 2024 · arXiv:2310.11511
-- **발표 필수:** reflection token으로 검색 여부·품질을 스스로 판단
-- **선택 심화:** critic 학습, segment beam search
-- **PDF:** [`W08_Self-RAG_2310.11511.pdf`](../papers/W08_Self-RAG_2310.11511.pdf)
+#### 🟡 Reflexion: Language Agents with Verbal RL
+- **출처:** Shinn et al., NeurIPS 2023 · arXiv:2303.11366
+- **발표 필수:** 언어 피드백이 gradient 없이 학습되는 메커니즘
+- **선택 심화:** actor-evaluator-reflection 구조
+- **PDF:** [`W08_Reflexion_2303.11366.pdf`](../papers/W08_Reflexion_2303.11366.pdf)
 
-#### 🟡 Adaptive-RAG: Adapting Retrieval to Query Complexity
-- **출처:** Jeong et al., NAACL 2024 · arXiv:2403.14403
-- **발표 필수:** 질의 난이도에 따라 검색 전략을 바꾸는 에이전틱 구조
-- **선택 심화:** complexity classifier
-- **PDF:** [`W08_Adaptive-RAG_2403.14403.pdf`](../papers/W08_Adaptive-RAG_2403.14403.pdf)
+#### 🟢 Self-Refine: Iterative Refinement with Self-Feedback
+- **출처:** Madaan et al., NeurIPS 2023 · arXiv:2303.17651
+- **발표 필수:** 단일 모델의 생성→비평→개선 반복
+- **선택 심화:** 과제별 개선 폭, 피드백 프롬프트 설계
+- **PDF:** [`W08_Self-Refine_2303.17651.pdf`](../papers/W08_Self-Refine_2303.17651.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-RAG를 도구로 만들면 무엇이 좋아지고 무엇이 어려워지나?
+자기반성은 진짜 개선인가, 아니면 같은 오류의 반복인가?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 검색을 '도구'로 노출하고 에이전트가 단계별로 호출하게 개조 *(최종 프로젝트 부품 2)*
+*이번 주 주제:* 검색 실패→언어 피드백→재시도 루프를 ReAct에 추가
 
-**개조:** `retriever`를 `tools.py`에 **검색 도구**로 등록 → 필요할 때만 검색. 📦 *최종 부품*
-> ✅ **완료:** 상식 질문은 검색 안 하고 문서 질문만 검색한다.
+**추가 모듈:** `reflect.py` — 검증 실패 시 언어 피드백을 붙여 재시도(최대 k회). 피드백 소스는 검색 품질·도구 에러.
+> ✅ **완료:** 처음 틀린 답을 재시도로 고친다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

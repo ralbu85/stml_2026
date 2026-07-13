@@ -13,7 +13,7 @@
 
 1. **스캐폴드 + TODO** — 매주 뼈대 코드(시그니처·테스트·데이터)를 제공. 학생은 핵심 함수만 채운다. *(빈칸 채우기, 백지 아님)*
 2. **주차별 체크포인트** — 각 주 시작 시 `checkpoints/weekNN/` 참조 구현을 받을 수 있다. **전주 실패가 다음주를 막지 않는다**(주차 간 디커플링).
-3. **최소 의존성** — LLM SDK + `numpy`(코사인 유사도) 중심. 무거운 벡터DB·LangGraph는 필요한 주(7·11)에만.
+3. **최소 의존성** — LLM SDK + `numpy`(코사인 유사도) 중심. 무거운 벡터DB·LangGraph는 필요한 주(5·11)에만.
 4. **명확한 완료 기준** — 매주 "이 쿼리가 되면 끝" 데모 또는 통과 테스트 1개. 추가 코드 분량 **~30–80줄/주**.
 
 ## 성장하는 아키텍처
@@ -21,12 +21,12 @@
 ```
 docqa/
   llm.py         # LLM 호출 래퍼            (W1)
-  loop.py        # ReAct 제어 루프          (W2)
-  reasoning.py   # self-consistency         (W3)
-  tools.py       # 도구 레지스트리·실행     (W4) → 검색도구 등록 (W8)
-  planner.py     # 계획 분해                (W5)
-  reflect.py     # 재시도·자기반성          (W6)
-  retriever.py   # 임베딩·검색              (W7)
+  reasoning.py   # CoT·self-consistency     (W2)
+  tools.py       # 도구 레지스트리·실행     (W3) → 검색도구 등록 (W6)
+  loop.py        # ReAct 제어 루프          (W4)
+  retriever.py   # 임베딩·검색              (W5)
+  planner.py     # 계획 분해                (W7)
+  reflect.py     # 재시도·자기반성          (W8)
   context.py     # 컨텍스트 예산·압축       (W9)
   memory.py      # 단기·장기 메모리         (W10)
   graph.py       # LangGraph 재구현         (W11)
@@ -58,7 +58,7 @@ checkpoints/weekNN/   # 주차별 참조 구현(뒤처진 학생용)
 
 - **왜:** `provider:model` 문자열 하나로 OpenAI·Anthropic·Google·**Ollama(로컬·무료)** 를 교체. 학생마다 API 사정이 달라도 코드 동일 → 접근성 ↑.
 - **from-scratch 유지:** aisuite는 **provider 호출 배관만** 감싼다. 에이전트 로직(루프·도구·메모리)은 학생이 직접 구현하므로 철학과 충돌 없음.
-- **주의:** aisuite의 **Agents/tools 레이어는 사용하지 않는다**(그건 W4에서 학생이 직접 만들 부분). **Chat Completions 계층만** 사용.
+- **주의:** aisuite의 **Agents/tools 레이어는 사용하지 않는다**(그건 W3에서 학생이 직접 만들 부분). **Chat Completions 계층만** 사용.
 - **W1 순서:** 원시 provider API를 1회 호출해 내부를 본 뒤 → aisuite로 감싼다.
 
 ## 주차별 빌드 (📦 = 최종 앱 핵심 부품)
@@ -66,13 +66,13 @@ checkpoints/weekNN/   # 주차별 참조 구현(뒤처진 학생용)
 | 주 | 추가 모듈 | 하는 일 | ✅ 완료 기준 |
 |---|---|---|---|
 | 1 | `llm.py` | 환경 세팅 + 원시 API 1회 → aisuite 래퍼 | 원시 HTTP·래퍼 양쪽으로 호출 성공 |
-| 2 | `loop.py` | ReAct while 루프 골격 | 루프가 한 바퀴 돌아 답 |
-| 3 | `reasoning.py` | self-consistency(N샘플 다수결) | 애매한 질문 정확도 ↑ |
-| 4 | `tools.py` | 도구 등록·파싱·실행(계산기 등) | 루프가 계산기 도구를 실제 호출 |
-| 5 | `planner.py` | 질문→하위 단계 분해·실행 | 2단계 질문을 계획대로 처리 |
-| 6 | `reflect.py` | 실패→피드백→재시도 | 처음 틀린 답을 재시도로 교정 |
-| 7 | `retriever.py` 📦 | 논문 청킹→임베딩→코사인 top-k | 논문 속 사실을 물으면 관련 청크로 답 |
-| 8 | (retriever→도구) 📦 | 검색을 도구로, 필요시만 호출 | 상식은 검색 안 함 / 논문질문만 검색 |
+| 2 | `reasoning.py` | CoT 프롬프트 + self-consistency(N샘플 다수결) | 애매한 질문 정확도 ↑ |
+| 3 | `tools.py` | 도구 등록·파싱·실행(계산기 등) | 스키마→호출→결과 재주입 왕복 성공 |
+| 4 | `loop.py` | ReAct while 루프 — W3 레지스트리 호출 + 미니 evalset | 루프가 계산기 도구를 실제 호출해 답 |
+| 5 | `retriever.py` 📦 | 논문 청킹→임베딩→코사인 top-k | 논문 속 사실을 물으면 관련 청크로 답 |
+| 6 | (retriever→도구) 📦 | 검색을 도구로, 필요시만 호출 | 상식은 검색 안 함 / 논문질문만 검색 |
+| 7 | `planner.py` | 멀티홉 질문→하위 단계 분해·실행 | 2단계 검색 질문을 계획대로 처리 |
+| 8 | `reflect.py` | 검색 실패→피드백→재시도 | 처음 틀린 답을 재시도로 교정 |
 | 9 | `context.py` | 토큰 예산·정렬·압축 | 논문 많아도 예산 내 품질 유지 |
 | 10 | `memory.py` 📦 | 단기+장기 메모리 | 이전 세션 정보를 다음 세션에서 기억 |
 | 11 | `graph.py` | LangGraph 재구현·비교 | from-scratch와 동일 동작을 그래프로 |
@@ -85,7 +85,7 @@ checkpoints/weekNN/   # 주차별 참조 구현(뒤처진 학생용)
 ## 스택 / 준비물
 
 - **Python 3.10+**, **`aisuite`**(통합 LLM 래퍼, 키 없으면 Ollama 로컬), `numpy`
-- 7주부터: 임베딩 API (또는 `sentence-transformers` 로컬)
+- 5주부터: 임베딩 API (또는 `sentence-transformers` 로컬)
 - 11주: `langgraph` (여기서부터 빌드 베이스) · 12주: `requests`/`beautifulsoup4`
 - `requirements.txt`는 스캐폴드에 포함 예정. API 키는 `.env`(gitignore).
 
@@ -95,4 +95,4 @@ checkpoints/weekNN/   # 주차별 참조 구현(뒤처진 학생용)
 - 교수는 `checkpoints/`에 참조 구현을 유지, 각 주 끝에 공개.
 - 최종 과제 = 이 저장소 + `eval/harness.py` 점수 + 발표([발표 가이드](presentation-guide.md)).
 
-> 스캐폴드는 [`labs/`](../labs/)에서 제작 중 — **W1–W4 완료**(빈칸 + 오프라인 테스트(가짜 LLM, 키 불필요) + 체크포인트 참조 구현). W5부터는 해당 주 덱과 함께 한 세트로 추가한다.
+> 스캐폴드는 [`labs/`](../labs/)에서 제작 중 — **W1–W4 완료**(빈칸 + 오프라인 테스트(가짜 LLM, 키 불필요) + 체크포인트 참조 구현), 2026-07 개념 순서 재조정에 맞춰 주차 재배치. W5부터는 해당 주 덱과 함께 한 세트로 추가한다.

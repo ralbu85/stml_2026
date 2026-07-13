@@ -1,42 +1,42 @@
-# Week 04. 도구 사용 (Tool Use)
+# Week 04. 에이전트 루프 (ReAct)
 
-> **Part:** 핵심 디자인 패턴 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 부품에서 루프까지 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트가 외부 세계와 만나는 통로인 **도구**. 이론에서 함수 호출·스키마·에러 설계와 **도구 절벽**을 다루고, 실습에서 도구 레지스트리·파싱·실행을 직접 만든다. Toolformer·ToolLLM.
+추론(W2)과 도구(W3)를 하나의 제어 루프로 결합하는 주. 이론에서 그냥 묻기→CoT→Act-only→**ReAct의 추론–행동–관찰 루프** 계보를 다루고 트레이스를 라이브로 읽는다. 실습에서 그 루프를 while 문으로 직접 구현해 **첫 완전한 에이전트**를 완성하고, 이후 매주 쓰는 **미니 evalset**(5문항)을 시작한다. ReAct·DeepSeek-R1. R1 발표는 RL 사전 지식을 가정하지 않는다 — 발표 필수는 보상 서사의 큰 그림까지.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Writing Effective Tools for Agents* · MS04
+Lilian Weng — *LLM Powered Autonomous Agents* · Berkeley 에이전트 역사 강의
 
 ## 📄 발표 논문
-#### 🟡 Toolformer: LMs Can Teach Themselves to Use Tools
-- **출처:** Schick et al., NeurIPS 2023 · arXiv:2302.04761
-- **발표 필수:** self-supervised로 API 호출 위치를 학습하는 방식
-- **선택 심화:** 호출 필터링 손실, 데이터 파이프라인
-- **PDF:** [`W04_Toolformer_2302.04761.pdf`](../papers/W04_Toolformer_2302.04761.pdf)
+#### 🟢 ReAct: Synergizing Reasoning and Acting in LLMs
+- **출처:** Yao et al., ICLR 2023 · arXiv:2210.03629
+- **발표 필수:** Think–Act–Observe 루프 구조와 추론·행동을 엮는 이유
+- **선택 심화:** HotpotQA·ALFWorld 셋업
+- **PDF:** [`W04_ReAct_2210.03629.pdf`](../papers/W04_ReAct_2210.03629.pdf)
 
-#### 🟡 ToolLLM: Mastering 16000+ Real-world APIs
-- **출처:** Qin et al., ICLR 2024 · arXiv:2307.16789
-- **발표 필수:** 대규모 실세계 API 학습 프레임과 DFSDT 탐색
-- **선택 심화:** ToolBench 구축, pass/win rate
-- **PDF:** [`W04_ToolLLM_2307.16789.pdf`](../papers/W04_ToolLLM_2307.16789.pdf)
+#### 🟡 DeepSeek-R1: Incentivizing Reasoning via RL
+- **출처:** DeepSeek-AI, 2025 · arXiv:2501.12948
+- **발표 필수:** 순수 RL로 추론이 창발하는 큰 그림('aha moment')과 추론 모델이 루프 설계에 미치는 영향
+- **선택 심화:** GRPO, cold-start 데이터
+- **PDF:** [`W04_DeepSeek-R1_2501.12948.pdf`](../papers/W04_DeepSeek-R1_2501.12948.pdf)
 
-#### 🔴 ReTool: RL for Strategic Tool Use (선택읽기·RL 보강) *(선택읽기)*
-- **출처:** 2025 · arXiv:2504.11536
-- **발표 필수:** 도구 사용 시점·방법을 RL로 최적화하는 핵심 직관
-- **선택 심화:** 코드 인터프리터 통합, outcome 보상
-- **PDF:** [`W04_opt-ReTool_2504.11536.pdf`](../papers/W04_opt-ReTool_2504.11536.pdf)
+#### 🟡 STaR: Self-Taught Reasoner (선택읽기·추론 학습 계보) *(선택읽기)*
+- **출처:** Zelikman et al., NeurIPS 2022 · arXiv:2203.14465
+- **발표 필수:** 스스로 만든 추론으로 추론을 부트스트랩하는 아이디어
+- **선택 심화:** rationalization 트릭
+- **PDF:** [`W04_opt-STaR_2203.14465.pdf`](../papers/W04_opt-STaR_2203.14465.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-도구가 많아질수록 좋은가? 도구 절벽(tool cliff)이 생기는 이유는?
+CoT 없는 ReAct는 가능한가? 추론과 행동을 섞으면 왜 둘 다 좋아지나?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 도구 레지스트리·파싱·실행 직접 구현 (계산기·검색 함수)
+*이번 주 주제:* ReAct(Thought→Action→Observation) while 루프 직접 구현 — W3 도구 레지스트리 위에서 + 미니 evalset
 
-**추가 모듈:** `tools.py` — 도구 등록(dict)·JSON 액션 파싱·실행(계산기·문자열검색).
-> ✅ **완료:** 루프가 계산기 도구를 실제로 호출해 답한다.
+**추가 모듈:** `loop.py` — ReAct while 루프 골격. W3의 `tools.py` 레지스트리를 호출한다. + 미니 evalset 5문항.
+> ✅ **완료:** 루프가 계산기 도구를 실제로 호출해 답하고, 미니 evalset 결과가 기록된다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

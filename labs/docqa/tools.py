@@ -1,9 +1,10 @@
-"""W4 — 도구 레지스트리·실행.
+"""W3 — 도구 레지스트리·실행.
 
-W2에서 `loop.py`의 `dispatch()`가 지키던 빈자리를 오늘 채운다.
-레지스트리는 그냥 dict다 — 이름 → (함수, 설명).
+스키마 제공 → 호출 의도 출력 → 파싱 → 실행 → 결과 재주입의 단발 왕복을
+오늘 완성한다. 다음 주(W4)의 ReAct 루프가 이 레지스트리를 반복 호출한다.
+레지스트리는 dict 하나다 — 이름 → (함수, 설명).
 
-설계 대원칙 (강의 '현장 노트 ②'):
+설계 대원칙 (강의 '현장 노트'):
     **에러도 Observation이다.** 도구가 무슨 짓을 해도 루프는 죽지 않는다.
     없는 도구·깨진 인자·실행 예외 전부 *문자열*로 모델에게 돌려주고,
     모델이 그걸 읽고 다음 수(재시도·다른 도구·포기)를 정하게 한다.
@@ -41,10 +42,10 @@ def run_tool(name: str, tool_input: str) -> str:
       2) 실행 예외  → "(도구 '<name>' 실행 오류: <예외 메시지>)"
       3) 정상 결과  → str(결과), 단 OBS_MAX_CHARS 넘으면 자르고 " ...(잘림)" 붙임
 
-    TODO(W4): 8~12줄.
+    TODO(W3): 8~12줄.
       힌트: TOOLS[name]["fn"](tool_input) 을 try/except Exception 으로 감싼다.
     """
-    raise NotImplementedError("TODO(W4): run_tool() 을 구현하세요")
+    raise NotImplementedError("TODO(W3): run_tool() 을 구현하세요")
 
 
 # ── 기본 도구 1: 계산기 ─────────────────────────────────────
@@ -82,12 +83,12 @@ def calculator(expression: str) -> str:
       (힌트: float인데 .is_integer() 면 int로 바꿔서 str)
     - 잘못된 식이면 예외가 나는데, 잡지 마라 — run_tool() 이 관찰로 바꿔준다.
 
-    TODO(W4): 3~5줄.
+    TODO(W3): 3~5줄.
     """
-    raise NotImplementedError("TODO(W4): calculator() 를 구현하세요")
+    raise NotImplementedError("TODO(W3): calculator() 를 구현하세요")
 
 
-# ── 기본 도구 2: 문서 검색 (원시적 — W7에서 임베딩으로 대체) ──
+# ── 기본 도구 2: 문서 검색 (원시적 — W5에서 임베딩으로 대체) ──
 
 _DOC_PATH = Path(__file__).resolve().parents[1] / "data" / "sample_doc.txt"
 
@@ -96,7 +97,7 @@ def text_search(query: str) -> str:
     """샘플 문서에서 query가 포함된 줄을 찾는다 (최대 3줄). (제공됨)
 
     단순 부분 문자열 매칭 — 동의어·의미 검색이 안 되는 게 보이면 성공.
-    그 갈증이 W7(임베딩 검색)의 동기가 된다.
+    그 갈증이 W5(임베딩 검색)의 동기가 된다.
     """
     query = query.strip()
     if not query:
@@ -106,21 +107,21 @@ def text_search(query: str) -> str:
     return "\n".join(hits) if hits else f"(문서에서 '{query}'를 찾지 못함)"
 
 
-# ── W8: 검색을 도구로 — 두 모듈(retriever·tools)이 처음 만난다 ──
+# ── W6: 검색을 도구로 — 두 모듈(retriever·tools)이 처음 만난다 ──
 
 def register_search(retriever) -> None:
-    """W7의 Retriever를 'search_papers' 도구로 등록한다.
+    """W5의 Retriever를 'search_papers' 도구로 등록한다.
 
     이걸로 "매번 검색"(워크플로우)이 "필요할 때만 검색"(에이전트)이 된다 —
     W1 미니체크 3번의 답. 검색할지 말지는 이제 모델이 description을 읽고 정한다.
 
-    TODO(W8): 4~7줄.
+    TODO(W6): 4~7줄.
       1) fn: 질문 문자열 → retriever.query(q, k=3) 결과를 "\\n---\\n"으로 join.
       2) register("search_papers", <설명>, fn).
          설명에는 반드시 "언제 쓰나"(수업 논문 내용 질문)와
-         "언제 안 쓰나"(일반 상식·계산에는 사용 금지)를 둘 다 적어라 — W4 체크리스트.
+         "언제 안 쓰나"(일반 상식·계산에는 사용 금지)를 둘 다 적어라 — W3 체크리스트.
     """
-    raise NotImplementedError("TODO(W8): register_search() 를 구현하세요")
+    raise NotImplementedError("TODO(W6): register_search() 를 구현하세요")
 
 
 def register_defaults() -> None:

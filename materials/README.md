@@ -14,7 +14,7 @@
 | `repos/llm-agents-mooc/slides/` | UC Berkeley CS294 (MOOC) | **대학원 강의 슬라이드 PDF 28개** | 이론 백본 |
 | `repos/ai-agents-for-beginners/` | Microsoft (MIT) | **12+강 구조화 레슨**(주차와 1:1) | 이론 구성·강의노트 |
 | `repos/agents-course/` | Hugging Face | 유닛형 코스(한국어 `units/ko` 포함) | 이론+실습 |
-| `repos/RAG_Techniques/` | NirDiamant | RAG 노트북 42개 | W6–7 실습·데모 |
+| `repos/RAG_Techniques/` | NirDiamant | RAG 노트북 42개 | W5–6 실습·데모 |
 | `repos/GenAI_Agents/` | NirDiamant | 에이전트 튜토리얼 53개 | 데모·최종프로젝트 예시 |
 | `repos/anthropic-cookbook/` | Anthropic | 도구사용·RAG·에이전트 패턴 | 실습 레시피 |
 | `repos/courses/` | Anthropic | 프롬프트·도구 코스 | 기초 보강 |
@@ -25,7 +25,7 @@
 
 ## 주차별 이론 30분 플랜 (무엇을 강의할지 + 근거 자료)
 
-> ⚠️ **구판 — 옛 주차 순서 기준.** 현행 순서(추론모델 W2, 도구 W3, …)로 재작성한 확정판은
+> ⚠️ **구판 — 옛 주차 순서 기준.** 현행 순서(v4 · 프롬프팅과 추론 W2, 도구 W3, 루프 W4, RAG W5–6, 계획 W7, 반성 W8)로 재작성한 확정판은
 > [`docs/lecture-outlines.md`](../docs/lecture-outlines.md) 참조. 아래 표는 자료 매핑 기록용으로만 남긴다.
 
 | 주 | 이론 30분에 다룰 핵심 개념 | 근거 자료 |

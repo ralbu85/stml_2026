@@ -26,7 +26,7 @@ def fetch_url(url: str, timeout: int = 10) -> str:
 
     규칙:
       1) requests.get(url, headers=USER_AGENT, timeout=timeout)
-      2) resp.raise_for_status()  — 4xx/5xx면 예외 (잡지 마라! W4 run_tool이 관찰로 바꾼다)
+      2) resp.raise_for_status()  — 4xx/5xx면 예외 (잡지 마라! W3 run_tool이 관찰로 바꾼다)
       3) _strip_html(resp.text) 후 MAX_CHARS로 잘라 반환 (넘으면 " ...(잘림)" 붙임)
 
     TODO(W12): 5~7줄.

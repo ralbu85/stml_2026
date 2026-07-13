@@ -1,4 +1,4 @@
-"""W6 — 자기반성 (실패 → 언어 피드백 → 재시도).
+"""W8 — 자기반성 (실패 → 언어 피드백 → 재시도).
 
 핵심 교훈(강의): 순진한 "다시 생각해봐"는 안 된다 — **외부 검증 신호**가
 있을 때만 반성이 작동한다. 그래서 이 모듈은 verify_fn(검증기)을 요구한다.
@@ -28,13 +28,13 @@ def reflect_retry(question: str, answer_fn, verify_fn, max_retries: int = 3, ver
     Returns:
         (최종 답, 시도 횟수)
 
-    TODO(W6): 8~11줄.
+    TODO(W8): 8~11줄.
       1) answer_fn(question, None, None) 으로 첫 답.
       2) verify_fn 통과면 즉시 반환.
       3) 실패면 feedback·이전 답을 넣어 answer_fn 재호출 — 최대 max_retries번.
       4) 끝까지 실패해도 예외 대신 마지막 답 반환.
     """
-    raise NotImplementedError("TODO(W6): reflect_retry() 를 구현하세요")
+    raise NotImplementedError("TODO(W8): reflect_retry() 를 구현하세요")
 
 
 def llm_answer_fn(llm_fn=None):

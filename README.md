@@ -1,13 +1,13 @@
 # 머신러닝 특론 — LLM 에이전트 (2026)
 
-**논문 읽기와 함께 만들기** · 16주 · 주당 논문 2편 발표 + 매주 from-scratch 실습
+**논문 읽기와 함께 만들기** · 16주 · 매주 논문 발표(총 27편) + from-scratch 실습
 **대상:** 부산대/부경대 대학원 · **최종 산출물:** 연구보조 검색·종합 에이전트 (수업 논문 코퍼스 기반 RAG)
 
 매주 3시간: **이론 · 실습 · 논문발표** 병행. 난이도 범례: 🟢 기초 · 🟡 중급 · 🔴 심화
 
 ## 문서
 
-- [`docs/syllabus.md`](docs/syllabus.md) — **강의계획서(현행판)**: MS/Berkeley 흐름 기반 재구성
+- [`docs/syllabus.md`](docs/syllabus.md) — **강의계획서(현행판 v4)**: 개념 의존성 순서 재조정
 - [`docs/presentation-guide.md`](docs/presentation-guide.md) — **논문 발표 가이드**: 시간 배분·템플릿·이해 검증
 - [`docs/practice-guide.md`](docs/practice-guide.md) — **실습 가이드**: 누적 빌드(문서 QA 에이전트) 주차별 설계
 - [`docs/lecture-outlines.md`](docs/lecture-outlines.md) — **이론 강의 개요(30–40분)**: 주차별 핵심 개념·분 단위 진행·근거 자료
@@ -16,18 +16,18 @@
 
 ## 주차 지도
 
-흐름: **Microsoft ai-agents-for-beginners + Berkeley LLM Agents** 재구성. 각 주차는 한 파일에서 다 보인다.
+순서 원칙: **개념 의존성** — 각 주는 직전 주까지 배운 것만으로 이해 가능하다. 각 주차는 한 파일에서 다 보인다.
 
 | 주 | 주제 | | 주 | 주제 |
 |---|---|---|---|---|
 | [01](weeks/week01.md) | 강의소개 · 에이전트 개요 | | [09](weeks/week09.md) | 컨텍스트 엔지니어링(하네스) ⭐ |
-| [02](weeks/week02.md) | CoT → ReAct | | [10](weeks/week10.md) | 메모리 |
-| [03](weeks/week03.md) | 추론 모델 | | [11](weeks/week11.md) | 멀티에이전트 + LangGraph ⭐ |
-| [04](weeks/week04.md) | 도구 사용 | | [12](weeks/week12.md) | 컴퓨터/웹 사용 |
-| [05](weeks/week05.md) | 계획과 탐색 | | [13](weeks/week13.md) | 평가·벤치마크 |
-| [06](weeks/week06.md) | 자기반성·메타인지 | | [14](weeks/week14.md) | 신뢰·보안 |
-| [07](weeks/week07.md) | RAG 1부: 기초 | | [15](weeks/week15.md) | 프로덕션·단순함 |
-| [08](weeks/week08.md) | 에이전틱 RAG + MCP | | [16](weeks/week16.md) | 최종 발표 |
+| [02](weeks/week02.md) | 프롬프팅과 추론 | | [10](weeks/week10.md) | 메모리 |
+| [03](weeks/week03.md) | 도구 사용 | | [11](weeks/week11.md) | 멀티에이전트 + LangGraph ⭐ |
+| [04](weeks/week04.md) | 에이전트 루프 (ReAct) | | [12](weeks/week12.md) | 컴퓨터/웹 사용 |
+| [05](weeks/week05.md) | RAG 1부: 기초 | | [13](weeks/week13.md) | 평가·벤치마크 |
+| [06](weeks/week06.md) | 에이전틱 RAG + MCP | | [14](weeks/week14.md) | 신뢰·보안 |
+| [07](weeks/week07.md) | 계획과 탐색 | | [15](weeks/week15.md) | 프로덕션·단순함 |
+| [08](weeks/week08.md) | 자기반성·메타인지 | | [16](weeks/week16.md) | 최종 발표 |
 
 ## 저장소 구조
 

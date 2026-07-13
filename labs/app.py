@@ -44,10 +44,10 @@ def agent_answer(question: str, retriever: Retriever, llm_fn=None) -> str:
     """에이전트 = 한 학기 부품의 조립.
 
     조립 순서 (전부 이미 만든 것들이다):
-      1) tools.TOOLS.clear() 후 tools.register_defaults()      (W4)
-      2) tools.register_search(retriever)                       (W8)
+      1) tools.TOOLS.clear() 후 tools.register_defaults()      (W3)
+      2) tools.register_search(retriever)                       (W6)
       3) guardrails.install()                                   (W14)
-      4) react_loop(question, llm_fn=llm_fn) 반환               (W2)
+      4) react_loop(question, llm_fn=llm_fn) 반환               (W4)
 
     TODO(W15): 4~6줄. — 마지막 빈칸. 새 코드는 없다, 조립뿐.
     """
