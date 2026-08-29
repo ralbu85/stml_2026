@@ -23,7 +23,9 @@ An LLM has no workspace outside the text. When the model produces the next token
 
 Placing this fact against the apple problem exposes the difference between the two methods. Reaching the answer requires computing 23 − 20 = 3 and then adding 6 to that 3. The intermediate value 3 must be kept somewhere. Method B writes it into the text: the moment "23 − 20 = 3" is written, the 3 is preserved in the text, and from then on the model only has to read the written value and use it. Method A demanded only the answer, so there is nowhere to write. Then the single prediction that emits the answer digit must handle both calculations in succession. The difference between A and B is therefore not a few tokens. B's additional tokens are not decoration but the storage site of intermediate values, and A is the condition that forbids that storage.
 
-> **[Figure 2.1]** Direct answering (A) versus written solution (B). Draw the two token sequences one above the other. In B, mark the intermediate value "3" remaining in the text as a token, with an arrow feeding it into the next calculation "3 + 6"; in A, mark that position as empty, with both calculations pushed into the single prediction that emits the final answer token.
+![Figure 2.1 — answer-only versus worked solution](figures/fig-2-1-cot-workspace.svg)
+
+*Figure 2.1 — In A, nothing stores the intermediate value, so one prediction must carry both calculations; in B, the written "3" is read back from the text and each step advances alone.*
 
 There is a limit on how many steps a single prediction can handle, and the existence of that limit is an established empirical fact. The wrong answer 27 in §2.1 is the evidence, and failure becomes more frequent as steps and digits grow. The shape of the wrong answers agrees with this account: prediction emits the most plausible token regardless of whether the computation finished, so where processing could not complete, an answer-shaped value assembled from the numbers in the problem (23, 6) appears. Why the limit exists, however, is an open question. One analysis holds that the internal computation of a single prediction is bounded by the model's layer count, imposing a ceiling on chaining ordered steps (Feng et al., 2023; Merrill & Sabharwal, 2023); another explanation is that answer-only solution text is rare in the training data; the two are not mutually exclusive. Settling the cause is not needed for what follows. What is needed is the fact that the limit is measured, and the fact that having a place to write intermediate values circumvents it.
 
@@ -82,7 +84,9 @@ $$P(a \mid q) = \sum_{r} P(a \mid r, q)\, P(r \mid q)$$
 
 Asking once shows only the answer of the single most plausible path — one term of this sum — and if that path is wrong, the result is simply wrong. Majority voting over multiple samples approximates this whole sum with a sample estimate. Correct answers are reached by different paths converging on the same conclusion, while wrong answers scatter across paths, each wrong in its own way; counting votes therefore brings the correct answer to the front.
 
-> **[Figure 2.2]** Self-consistency. From the same question $q$, several reasoning paths $r$ branch out; paths reaching the correct answer converge on one value while wrong paths scatter across different values. Attach a bar chart of votes per value on the right, marking the majority value chosen as the final answer.
+![Figure 2.2 — self-consistency](figures/fig-2-2-self-consistency.svg)
+
+*Figure 2.2 — Sampled paths from the same question: correct paths converge on one value, wrong paths scatter, and the vote surfaces the convergent answer.*
 
 Majority voting presupposes that answers can be compared and counted — a discrete final answer (a number, a choice, a short string) that can be extracted from each sample. On open-ended outputs such as free-form prose, where no two samples are literally equal, the vote cannot be tallied as is; selecting among such outputs requires a separate scoring device, which the next section names.
 
@@ -99,11 +103,23 @@ What self-consistency increased is the number of predictions. Where CoT lengthen
 
 The common principle is the exchange of inference computation for accuracy, called **inference-time scaling**. Unlike majority voting, Best-of-N and tree search additionally require a **verifier** — a device that scores answers against each other — which is also what replaces voting when answers are not discrete (→ §2.5).
 
+The exchange is now visible on product price lists, not only in papers. The "thinking" modes of current chat products (OpenAI's o-series, Claude's extended thinking, Gemini's thinking models) are the written solution of 2.2 moved into the model and billed by the token (→ Ch. 11). The tiers above them — o1 pro mode, Gemini Deep Think, Grok's Heavy tier — are documented by their vendors as exploring several lines of reasoning in parallel on each question: the sampling and selection of 2.5–2.6, sold as a subscription level.
+
 The exchange is not free. Repeating N times multiplies cost and latency by N as well. In practice the decision variable is not the size of N but the selection of which questions deserve N > 1 (→ Ch. 12, routing in inference economics).
 
 ## 2.7 Summary
 
 The chapter departed from the measured fact that the same model gives different answers depending on how it is asked. A model has no workspace outside the text, so demanding only the answer forces every intermediate calculation into a single prediction, while eliciting a written solution preserves intermediate values in the text and lets the model advance one step at a time. The limit on steps per prediction is an established measurement; its cause remains open (→ 2.2). The means of inducing the writing are an instruction (zero-shot) and worked examples (few-shot), the latter being the original form of CoT; examples additionally specify the procedure and format that instructions leave open. The defect CoT leaves — dependence on internal knowledge — calls for an external checking step, that is, tools (→ Ch. 3) and the loop (→ Ch. 4). On the computation side, the stochastic nature of sampling makes repetition and majority voting (self-consistency) valid, and the general form of buying accuracy with prediction count is test-time compute. None of these procedures reads the answer after it is written; adding that reading step — critique and revision — is the subject of Ch. 5, reflection. Moving the whole exchange from the caller's procedure into the model's own weights returns in Ch. 11, reasoning models.
+
+## 2.8 Discussion
+
+Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
+
+1. A teammate concludes "our model cannot do arithmetic" after it answers 27 in the cafeteria problem. State what that run actually measured, and design the smallest two-prompt experiment that separates a limitation of the weights from a limitation of the prompt condition (2.1–2.2).
+2. An output must always end with a date line formatted "2026-03-02 (Mon)". Name two properties of that requirement a "think step by step" instruction leaves unspecified but three worked exemplars would pin down (2.3).
+3. Self-consistency lifts accuracy on this week's math evalset but fails outright on "write a 200-word abstract of this paper." Say exactly where the procedure breaks (2.5), and name the device that replaces the vote (2.6).
+4. The Apple Remote failure of 2.4 keeps its flawless step structure even when the prompt adds "verify each step before continuing." Why can no added instruction fix this failure class, and what is the smallest addition to the system — not to the prompt — that can (→ Ch. 3)?
+5. Your chat product's thinking toggle makes answers slower and costlier, and a product manager asks whether it should be on by default. Using 2.2 and 2.6, state what the toggle buys, for which question types it buys nothing, and what measurement would settle the default (→ 5.8).
 
 **Presentation.** CoT (Wei et al., 2022) — the improvement obtainable by prompting alone, and the emergence curve across model scales. First student presentation week; one paper this week.
 

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a7dbe"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="400" fill="white"/>
+
+  <!-- ============ A: answer only ============ -->
+  <text x="60" y="50" font-size="15" font-weight="600" fill="#222">A — answer only</text>
+
+  <rect x="60" y="72" width="290" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="205" y="100" text-anchor="middle" font-size="12.5" fill="#222">23 apples; use 20, buy 6 — how many?</text>
+
+  <line x1="350" y1="95" x2="646" y2="95" stroke="#555" stroke-width="1.6" marker-end="url(#a1)"/>
+  <text x="498" y="82" text-anchor="middle" font-size="12" fill="#555">one prediction carries both calculations</text>
+
+  <rect x="420" y="112" width="160" height="34" rx="6" fill="none" stroke="#aaaaaa" stroke-dasharray="5 4"/>
+  <text x="500" y="133" text-anchor="middle" font-size="11.5" fill="#999">the 3 is never written</text>
+  <line x1="500" y1="97" x2="500" y2="110" stroke="#aaaaaa" stroke-dasharray="3 3"/>
+
+  <rect x="650" y="72" width="90" height="46" rx="6" fill="white" stroke="#b3554e" stroke-width="1.6"/>
+  <text x="695" y="100" text-anchor="middle" font-size="14" fill="#222">27</text>
+  <text x="695" y="136" text-anchor="middle" font-size="12" fill="#b3554e">(wrong)</text>
+
+  <!-- ============ B: worked solution ============ -->
+  <text x="60" y="230" font-size="15" font-weight="600" fill="#222">B — worked solution (chain-of-thought)</text>
+
+  <rect x="60" y="252" width="160" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="140" y="280" text-anchor="middle" font-size="12.5" fill="#222">same question</text>
+
+  <line x1="220" y1="275" x2="256" y2="275" stroke="#555" stroke-width="1.6" marker-end="url(#a1)"/>
+
+  <rect x="260" y="252" width="150" height="46" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="335" y="280" text-anchor="middle" font-size="13" fill="#222">23 − 20 = 3</text>
+
+  <line x1="410" y1="275" x2="446" y2="275" stroke="#555" stroke-width="1.6" marker-end="url(#a1)"/>
+
+  <rect x="450" y="252" width="140" height="46" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="520" y="280" text-anchor="middle" font-size="13" fill="#222">3 + 6 = 9</text>
+
+  <line x1="590" y1="275" x2="626" y2="275" stroke="#555" stroke-width="1.6" marker-end="url(#a1)"/>
+
+  <rect x="630" y="252" width="130" height="46" rx="6" fill="white" stroke="#4e8a52" stroke-width="1.6"/>
+  <text x="695" y="280" text-anchor="middle" font-size="13" fill="#222">ANSWER: 9</text>
+  <text x="695" y="316" text-anchor="middle" font-size="12" fill="#4e8a52">(correct)</text>
+
+  <!-- stored-value arc -->
+  <path d="M 390 250 C 400 218, 460 218, 478 248" fill="none" stroke="#4a7dbe" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a2)"/>
+  <text x="435" y="212" text-anchor="middle" font-size="11.5" fill="#4a7dbe">the 3 is read back from the text</text>
+
+  <text x="450" y="370" text-anchor="middle" font-size="12.5" fill="#666">every step only reads values already written — the text is the workspace</text>
+</svg>
