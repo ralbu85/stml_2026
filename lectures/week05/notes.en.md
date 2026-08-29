@@ -195,14 +195,13 @@ Two design rules follow. First, criteria are stated per dimension — the judge 
 
 ```
 Score the essay on each criterion. Answer 1 or 0 per line, then one line of JSON.
-1. thesis: the opening paragraph states one main claim.
-2. evidence: every factual claim cites one of the provided sources.
-3. structure: each paragraph begins with a topic sentence.
-4. length: the essay is between 350 and 450 words.
-5. counterargument: at least one opposing view is stated and answered.
+1. thesis: states a clear position on the question.
+2. structure: has a recognizable introduction, body, and conclusion.
+3. evidence: supports claims with concrete examples or reasons.
+4. counterargument: addresses at least one opposing view.
 ```
 
-A score of 3/5 under this rubric is not "the judge felt 3-ish"; it names which two properties are absent, and the revision targets them. Second, the judge is itself evaluated: on a sample of items, judge verdicts are compared with human labels, and the judge is trusted only as far as that agreement. A judge that has never been checked against a human is an unread instrument.
+A score of 2/4 under this rubric is not "the judge felt 2-ish"; it names which two properties are absent, and the revision targets them. Second, the judge is itself evaluated: on a sample of items, judge verdicts are compared with human labels, and the judge is trusted only as far as that agreement. A judge that has never been checked against a human is an unread instrument.
 
 ## 5.10 Error Analysis
 
@@ -244,6 +243,6 @@ The next chapter begins to scale the system itself — from one agent to several
 
 **Presentation.** Two papers this week. Reflexion (Shinn et al., 2023) — the mechanism by which verbal feedback works like learning without weight updates; listen for where the feedback signal comes from and what breaks without it. Judging LLM-as-a-Judge (Zheng et al., 2023) — MT-Bench and Chatbot Arena: how judge agreement with humans is measured, and the position and verbosity biases with their mitigations; listen for when a model is allowed to grade a model. Optional reading: Self-Refine (Madaan et al., 2023) — the generate–critique–improve iteration and per-task margins.
 
-**Lab.** `W5_lab_reflection_evals.ipynb` — the chapter's two halves run as one experiment, adapted from Andrew Ng's *Agentic AI* Modules 2 and 4. First the reflection cycle on an essay task: draft (V1), critique with the prompt of 5.2, revise (V2). Then the claim "V2 beats V1" is put through the second half: the five-criterion binary judge of 5.9 scores both versions over a fixed topic set, error analysis labels and counts the remaining failures, and the critique prompt is iterated against a numeric target with the same set re-scored each round. Reference answers: `labs/checkpoints/week05/solution.py`.
+**Lab.** `W5_lab_reflection_evals.ipynb` — the chapter's two halves run as one experiment, adapted from Andrew Ng's *Agentic AI* Modules 2 and 4. First the reflection cycle on an essay task: draft (V1), critique with the prompt of 5.2, revise (V2). Then the claim "V2 beats V1" is put through the second half: the four-criterion binary judge of 5.9 scores both versions over a fixed topic set, error analysis labels and counts the remaining failures, and the critique prompt is iterated against a numeric target with the same set re-scored each round. Reference answers: `labs/checkpoints/week05/solution.py`.
 
 **Homework.** `W5_hw_chart_reflection.ipynb` — the reflection loop where the output is a rendered matplotlib chart and the critique reads the image itself: an external signal in exactly the sense of 5.5, produced by the code-execution convention of 3.7. Due before W6.
