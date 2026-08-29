@@ -53,6 +53,23 @@ Every first-half lab and homework (W1–W7) follows a single standard:
 `data/` evalsets are infrastructure for the second-half labs (W9–13); notebooks load
 data by URL, never from a local checkout.
 
+## Grading homework submissions (instructors)
+
+Students submit the executed `.ipynb` (outputs saved) through the LMS. Download all
+submissions into one folder and run:
+
+```bash
+python3 tests/grade_hw.py submissions/week03/ --out grades_w03.csv
+```
+
+No API key, no re-execution: the script reads each notebook's saved completion-cell
+output (PASS/FAIL rows, HOMEWORK COMPLETE line, score lines) and writes one CSV row
+per submission. Submissions are matched to their homework by the notebook's H1 title,
+so LMS-renamed files are fine. Integrity flags mark what to open by hand:
+`NO_OUTPUT` (never run), `FILLIN_UNCHANGED` (starter untouched — pasted outputs),
+`COMPLETION_NOT_LAST` (edited after the check), `NO_COMPLETION_CELL`, `PARSE_ERROR`.
+Flags are smoke-level by design; spot-check flagged files only.
+
 ## Authoring environment (instructors)
 
 Notebooks are authored in this repo and validated without a key by stubbing the
