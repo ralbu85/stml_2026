@@ -57,6 +57,15 @@ done
 mkdir -p _site/labs/data
 cp ../labs/data/*.csv _site/labs/data/ 2>/dev/null || true
 
+# Figures referenced by the notes (lectures/weekNN/figures/) — published weeks only.
+mkdir -p _site/figures
+for d in ../lectures/week*/figures; do
+  [ -d "$d" ] || continue
+  wk="$(basename "$(dirname "$d")")"
+  published "${wk#week}" || continue
+  cp "$d"/* _site/figures/
+done
+
 # Purge artifacts of unpublished weeks and retired formats (slides, Korean pages)
 # left in _site by earlier builds.
 rm -rf _site/lectures/week0? _site/lectures/week1?

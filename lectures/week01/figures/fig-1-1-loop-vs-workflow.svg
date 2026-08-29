@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a7dbe"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="400" fill="white"/>
+
+  <!-- ================= left: workflow ================= -->
+  <text x="205" y="42" text-anchor="middle" font-size="16" font-weight="600" fill="#222">Workflow</text>
+  <text x="205" y="62" text-anchor="middle" font-size="12.5" fill="#666">control flow fixed in advance by code</text>
+
+  <rect x="40"  y="150" width="80"  height="44" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="80"  y="176" text-anchor="middle" font-size="13" fill="#222">Input</text>
+
+  <rect x="150" y="150" width="110" height="44" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="205" y="170" text-anchor="middle" font-size="13" fill="#222">LLM call</text>
+  <text x="205" y="186" text-anchor="middle" font-size="11.5" fill="#555">translate</text>
+
+  <rect x="290" y="150" width="110" height="44" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="345" y="170" text-anchor="middle" font-size="13" fill="#222">LLM call</text>
+  <text x="345" y="186" text-anchor="middle" font-size="11.5" fill="#555">summarize</text>
+
+  <rect x="150" y="240" width="250" height="40" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="275" y="264" text-anchor="middle" font-size="13" fill="#222">Output — the path never varies</text>
+
+  <line x1="120" y1="172" x2="146" y2="172" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="260" y1="172" x2="286" y2="172" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <path d="M 345 194 L 345 220 L 275 220 L 275 236" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <text x="205" y="330" text-anchor="middle" font-size="12.5" fill="#666">the model does predetermined work</text>
+  <text x="205" y="348" text-anchor="middle" font-size="12.5" fill="#666">at predetermined points</text>
+
+  <!-- divider -->
+  <line x1="440" y1="30" x2="440" y2="370" stroke="#cccccc" stroke-dasharray="4 4"/>
+
+  <!-- ================= right: agent loop ================= -->
+  <text x="680" y="42" text-anchor="middle" font-size="16" font-weight="600" fill="#222">Agent</text>
+  <text x="680" y="62" text-anchor="middle" font-size="12.5" fill="#666">control flow decided by the model&#8217;s output</text>
+
+  <rect x="600" y="90" width="160" height="46" rx="6" fill="#dbe7f5" stroke="#4a7dbe" stroke-width="1.5"/>
+  <text x="680" y="112" text-anchor="middle" font-size="13.5" font-weight="600" fill="#222">Model</text>
+  <text x="680" y="128" text-anchor="middle" font-size="11.5" fill="#555">reads input so far &#8594; output</text>
+
+  <!-- judge diamond -->
+  <path d="M 680 176 L 748 214 L 680 252 L 612 214 Z" fill="#fff7e0" stroke="#c9a227"/>
+  <text x="680" y="209" text-anchor="middle" font-size="12" fill="#222">action or</text>
+  <text x="680" y="225" text-anchor="middle" font-size="12" fill="#222">final answer?</text>
+
+  <line x1="680" y1="136" x2="680" y2="172" stroke="#4a7dbe" stroke-width="1.6" marker-end="url(#arrB)"/>
+  <text x="694" y="158" font-size="11.5" fill="#4a7dbe">output</text>
+
+  <!-- final answer exit -->
+  <line x1="748" y1="214" x2="812" y2="214" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="780" y="204" text-anchor="middle" font-size="11.5" fill="#555">final</text>
+  <rect x="816" y="192" width="72" height="44" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="852" y="218" text-anchor="middle" font-size="13" fill="#222">Answer</text>
+
+  <!-- action path down to tool -->
+  <line x1="680" y1="252" x2="680" y2="288" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="694" y="274" font-size="11.5" fill="#555">action</text>
+  <rect x="600" y="292" width="160" height="44" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="680" y="312" text-anchor="middle" font-size="13" fill="#222">Tool execution</text>
+  <text x="680" y="328" text-anchor="middle" font-size="11.5" fill="#555">(code)</text>
+
+  <!-- loop back -->
+  <path d="M 596 314 L 520 314 L 520 113 L 596 113" fill="none" stroke="#4a7dbe" stroke-width="1.6" marker-end="url(#arrB)"/>
+  <text x="512" y="206" text-anchor="middle" font-size="11.5" fill="#4a7dbe" transform="rotate(-90 512 206)">result appended to input</text>
+</svg>

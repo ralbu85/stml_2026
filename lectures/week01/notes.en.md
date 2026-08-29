@@ -28,7 +28,9 @@ Translating the definition of an agent into an execution form yields the followi
 
 This iterative structure is called the **agent loop**, and it is implemented directly in Chapter 4. Deep Research and Claude Code differ in the form visible to the user, but the internal execution structure of both is this loop. The two systems differ only in which tools the loop holds and which instructions it follows; the skeleton of control is identical.
 
-> **[Figure 1.1]** Circulation diagram of the agent loop. Output emerges from the model node at the center; at the branch decision (action vs. final answer), "action" leads to tool execution → result appended back to the input → arrow returning to the model, while "final answer" exits the loop. Placed side by side with a workflow (control flow fixed as a straight line in code) to contrast visually that the subject of the branch decision is the model's output, not code.
+![Figure 1.1 — control flow in a workflow versus an agent](figures/fig-1-1-loop-vs-workflow.svg)
+
+*Figure 1.1 — A workflow executes a path fixed in code; an agent's every next step is a branch taken by reading the model's output.*
 
 ## 1.3 Components
 
@@ -56,6 +58,12 @@ The distinction in 1.2 placed decision authority on one side, code or model, but
 
 Moving down the table, the system can handle problems that cannot be fixed in advance, but its behavior becomes harder to predict and the number of calls and the cost grow. Autonomy is a trade: flexibility is gained at the price of predictability and cost.
 
+Real systems occupy every band of this spectrum. Batch translation and summary-digest pipelines leave the model no control-flow decision. Commercial support agents (Intercom Fin, Sierra) run between router and bounded loop: the model classifies the ticket, drafts the reply, and decides escalation, inside guardrails fixed by code. Coding agents (Claude Code, Cursor's agent mode) are the third row's bounded loop in production form — edit, run the tests, read the failure, edit again, under an attempt cap. At the far end, Deep Research (OpenAI, Google) and the software-engineering agent Devin are handed a whole task and produce the plan themselves, and computer-use agents (OpenAI's Operator, Anthropic's computer use) do the same with the screen and mouse as their action surface.
+
+![Figure 1.2 — real systems on the autonomy spectrum](figures/fig-1-2-autonomy-spectrum.svg)
+
+*Figure 1.2 — The autonomy spectrum with deployed systems placed on it; rightward, flexibility grows while predictability and per-run cost control shrink.*
+
 The side that does not hand over decision authority — the workflow — also has an established design vocabulary. The following patterns for composing LLM calls are standard terms in framework documentation and papers, and later chapters of this course implement each of them.
 
 | Pattern | Structure | Appears in |
@@ -72,10 +80,10 @@ The definition so far specifies only where control flow resides; it does not spe
 
 | Form factor | Example | Unit of interaction |
 |---|---|---|
-| Conversational | Chatbot, counseling assistant | Exchange of messages |
-| Delegated | Deep Research, background coding agents | Assign a task, review the deliverable |
-| Embedded | IDE copilot | Assistance inside the workplace |
-| Headless | Component inside a pipeline, agent inside an agent | API call (no human) |
+| Conversational | ChatGPT, Claude — the chat products themselves | Exchange of messages |
+| Delegated | Deep Research, Devin, cloud coding agents | Assign a task, review the deliverable |
+| Embedded | GitHub Copilot, Cursor — inside the IDE | Assistance inside the workplace |
+| Headless | an extraction step inside a data pipeline; a sub-agent inside another agent | API call (no human) |
 
 The chatbot is not the definition of an agent but one of its form factors, and historically the first to appear. What this course covers is the internal structure common to all four forms.
 
@@ -101,6 +109,16 @@ As established in 1.2, an LLM call takes text in and returns text out, and nothi
 The order of the chapters is the arc of the course. The first half builds one complete agent and disciplines it: reasoning as the raw material (Ch. 2), tools as its hands (Ch. 3), the loop that assembles the first agent (Ch. 4), then the feedback and measurement that make its improvement claimable (Ch. 5), and finally scale — several agents (Ch. 6) and paths planned rather than stumbled into (Ch. 7) — before the midterm. The second half grounds the agent in knowledge it does not have (Ch. 8–10) and turns it into an operated system (Ch. 11–14).
 
 Labs run as one self-contained Colab notebook per week. From week 3 onward the labs adapt Andrew Ng's *Agentic AI* modules, with one course-built lab (week 4, the loop built by hand); weeks 1–2 cover prompting practice. This chapter's lab is the first API call and prompting fundamentals.
+
+## 1.8 Discussion
+
+Each question is answerable with this chapter's definitions; several return as design decisions in later chapters.
+
+1. A nightly job sends every new arXiv abstract in your field to an LLM, stores the summaries, and mails a digest. A support bot reads each incoming ticket and decides whether to answer, refund, or escalate to a human. Classify each as workflow or agent by the criterion of 1.2, and name the single decision that settles the classification.
+2. A RAG chatbot always retrieves the top five passages for the user's question and answers from them, in a fixed sequence. Is it an agent under 1.2? State the smallest change that would flip your answer.
+3. A team proposes "a fully autonomous agent that answers all customer email." Using 1.4 and 1.6, argue for the lowest autonomy level that serves the goal, and name one observed failure that would justify moving up exactly one level.
+4. Pick one agentic product you have used (1.4–1.5 name several). Identify its form factor, fill in its four components from the table in 1.3, and give one control-flow decision its model makes and one that its code fixes.
+5. The same model serves as a chatbot and as a component of Deep Research (1.1). If the weights are identical, where does the added capability come from — and which components of 1.3 supply it?
 
 **Presentation.** There is no paper presentation this week. Presentations begin in week 2; presenter assignment and format guidance take place during orientation.
 
