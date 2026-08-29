@@ -26,7 +26,9 @@ On the bug-fixing task, this procedure runs as follows. The model requests a tes
 
 By Chapter 1's definition — a system whose control flow is decided by the LLM's output — the email assistant of 3.6 already qualified as an agent; what this procedure changes is ownership, not status. The loop is now our code, and with it three things become ours: the protocol, meaning what the model must write on each turn (4.2–4.3); the bound, meaning when the loop stops and how failure is reported (above, and the guards of 4.6); and the record, meaning what to read when a run goes wrong (4.6). The rest of the chapter takes these up in turn.
 
-> **[Figure 4.1]** A cycle diagram connecting the four steps Call → Judge → Execute → Reinject. The Judge step branches three ways: Termination (Final Answer) exits the loop; an execution request passes through Execute and Reinject back to Call; a format error skips Execute and goes to Reinject. The Call step carries a separate failure-exit arrow for reaching the bound. Each step is annotated with its owner (code/model), and a dotted outline contrasts Chapter 3's single round trip as one revolution of this cycle.
+![the agent loop](figures/fig-4-1-agent-loop.svg)
+
+*Figure 4.1 — One revolution of the loop: Call → Judge → Execute → Reinject, with the Judge's three branches and the bound's failure exit.*
 
 ## 4.2 The Failure of Act-Only
 
@@ -93,7 +95,9 @@ This trace also resolves the failure of CoT. CoT, which makes the model write ou
 
 ReAct predates function calling, and the two are the same skeleton in different notation. The Action line and the Final Answer marker are the Judge step's two branches carried in plain text; function calling carries the same two branches in structured fields (`tool_calls` present, or absent). What ReAct adds beyond notation is the content requirement — a written judgment before every action — and that requirement is what the measurement above shows to matter.
 
-> **[Figure 4.2]** A side-by-side contrast of the two traces on the same question. On the left, Act-only alternates only actions and observations and ends in an unrelated answer ("yes"); on the right, ReAct inserts one Thought line before each action, leaving the facts obtained from observations and the remaining task in text. Only the inserted Thought lines are marked in an accent color, and the two termination points are labeled wrong/correct.
+![Act-only versus ReAct traces](figures/fig-4-2-actonly-vs-react.svg)
+
+*Figure 4.2 — The same question under two protocols: without written judgments the termination collapses; with a Thought before every action, the answer concludes from confirmed fact.*
 
 ## 4.4 Limits
 
@@ -108,6 +112,8 @@ A fair question at this point: the loop of Chapter 3's lab ran without any ReAct
 It mattered — but it had already been paid for, during training. Models offered behind a function-calling API are trained on tool-use episodes of exactly this shape — reason, call, read the result, continue — so the convention that ReAct imposed by prompt in 2022 now sits, in tool-calling models, in the weights. Reasoning models go one step further and internalize the Thought itself: the deliberation ReAct forced into the visible record runs as **thinking tokens** before the answer, budgeted and billed but not prompted (→ Ch. 11). The migration is the same one Chapter 2 flagged for test-time compute: a procedure the caller once orchestrated — write your reasoning, then act — moves into the model, and the caller's protocol survives as the model's habit.
 
 The practical consequence runs in both directions. Because the protocol is internalized, production systems mostly run function-calling loops and get grounded, interleaved reasoning without a ReAct prompt. But internalized does not mean guaranteed: the habit falls short on smaller models, unfamiliar tools, and long horizons, and then the remedy is the 2022 one — put the requirement back into the prompt and read what the model writes. The lab does both on the same questions and measures the difference.
+
+The loop is also the part of shipped software you can watch. Claude Code and Cursor's agent mode stream exactly this record — a line of judgment, a tool call, its result — so a session transcript there is the trace of 4.6; agent frameworks expose the bound as a parameter (`max_turns` in the OpenAI Agents SDK, a recursion limit in LangGraph), the same max_steps this chapter makes ours to set and report.
 
 ## 4.6 Operations — Trace Reading
 
@@ -131,6 +137,16 @@ The effect of a fix is confirmed by measurement, not by a single reproduction. A
 Chapter 3's client repeated round trips under a hidden bound; this chapter took the loop into our own code, and with it the protocol, the bound, and the record. The protocol is ours to set: repeating actions without any requirement to write judgments (Act-only) fails in measurement, because for a model whose only workspace is text, the record retains no judgments — the prescription is ReAct, a written judgment before every action, under which the next query is decided on facts confirmed in the preceding observation (grounding) and even failed actions become input for course correction. The bound is ours to enforce: max_steps with an explicit failure report, plus a guard against repeated actions. The record is ours to read: trace reading locates the first error and classifies it into prompt, schema, or tool. Today's tool-calling models carry the ReAct convention in their weights, which is why the borrowed loop worked without it and why the explicit form returns when the internalized habit falls short.
 
 The loop commits its Final Answer and stops; nothing reads the answer after it is written, and every fix so far was justified by a score we have not yet examined critically. Chapter 5 takes up both halves of that gap in one week: feeding outputs and attempts back to be improved (reflection), and making "it improved" a measured claim (evaluation).
+
+## 4.8 Discussion
+
+Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
+
+1. By Chapter 1's definition, the email assistant of 3.6 was already an agent — so what did this chapter change? Name the three things ownership bought (4.1) and, for each, one failure that cannot be diagnosed or fixed without it.
+2. In the Act-only trace of 4.2 every search was correct, and the final answer was still unrelated to the question. Explain why "the model is weak" is the wrong diagnosis, and state exactly what was missing from the record at the moment of termination.
+3. An agent of yours answers correctly, but its Thoughts merely paraphrase the last observation and never restate the remaining task. Using the diagnosis of 4.2, predict the failure this foreshadows and the question type that will trigger it.
+4. A production run returns "(no Final Answer within max_steps=6)" and a colleague proposes raising the bound to 20. Using 4.6, state the investigation order before touching the bound, and what raising it costs if the run was spinning.
+5. Tool-calling models carry the ReAct convention in their weights (4.5). Name two conditions under which you would still pin the protocol in the prompt, and the measurement that would show the internalized habit falling short (→ 5.8).
 
 ---
 

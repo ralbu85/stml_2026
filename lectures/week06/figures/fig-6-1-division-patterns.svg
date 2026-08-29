@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4e8a52"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="300" fill="white"/>
+
+  <line x1="230" y1="36" x2="230" y2="268" stroke="#cccccc" stroke-dasharray="4 4"/>
+  <line x1="450" y1="36" x2="450" y2="268" stroke="#cccccc" stroke-dasharray="4 4"/>
+  <line x1="670" y1="36" x2="670" y2="268" stroke="#cccccc" stroke-dasharray="4 4"/>
+
+  <!-- ============ pipeline ============ -->
+  <text x="120" y="48" text-anchor="middle" font-size="13" font-weight="600" fill="#222">Pipeline</text>
+
+  <rect x="30" y="130" width="44" height="30" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="52" y="149" text-anchor="middle" font-size="12" fill="#222">A</text>
+  <rect x="98" y="130" width="44" height="30" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="120" y="149" text-anchor="middle" font-size="12" fill="#222">B</text>
+  <rect x="166" y="130" width="44" height="30" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="188" y="149" text-anchor="middle" font-size="12" fill="#222">C</text>
+
+  <line x1="74" y1="145" x2="94" y2="145" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="142" y1="145" x2="162" y2="145" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+
+  <text x="120" y="252" text-anchor="middle" font-size="11.5" fill="#666">stages with a natural order</text>
+
+  <!-- ============ parallel + aggregate ============ -->
+  <text x="340" y="48" text-anchor="middle" font-size="13" font-weight="600" fill="#222">Parallel + aggregate</text>
+
+  <rect x="252" y="84" width="56" height="26" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="280" y="101" text-anchor="middle" font-size="12" fill="#222">A1</text>
+  <rect x="252" y="134" width="56" height="26" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="280" y="151" text-anchor="middle" font-size="12" fill="#222">A2</text>
+  <rect x="252" y="184" width="56" height="26" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="280" y="201" text-anchor="middle" font-size="12" fill="#222">A3</text>
+
+  <rect x="362" y="130" width="68" height="34" rx="5" fill="#eeeeee" stroke="#888"/>
+  <text x="396" y="151" text-anchor="middle" font-size="11.5" fill="#222">aggregate</text>
+
+  <line x1="308" y1="97" x2="358" y2="136" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="308" y1="147" x2="358" y2="147" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="308" y1="197" x2="358" y2="158" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+
+  <text x="340" y="252" text-anchor="middle" font-size="11.5" fill="#666">divisible work; independent votes</text>
+
+  <!-- ============ orchestrator-workers ============ -->
+  <text x="560" y="48" text-anchor="middle" font-size="13" font-weight="600" fill="#222">Orchestrator&#8211;workers</text>
+
+  <rect x="508" y="70" width="104" height="28" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="560" y="88" text-anchor="middle" font-size="11.5" fill="#222">orchestrator</text>
+
+  <rect x="470" y="176" width="52" height="26" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="496" y="193" text-anchor="middle" font-size="11.5" fill="#222">worker</text>
+  <rect x="534" y="176" width="52" height="26" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="560" y="193" text-anchor="middle" font-size="11.5" fill="#222">worker</text>
+  <rect x="598" y="176" width="52" height="26" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="624" y="193" text-anchor="middle" font-size="11.5" fill="#222">worker</text>
+
+  <line x1="528" y1="102" x2="490" y2="172" stroke="#555" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="504" y1="172" x2="542" y2="102" stroke="#555" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="554" y1="102" x2="554" y2="172" stroke="#555" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="566" y1="172" x2="566" y2="102" stroke="#555" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="592" y1="102" x2="630" y2="172" stroke="#555" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="616" y1="172" x2="578" y2="102" stroke="#555" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <text x="560" y="252" text-anchor="middle" font-size="11.5" fill="#666">subtasks unknown until run time</text>
+
+  <!-- ============ evaluator-optimizer ============ -->
+  <text x="780" y="48" text-anchor="middle" font-size="13" font-weight="600" fill="#222">Evaluator&#8211;optimizer</text>
+
+  <rect x="688" y="128" width="74" height="34" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="725" y="149" text-anchor="middle" font-size="11.5" fill="#222">generator</text>
+  <rect x="800" y="128" width="56" height="34" rx="5" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="828" y="149" text-anchor="middle" font-size="11.5" fill="#222">critic</text>
+
+  <line x1="766" y1="138" x2="796" y2="138" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="796" y1="152" x2="766" y2="152" stroke="#555" stroke-width="1.4" marker-end="url(#arr)"/>
+  <text x="781" y="122" text-anchor="middle" font-size="11.5" fill="#777">draft</text>
+  <text x="781" y="172" text-anchor="middle" font-size="11.5" fill="#777">critique</text>
+
+  <line x1="828" y1="162" x2="828" y2="196" stroke="#4e8a52" stroke-width="1.4" marker-end="url(#arrG)"/>
+  <text x="838" y="184" font-size="11.5" fill="#4e8a52">pass</text>
+
+  <text x="780" y="252" text-anchor="middle" font-size="11.5" fill="#666">a quality gate before exit</text>
+</svg>

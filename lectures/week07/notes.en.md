@@ -16,7 +16,9 @@ The way the loop of Chapter 4 chooses actions is called **greedy**: at every tur
 
 The very first search went wrong. A question that requires two facts to be established separately (each paper's publication date) and then compared was lumped into a single search, and no such comparison passage exists in the documents. Led by the off-target observation, the model loses the structure of the original question (which paper is later is still unknown) and keeps advancing along the wrong path. The failure divides in two: the whole path was never drawn in advance (absence of a path), and there is no device that detects a wrong turn and returns from it (absence of recovery).
 
-> **[Figure 7.1]** A greedy loop advancing down a wrong path on a multi-step question. The question enters from the left, the first search returns an off-target observation, and the subsequent action arrows continue in a single direction without any branching, arriving at a wrong answer. The absence of alternative paths and of any return arrow to an earlier step must be visually evident.
+![greedy progression down a wrong path](figures/fig-7-1-greedy-path.svg)
+
+*Figure 7.1 — Greedy progression: one committed action per turn, no alternatives kept, no way back — a wrong first step propagates to the end.*
 
 ## 7.2 Task Decomposition and Planning
 
@@ -51,6 +53,8 @@ The complement to plan-then-execute's weakness is replanning, and it must be ope
 
 This iteration is the basic skeleton of production planners, and it is what Chapter 6's orchestrator–workers pattern executes when the plan's steps are dispatched to separate agents instead of one loop.
 
+Plan-then-execute is visible in products as a control surface. Deep Research products present the research plan for approval before spending the browsing budget, and coding agents ship plan modes (Claude Code, Cursor) that write the whole path out for review before the first edit — a human reader standing exactly where this section put the replan trigger.
+
 ## 7.3 Separating Planning from Execution — ReWOO
 
 Interleaved progression has a cost problem separate from accuracy. The Call step of the loop (→ 4.1) re-sends the entire conversation so far to the model at every turn. Search observations are long, so over n turns the first observation is re-sent n times, the second n−1 times. Each action also costs one LLM call. On multi-step tasks, tokens and call counts grow with the number of steps.
@@ -67,7 +71,9 @@ which grows quadratically in the number of turns. The LLM is also called $n$ tim
 2. **Worker** (code) — executes each step of the plan with tools and fills the variables with actual results. No LLM call.
 3. **Solver** (LLM) — reads the question, the plan, and all filled-in results at once and writes the final answer.
 
-> **[Figure 7.2]** The three-module ReWOO pipeline. Question → planner (LLM) outputs, in one pass, a plan whose unfinished results are referenced as variables #E1, #E2 → worker (code) fills each variable with a tool-execution result (no LLM calls) → solver (LLM) reads the plan and the filled results at once and outputs the final answer. The flow must show that LLM calls occur only at the two ends and that observations are never re-sent in the middle.
+![the ReWOO pipeline](figures/fig-7-2-rewoo.svg)
+
+*Figure 7.2 — ReWOO: the planner writes the whole plan against variables, code fills them, and the solver reads everything once — LLM calls only at the two ends.*
 
 The planner's output takes the following form.
 
@@ -92,7 +98,9 @@ A plan is still a single path. If the first plan is wrong, the absence of recove
 2. **State evaluation** (model) — judge how likely each candidate state is to lead to a solution. Two formats exist: scoring each state independently (the paper's sure / maybe / impossible grades), and placing candidates side by side and voting for the most promising. Either way, choosing the best among several candidates requires a scoring verifier, and the model's self-evaluation plays that verifier role (Best-of-N, → 2.6).
 3. **Search** (code) — expand the tree according to the evaluations. Breadth-first search (BFS) keeps only the top b most promising states at each depth; depth-first search (DFS) pursues one path and, on an "impossible" verdict, abandons that branch and returns to the fork (backtracking).
 
-> **[Figure 7.3]** The Tree of Thoughts search tree. The root is the initial state; each node branches into several candidate states, and every node carries an evaluation grade (sure / maybe / impossible). BFS is shown by keeping the top b states per depth and dimming the remaining branches; DFS by a backtracking arrow that pursues one path and returns to the fork at an impossible node. Draw it in contrast with greedy/CoT, which have only a single linear path.
+![the Tree of Thoughts search tree](figures/fig-7-3-tot.svg)
+
+*Figure 7.3 — Tree of Thoughts: candidate states graded, unpromising branches pruned or abandoned (backtracking), against the single path of greedy/CoT.*
 
 The paper's example, Game of 24 (make 24 from four given numbers with the four arithmetic operations), shows the structure clearly. From the state "4, 9, 10, 13", candidates such as "13 − 9 = 4 (remaining: 4, 4, 10)" are generated, and each intermediate state is evaluated for whether 24 is still reachable, pruning branches as the search advances. A task that single-pass generation or CoT almost never solves is improved by a wide margin under search; the numbers are covered in the presentation.
 
@@ -107,6 +115,16 @@ Planning and search are both extensions of test-time compute (→ 2.6) — accur
 The failure of greedy progression divides into the absence of a whole path and the absence of recovery. The remedy for the former is task decomposition: making the model write the plan first lets every action choice refer to the whole path. Separating planning from execution entirely (ReWOO) removes observation re-sending and per-turn calls, so the cost drops. The remedy for the latter is search: ToT, which evaluates intermediate states, prunes, and backtracks, turns self-consistency's independent sampling into structured search. All three are exchanges of computation for accuracy, so the task and the measurement decide adoption.
 
 Even with a plan and search, a committed answer can still be wrong. The remedy — critique grounded in external signals — was Chapter 5, and this week's lab wires the whole first half together: a planner from this chapter drives tool-using loops from Chapter 4, arranged as the specialist pipeline of Chapter 6, closed by the reflection of Chapter 5 and scored by its evaluation half.
+
+## 7.7 Discussion
+
+Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
+
+1. In the failing trace of 7.1, the very first search already went wrong. Separate the two absences that define greedy failure, and state which one planning repairs and which one search repairs.
+2. Why must a plan be written into the context rather than "kept in mind" (7.2, → 2.2)? And when an observation contradicts a plan premise, state the replan trigger and its scope — what stays fixed, what is rewritten.
+3. For (a) "find the evaluation tasks of whichever of two papers is later" and (b) "keep searching until a dataset with property X appears," decide which suits ReWOO and which needs interleaved execution (7.3), and support the choice with the cost shape.
+4. Tree of Thoughts lifts Game of 24 dramatically but does little for "write a better abstract." Name the requirement on intermediate states that decides this (7.4), and connect it to the verifier of 2.6.
+5. The W7 lab's assembled system fails three ways: the report cites no sources; the research loop repeats one search; the plan never includes a drafting step. For each, name the catching device and its home chapter.
 
 ---
 

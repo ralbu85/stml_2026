@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 340" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#cccccc"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="340" fill="white"/>
+
+  <text x="450" y="34" text-anchor="middle" font-size="13" fill="#555">greedy: one committed action per turn, one direction</text>
+  <text x="450" y="54" text-anchor="middle" font-size="11.5" fill="#999">dashed grey = paths that never exist in a greedy loop</text>
+
+  <!-- ================= single forward chain ================= -->
+  <rect x="30" y="96" width="120" height="54" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="90" y="118" text-anchor="middle" font-size="13" fill="#222">Question</text>
+  <text x="90" y="136" text-anchor="middle" font-size="10.5" fill="#555">two facts + compare</text>
+
+  <line x1="150" y1="123" x2="172" y2="123" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <rect x="176" y="96" width="152" height="54" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="252" y="118" text-anchor="middle" font-size="12.5" fill="#222">Thought 1 &#183; Action 1</text>
+  <text x="252" y="136" text-anchor="middle" font-size="10.5" fill="#555">search: "compare dates"</text>
+
+  <line x1="328" y1="123" x2="350" y2="123" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <rect x="354" y="96" width="152" height="54" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="430" y="118" text-anchor="middle" font-size="12.5" fill="#222">Observation 1</text>
+  <text x="430" y="136" text-anchor="middle" font-size="10.5" fill="#b3554e">off-target: ReAct chunk</text>
+
+  <line x1="506" y1="123" x2="528" y2="123" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <rect x="532" y="96" width="152" height="54" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="608" y="118" text-anchor="middle" font-size="12.5" fill="#222">Thought 2 &#183; Action 2</text>
+  <text x="608" y="136" text-anchor="middle" font-size="10.5" fill="#555">search: ReAct tasks</text>
+
+  <line x1="684" y1="123" x2="738" y2="123" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="711" y="114" text-anchor="middle" font-size="15" fill="#555">&#8230;</text>
+
+  <rect x="742" y="96" width="128" height="54" rx="6" fill="#ffffff" stroke="#b3554e" stroke-width="1.5"/>
+  <text x="806" y="118" text-anchor="middle" font-size="12.5" font-weight="600" fill="#b3554e">Wrong answer</text>
+  <text x="806" y="136" text-anchor="middle" font-size="10.5" fill="#555">never compared</text>
+
+  <text x="430" y="168" text-anchor="middle" font-size="10" fill="#b3554e">question structure lost</text>
+
+  <!-- ================= ghost branch (never taken) ================= -->
+  <line x1="252" y1="150" x2="297" y2="211" stroke="#cccccc" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrD)"/>
+  <line x1="268" y1="174" x2="281" y2="187" stroke="#b3554e" stroke-width="1.8"/>
+  <line x1="281" y1="174" x2="268" y2="187" stroke="#b3554e" stroke-width="1.8"/>
+  <rect x="232" y="218" width="136" height="36" rx="6" fill="none" stroke="#cccccc" stroke-dasharray="4 3"/>
+  <text x="300" y="240" text-anchor="middle" font-size="11" fill="#bbbbbb">alternative action</text>
+  <text x="300" y="276" text-anchor="middle" font-size="11" fill="#999">no branch point &#8212; one candidate per turn</text>
+
+  <!-- ================= ghost return (never taken) ================= -->
+  <path d="M 608 150 C 608 300, 206 300, 206 156" fill="none" stroke="#cccccc" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrD)"/>
+  <line x1="469" y1="249" x2="483" y2="263" stroke="#b3554e" stroke-width="1.8"/>
+  <line x1="483" y1="249" x2="469" y2="263" stroke="#b3554e" stroke-width="1.8"/>
+  <text x="490" y="318" text-anchor="middle" font-size="11" fill="#999">no return arrow &#8212; a committed action is never undone</text>
+</svg>

@@ -20,7 +20,9 @@ The model itself can perform the missing examination. Generation and critique ar
 2. **Critique** (same model, different prompt) — take the draft as input and generate concrete points of improvement. If the critique judges that nothing needs improving, terminate.
 3. **Improve** — take the draft and the critique together as input, generate a revision, and return to the critique step. The iteration has a cap.
 
-> **[Figure 5.1]** The generate–critique–improve cycle of Self-Refine. From one model icon, three prompts (generate, critique, improve) branch out; arrows form a ring from draft → critique (list of improvements) → revision → back to critique. From the critique node, a "nothing to improve" verdict exits the ring toward termination. The structure — one model cycling through roles — and the termination condition must be visible at a glance.
+![Self-Refine cycle](figures/fig-5-1-self-refine.svg)
+
+*Figure 5.1 — Self-Refine: one model cycling through generate, critique, and improve, until the critique finds nothing left.*
 
 The requirement on the critique prompt is specificity. "Make it better" gives the improve step no information. The prompt must demand what is deficient, against which criterion, and why; in practice, the critique's criteria are stated per dimension (accuracy, constraint compliance, format, and so on). With dimensions stated, the critique becomes a checklist, and the "good enough" verdict (the termination condition) is made per dimension, with grounds.
 
@@ -61,7 +63,9 @@ What Self-Refine fixes is a single output. But failures often occur at the level
 3. **Reflect** (self-reflection, model) — from the record and the failure signal, summarize what failed, why, and what to do differently in the next attempt.
 4. **Retry** — append the reflection summary to the prompt and return to the attempt step. The iteration has a cap. Reflections are themselves context-consuming text, so they are not accumulated without bound; the paper keeps a fixed-size window of the most recent reflections.
 
-> **[Figure 5.2]** The attempt–evaluate–reflect–retry cycle of Reflexion and the accumulation of reflection memos. On the left, three blocks — actor, evaluator, reflection — stacked vertically; from the evaluator, a branch to termination on success and to reflection on failure. The reflection block's output (a linguistic summary) stacks line by line into an episodic-memory box on the right, and an arrow feeds that memory back into the next attempt's prompt. The drawing must show that what is updated is the context, not the weights.
+![Reflexion cycle](figures/fig-5-2-reflexion.svg)
+
+*Figure 5.2 — Reflexion: failed trials become linguistic lessons that accumulate in the context — the update target is the prompt, not the weights.*
 
 On a code-generation task checked by unit tests, the reflect step's output takes this form.
 
@@ -123,6 +127,8 @@ Three names, one mechanism; what changes is only where the writing sits.
 The quality of reflection cannot exceed the quality of the signal the evaluation step receives. The extreme is the case with no external signal at all. If the only basis for judging an attempt is the model's own opinion, there is no information by which the model, rereading an answer it generated as correct, could judge it wrong. Self-correction under this condition either finds no errors or, conversely, "corrects" right answers into wrong ones. Controlled measurements with external signals blocked report that self-correction fails to improve reasoning accuracy or actively lowers it (Huang et al., 2024, *Large Language Models Cannot Self-Correct Reasoning Yet*), and the fact that the success stories of the reflection line are all in domains with automatic evaluation signals (5.3 above) points to the same conclusion.
 
 The condition under which reflection holds, therefore, is the existence of an evaluation signal from outside the attempt: a test passing, an answer matching, an execution error, a rendered result that can be inspected. Given such a signal, reflection converts it into causal analysis; without one, it becomes groundless rewriting. The character of the cost is also fixed: a retry is a multiple of an attempt's cost, so these methods belong to test-time compute (→ 2.6) — accuracy bought with more predictions.
+
+The condition explains what actually ships: the reflection loops inside production coding agents are test-driven — edit, run the suite, read the failure, edit again — Reflexion with a rule-based signal, which is why such agents ask for the test command before they promise fixes.
 
 ## 5.6 Practical Guide — Adding a Reflection Step
 
@@ -223,13 +229,17 @@ A worked instance, in the shape the lab produces. Forty items, eleven failures; 
 
 The vivid failure in this run was the ignored constraint — it produced a confidently wrong paragraph — but the count says the next change is the query prompt, worth five items, and the format fix is worth three more before the vivid one is worth touching. One item goes back to the evalset for repair, not to the system. The counting step is what separates this procedure from debugging by anecdote: a failure that is vivid but rare loses to a failure that is dull but frequent, and only the count reveals which is which.
 
-> **[Figure 5.3]** The error-analysis loop as a cycle: run → read & label → count → fix one thing → re-run, drawn as a ring with the label-count bar chart at the "count" node feeding the choice at "fix one thing." A dashed shortcut arrow from "run" directly to "fix," bypassing read/count, is struck through and labeled "debugging by anecdote" — the anti-pattern the loop replaces.
+![the error-analysis loop](figures/fig-5-3-error-analysis-loop.svg)
+
+*Figure 5.3 — The error-analysis loop; the struck shortcut from run to fix is debugging by anecdote, which the count step replaces.*
 
 ## 5.11 Operations — Regression and Growth
 
 The evalset earns its cost when it runs on every change, not once. **Regression testing** = re-scoring the same set after each modification, so that a fix which breaks something else is caught by the score, not by a user. Two operational rules complete the practice. A numeric **target** is fixed before iterating (the labs' "≥ 11/12" lines), because a target chosen after seeing the score will drift to meet it. And the set **grows from failures**: an error found in real use becomes a new item, so coverage tracks the system's actual failure surface rather than its designer's imagination.
 
 What this half measures is components: one prompt, one tool router, one retrieval step. Whole-agent measurement — multi-step tasks, success rates over repeated trials (pass^k), cost-aware comparison — layers on top of it and is treated with benchmarks in Chapter 13.
+
+The practice is also a product category of its own. Evaluation harnesses (OpenAI Evals, LangSmith, Braintrust) package what this half built by hand — evalset storage, code graders, judge calls, regression runs on every change — and Chatbot Arena operates the human-preference version at public scale: the instrument this week's second paper both built and audited.
 
 ## 5.12 Summary
 
@@ -238,6 +248,16 @@ The loop commits its answer without verifying it; the remedy feeds the output or
 The claim that any of this helped is settled by the chapter's second half. Impression-based checking fails structurally — sample of one, charitable reader, invisible regressions — so dataset, metric, and procedure are fixed to make numbers comparable. Code grading is the most reliable instrument and the narrowest; the LLM judge extends measurement to unruled outputs at the price of documented biases, and is trusted only as far as its agreement with human labels. Error analysis converts scores into causes by reading and counting failures; regression runs convert the evalset into a standing safety net that grows from real failures. Operationally, the two halves close into one loop: reflect where defects are checkable, ground the critique in the cheapest reliable signal, and prove the gain on a fixed set before keeping it.
 
 The next chapter begins to scale the system itself — from one agent to several — and per-component measurement is what keeps a many-part system debuggable: when the pipeline's score drops, component scores say where.
+
+## 5.13 Discussion
+
+Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
+
+1. In the Trial 1 record of 5.4, identify the line where the run went wrong, and explain why no Thought written at that moment could have prevented the failure while the post-trial reflection could — state what each writing reads, and when.
+2. A teammate adds "review your answer and fix any errors" to a question-answering bot with no external check and reports a four-point gain on twenty hand-picked examples. Give two independent reasons to distrust the claim (5.5, 5.7) and design the run that would settle it (5.8).
+3. Compare "rate this essay 1–10 for overall quality" with the four-criterion binary rubric of 5.9: name the judge biases the first invites, and what the second buys for the error-analysis step that follows (5.10).
+4. In the worked table of 5.10, the ignored-constraint failure is vivid but counts 2, while the literal-query failure is dull but counts 5. Make the argument for fixing the dull one first, and state what evidence would justify reversing that order.
+5. The lab's second reflection round adds almost nothing. Explain why reflection saturates (5.6), and name two stop conditions you would build into a production Self-Refine loop so it stops paying for rounds that no longer help.
 
 ---
 

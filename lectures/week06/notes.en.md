@@ -27,11 +27,15 @@ The workflow patterns of Chapter 1 reappear here with agents as the parts. Four 
 | Orchestrator–workers | a lead agent decomposes the task at run time and dispatches workers | subtasks unknown until the input arrives |
 | Evaluator–optimizer | a generator agent and a critic agent alternate | quality gates; Chapter 5's reflection with the critic externalized |
 
-> **[Figure 6.1]** The four patterns as four small box-and-arrow diagrams in one row: a pipeline's straight chain; parallel branches converging on an aggregator; an orchestrator node fanning out to workers and collecting; a generator–critic pair joined by a two-way arrow with an exit on the critic's "pass" verdict. Under each, one line naming what the arrangement buys.
+![four division-of-labor patterns](figures/fig-6-1-division-patterns.svg)
+
+*Figure 6.1 — The four division-of-labor patterns and what each arrangement buys.*
 
 Two of these are old acquaintances in new form. Evaluator–optimizer is Self-Refine (→ 5.2) with generator and critic given separate contexts, which removes the shared-framing weakness of self-critique. Orchestrator–workers is planning (→ Ch. 7) with the plan's steps executed by dispatched agents instead of a single loop.
 
 The choice among patterns follows the task's structure, and the fallback is always the simplest arrangement that fits: a fixed pipeline where stages are known, dynamic orchestration only where they are not.
+
+Every row is in production somewhere: Anthropic's research feature runs orchestrator–workers — a lead agent decomposes the question and spawns parallel searchers; Claude Code dispatches subtasks to subagents holding their own contexts; and the OpenAI Agents SDK ships handoffs — one agent passing a task to another — as a first-class primitive.
 
 ## 6.3 Communication and Shared State
 
@@ -62,7 +66,9 @@ The seam between agents and their tools has a standard of its own. Function call
 
 **MCP (Model Context Protocol)** = an open protocol, released by Anthropic in November 2024, that standardizes how applications connect models to tools and data sources. An **MCP server** wraps one service and exposes its tools over the protocol; the application (the **host**) runs an **MCP client** per connection, discovers what a server offers at connection time (`tools/list`), and calls by name (`tools/call`). A service wrapped once serves every agent that speaks the protocol: M×N becomes M+N, and a server-side change reaches every connected agent without a code change. MCP does not replace function calling — at the model boundary schemas still travel in `tools` and calls return in `tool_calls`; what it standardizes is where the schemas come from. Prebuilt servers exist for common services (GitHub, Google Drive, Slack, PostgreSQL), clients ship in editors and chat applications, and major vendors beyond the protocol's origin announced support in 2025.
 
-> **[Figure 6.2]** Left: M agents × N services drawn as a full bipartite tangle of private integrations. Right: the same agents and services joined through the protocol — each agent speaks MCP once, each service is wrapped by one MCP server — and the edge count collapses from M×N to M+N. Annotate one server box with `tools/list` / `tools/call` to show discovery and call.
+![M×N integrations versus MCP](figures/fig-6-2-mcp.svg)
+
+*Figure 6.2 — Without a protocol, M agents × N services multiply private integrations; with MCP, each side connects once and M×N collapses to M+N.*
 
 The caution restates the capability boundary (→ 3.6): a server's tool list is capability granted to the agent, and its descriptions and results are third-party text entering the context — connect servers as deliberately as you register tools. In a multi-agent system the deliberation is per agent: the researcher may hold the search server, and the writer none at all.
 
@@ -77,6 +83,16 @@ The default is therefore one agent. The split is justified when a measured bottl
 One agent, one context reaches its limits by role interference, context growth, and the absence of independent perspective. The remedy arranges several agents — each with its own prompt, context, and tools, each a Chapter 4 loop inside — under an orchestration layer, in four recurring patterns: pipeline, parallel-aggregate, orchestrator–workers, evaluator–optimizer. Cooperation runs over explicit messages or a shared store, and both exist to buy context isolation, whose price is that nothing travels implicitly — the characteristic failure is a downstream agent confident on an upstream omission. Frameworks package the orchestration shapes as graphs, and MCP standardizes the agent–tool seam, turning M×N private integrations into M+N. The split is adopted against a measured bottleneck, never by default, and per-component evaluation is what keeps the assembled system debuggable.
 
 Every arrangement in this chapter took its step sequence from somewhere: the pipeline's stages were fixed by us, and the orchestrator decomposed tasks at run time by judgment alone. What it means to produce that decomposition well — to draw the whole path before walking it, and to search among paths instead of committing to one — is planning, the subject of Chapter 7.
+
+## 6.7 Discussion
+
+Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
+
+1. A team proposes researcher / writer / critic / formatter — four agents — "because the roles are cleaner." Which of 6.1's three pressures actually justify a split, and at which of these four seams would you expect a measured bottleneck to appear first?
+2. The researcher→writer handoff of 6.3 carries topic, findings, and sources, and the reports keep presenting two disagreeing sources as if they compose. Name what is missing, and explain why improving the writer's prompt cannot fix it.
+3. After a change, the pipeline's end-to-end score drops. Describe the reading order that locates the fault — which records, in what sequence (6.3) — and how per-component evaluation shortens it (→ 5.10).
+4. Connecting a community MCP server adds thirty tools to your researcher agent (6.4). Name the two distinct risks this creates (the capability boundary of 3.6; third-party text entering the context) and state a per-agent connection policy that addresses both.
+5. A nightly job must turn forty new papers into one digest. Choose among the four patterns of 6.2, justify the choice with the table's "fits" column, and name the input change that would force an upgrade to orchestrator–workers.
 
 ---
 

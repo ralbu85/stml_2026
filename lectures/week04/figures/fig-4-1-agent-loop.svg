@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a7dbe"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="460" fill="white"/>
+
+  <!-- dotted outline: one revolution = Chapter 3's round trip -->
+  <rect x="96" y="92" width="584" height="330" rx="10" fill="none" stroke="#aaaaaa" stroke-dasharray="5 4"/>
+  <text x="110" y="413" font-size="11.5" fill="#999">one revolution = Chapter 3&#8217;s round trip</text>
+
+  <!-- failure exit (bound reached) -->
+  <rect x="52" y="22" width="156" height="52" rx="6" fill="white" stroke="#b3554e" stroke-width="1.6"/>
+  <text x="130" y="44" text-anchor="middle" font-size="13" fill="#222">Failure reported</text>
+  <text x="130" y="61" text-anchor="middle" font-size="11.5" fill="#b3554e">reports bound + trace</text>
+  <path d="M 275 106 L 275 48 L 212 48" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="283" y="84" font-size="11.5" fill="#555">bound reached (max_steps)</text>
+
+  <!-- Call -->
+  <rect x="200" y="106" width="150" height="68" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="275" y="123" text-anchor="middle" font-size="13.5" font-weight="600" fill="#222">Call</text>
+  <text x="275" y="138" text-anchor="middle" font-size="11.5" fill="#555">(code)</text>
+  <rect x="212" y="146" width="126" height="18" rx="4" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="275" y="159" text-anchor="middle" font-size="11.5" fill="#222">model called inside</text>
+
+  <!-- Call -> Judge -->
+  <path d="M 350 140 L 560 140 L 560 158" fill="none" stroke="#4a7dbe" stroke-width="1.6" marker-end="url(#arrB)"/>
+  <text x="455" y="130" text-anchor="middle" font-size="11.5" fill="#4a7dbe">model output</text>
+
+  <!-- Judge diamond -->
+  <path d="M 560 162 L 640 208 L 560 254 L 480 208 Z" fill="#fff7e0" stroke="#c9a227"/>
+  <text x="560" y="205" text-anchor="middle" font-size="13" font-weight="600" fill="#222">Judge</text>
+  <text x="560" y="221" text-anchor="middle" font-size="11.5" fill="#555">(code)</text>
+
+  <!-- Judge -> Answer (termination) -->
+  <line x1="640" y1="208" x2="716" y2="208" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="678" y="197" text-anchor="middle" font-size="11.5" fill="#555">Final Answer</text>
+  <rect x="720" y="182" width="158" height="52" rx="6" fill="white" stroke="#4e8a52" stroke-width="1.6"/>
+  <text x="799" y="204" text-anchor="middle" font-size="13" fill="#222">Answer returned</text>
+  <text x="799" y="221" text-anchor="middle" font-size="11.5" fill="#4e8a52">loop exits</text>
+
+  <!-- Judge -> Execute (execution request) -->
+  <line x1="560" y1="254" x2="560" y2="336" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="570" y="295" font-size="11.5" fill="#555">execution request</text>
+
+  <!-- Judge -> Reinject (format error, skips Execute) -->
+  <path d="M 480 208 L 275 208 L 275 336" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="390" y="198" text-anchor="middle" font-size="11.5" fill="#555">format error (skips Execute)</text>
+
+  <!-- Execute -->
+  <rect x="485" y="340" width="150" height="56" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="560" y="362" text-anchor="middle" font-size="13.5" font-weight="600" fill="#222">Execute</text>
+  <text x="560" y="379" text-anchor="middle" font-size="11.5" fill="#555">(code)</text>
+
+  <!-- Execute -> Reinject -->
+  <line x1="485" y1="368" x2="354" y2="368" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="420" y="358" text-anchor="middle" font-size="11.5" fill="#555">result string</text>
+
+  <!-- Reinject -->
+  <rect x="200" y="340" width="150" height="56" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="275" y="362" text-anchor="middle" font-size="13.5" font-weight="600" fill="#222">Reinject</text>
+  <text x="275" y="379" text-anchor="middle" font-size="11.5" fill="#555">(code)</text>
+
+  <!-- Reinject -> Call (next iteration) -->
+  <path d="M 200 368 L 120 368 L 120 140 L 196 140" fill="none" stroke="#4a7dbe" stroke-width="1.6" marker-end="url(#arrB)"/>
+  <text x="110" y="254" text-anchor="middle" font-size="11.5" fill="#4a7dbe" transform="rotate(-90 110 254)">next iteration</text>
+
+  <text x="450" y="446" text-anchor="middle" font-size="12.5" fill="#666">every step of the loop is our code; the model runs only inside Call</text>
+</svg>

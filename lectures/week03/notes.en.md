@@ -29,7 +29,9 @@ A **round trip** is one cycle in which the model issues an execution request, re
 4. **Execution** (our code) — Call the function; on an exception, turn the exception into the result string.
 5. **Reinjection** (our code) — Append the result string to the conversation and call the model again. The model reads it and answers, or corrects a failed call, repeating from Parsing.
 
-> **[Figure 3.1]** The five steps as a swimlane diagram: lanes "model" and "our code"; only judgment (call generation, final answer) sits in the model lane — the division of 3.1 made visible.
+![the round trip as a swimlane](figures/fig-3-1-round-trip-swimlane.svg)
+
+*Figure 3.1 — The five round-trip steps as a swimlane: only the call judgment sits in the model lane; every other step is our code.*
 
 The opening failure, run through this procedure:
 
@@ -67,6 +69,8 @@ reinjection:                 { "role": "tool", "content": "406" }
 ```
 
 The step structure is identical to the handcrafted protocol; the reliability is higher, because models are trained to emit this format and arguments arrive as structured fields. Three operating controls come with the standard: **tool_choice** constrains call generation by setting instead of pleading (auto / required / a named tool / none); **parallel tool calls** put several independent calls in one `tool_calls` response, saving a round trip per extra call; **structured outputs** apply the same schema guarantee to the final answer, removing the parse-failure branch for answers as function calling removed it for calls.
+
+Function calling is the substrate of current assistant products, not an optional feature: the web-search and file tools inside ChatGPT and Claude, and every action a coding agent takes — read a file, run the tests, apply an edit — travel the API as exactly these fields. When such a product "does something," a `tool_calls` message like the one above did it.
 
 ## 3.4 Schema Writing
 
@@ -135,7 +139,7 @@ The alternative gives the model one capability instead of many tools: write code
 [model]   The square root of 2 is approximately 1.4142.
 ```
 
-The choice between paradigms: function calling suits a fixed action surface with side effects worth controlling — where the capability boundary of 3.6 is the point; code execution suits open-ended computation and data manipulation, where everything the language expresses composes in one block (the Week 5 homework runs exactly this convention on chart generation). The price is safety: generated code can do anything the runtime allows — the source course records an agent tidying a project directory with `rm *.py`, and the apology afterward restored nothing. The rule: execute generated code in a **sandbox**, an isolated runtime with restricted filesystem and network access (a container such as Docker, or a hosted service such as E2B), never in a process that holds real data. (Adapted from Ng, *Agentic AI* Module 3.)
+The choice between paradigms: function calling suits a fixed action surface with side effects worth controlling — where the capability boundary of 3.6 is the point; code execution suits open-ended computation and data manipulation, where everything the language expresses composes in one block (the Week 5 homework runs exactly this convention on chart generation). The price is safety: generated code can do anything the runtime allows — the source course records an agent tidying a project directory with `rm *.py`, and the apology afterward restored nothing. The rule: execute generated code in a **sandbox**, an isolated runtime with restricted filesystem and network access (a container such as Docker, or a hosted service such as E2B), never in a process that holds real data. Both shapes ship today: ChatGPT's Advanced Data Analysis and Claude's code execution run model-written Python in hosted sandboxes of exactly this kind, while coding agents (Claude Code, Cursor) run the convention against a real repository, with a permission prompt standing where the sandbox wall would be. (Adapted from Ng, *Agentic AI* Module 3.)
 
 ## 3.8 Learning the Judgment — Toolformer · ToolLLM
 
@@ -148,6 +152,16 @@ Code-side improvement ends at schema writing and failure handling; the judgment 
 The principle of tool use is a division of labor: judgment to the model as text, execution to code, under the convention that output is read as an execution request. Its implementation is the round trip (schema provision → call generation → parsing → execution → reinjection); function calling is its standardization. Operation concentrates on three points: the schema supplies the basis for the call judgment, failures are reinjected as result strings so recovery is delegated to the model, and the tool list is the action surface — capability and safety are both set by what is registered. Code execution rounds out the practice, replacing an enumerated toolbox with one generated program at the price of a sandbox; the seam between applications and tool providers has its own standard, MCP, treated with multi-agent systems (→ Ch. 6). Judgment beyond the reach of prompts is trained into the weights, with self-generated data filtered automatically (Toolformer, ToolLLM).
 
 One fact from this chapter carries forward. The email assistant completed multi-step work because round trips repeated under the client's bound, with the model deciding each next call and the stopping point — by Chapter 1's definition, control flow was already in the model's output. The loop that did this was borrowed and invisible. Chapter 4 builds it by hand: its anatomy, the convention for what the model writes on each turn, and what to read when it fails.
+
+## 3.10 Discussion
+
+Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
+
+1. Three failures are observed in one afternoon: the model calls `search_papers` for "what is 2 + 2"; the model passes the user's whole sentence as a search query; a tool raises an exception that crashes the application. For each, name the round-trip step where the failure lives (3.2) and where the fix belongs — schema, prompt, or code (3.4–3.5).
+2. A tool is registered as `helper2(x)` with the description "does the thing", and routing is poor. Rewrite the name, the description, and the parameter line to the checklist of 3.4, and state which misrouting each rewritten line prevents.
+3. A product owner wants the email assistant to "never delete emails." Compare enforcing this by instruction against not registering `delete_email` (3.6): which one is a guarantee, and what does the difference come to once untrusted text can enter the context (→ Ch. 14)?
+4. Choose the paradigm — function calling or code execution (3.7) — for (a) a banking assistant that executes transfers and (b) an analyst assistant over uploaded CSV files. Name the single property of each task that decides, and the safety cost accepted in (b).
+5. An internal agent with five hundred registered tools misroutes even after every docstring passes the checklist. What remains on the prompt side, and what would a Toolformer- or ToolLLM-style weights-side fix require here (3.8) — where would the training data come from?
 
 ---
 

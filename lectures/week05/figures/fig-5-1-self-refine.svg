@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4e8a52"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="380" fill="white"/>
+
+  <!-- task input -->
+  <rect x="28" y="66" width="96" height="48" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="76" y="95" text-anchor="middle" font-size="13" fill="#222">Task</text>
+
+  <!-- generate -->
+  <rect x="170" y="64" width="150" height="52" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="245" y="85" text-anchor="middle" font-size="13.5" font-weight="600" fill="#222">Generate</text>
+  <text x="245" y="102" text-anchor="middle" font-size="11.5" fill="#555">writes the draft</text>
+
+  <!-- critique -->
+  <rect x="520" y="64" width="170" height="52" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="605" y="85" text-anchor="middle" font-size="13.5" font-weight="600" fill="#222">Critique</text>
+  <text x="605" y="102" text-anchor="middle" font-size="11.5" fill="#555">names concrete defects</text>
+
+  <!-- improve -->
+  <rect x="520" y="280" width="170" height="52" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="605" y="301" text-anchor="middle" font-size="13.5" font-weight="600" fill="#222">Improve</text>
+  <text x="605" y="318" text-anchor="middle" font-size="11.5" fill="#555">revises: draft + critique</text>
+
+  <!-- termination -->
+  <rect x="770" y="66" width="110" height="48" rx="6" fill="#eaf3eb" stroke="#4e8a52"/>
+  <text x="825" y="95" text-anchor="middle" font-size="13" fill="#222">Final output</text>
+
+  <!-- flow arrows -->
+  <line x1="124" y1="90" x2="166" y2="90" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="320" y1="90" x2="516" y2="90" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="418" y="80" text-anchor="middle" font-size="11.5" fill="#555">draft</text>
+
+  <line x1="655" y1="116" x2="655" y2="276" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="668" y="186" font-size="11.5" fill="#555">list of</text>
+  <text x="668" y="202" font-size="11.5" fill="#555">improvements</text>
+
+  <line x1="555" y1="276" x2="555" y2="120" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="543" y="190" text-anchor="end" font-size="11.5" fill="#555">revision</text>
+  <text x="543" y="206" text-anchor="end" font-size="11.5" fill="#777">(iteration capped)</text>
+
+  <!-- termination exit -->
+  <line x1="690" y1="90" x2="766" y2="90" stroke="#4e8a52" stroke-width="1.6" marker-end="url(#arrG)"/>
+  <text x="728" y="68" text-anchor="middle" font-size="11.5" fill="#4e8a52">nothing</text>
+  <text x="728" y="81" text-anchor="middle" font-size="11.5" fill="#4e8a52">to improve</text>
+
+  <!-- one model, three prompts -->
+  <circle cx="388" cy="230" r="46" fill="#dbe7f5" stroke="#4a7dbe" stroke-width="1.5"/>
+  <text x="388" y="235" text-anchor="middle" font-size="13" font-weight="600" fill="#222">one model</text>
+
+  <line x1="352" y1="201" x2="256" y2="120" stroke="#4a7dbe" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <line x1="421" y1="198" x2="514" y2="110" stroke="#4a7dbe" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <line x1="428" y1="252" x2="516" y2="298" stroke="#4a7dbe" stroke-width="1.2" stroke-dasharray="3 3"/>
+
+  <text x="372" y="312" text-anchor="middle" font-size="12" fill="#666">the roles are three prompts to the same model</text>
+</svg>

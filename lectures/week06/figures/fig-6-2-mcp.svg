@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="420" fill="white"/>
+
+  <!-- ================= left: private integrations ================= -->
+  <text x="225" y="40" text-anchor="middle" font-size="16" font-weight="600" fill="#222">Private integrations</text>
+  <text x="225" y="60" text-anchor="middle" font-size="12.5" fill="#666">every agent implements every service</text>
+
+  <text x="96" y="92" text-anchor="middle" font-size="11" fill="#777">agents (M = 3)</text>
+  <text x="357" y="92" text-anchor="middle" font-size="11" fill="#777">services (N = 4)</text>
+
+  <!-- tangle: 3 x 4 = 12 lines -->
+  <line x1="156" y1="135" x2="305" y2="115" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="135" x2="305" y2="185" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="135" x2="305" y2="255" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="135" x2="305" y2="325" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="225" x2="305" y2="115" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="225" x2="305" y2="185" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="225" x2="305" y2="255" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="225" x2="305" y2="325" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="315" x2="305" y2="115" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="315" x2="305" y2="185" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="315" x2="305" y2="255" stroke="#aaaaaa" stroke-width="1.1"/>
+  <line x1="156" y1="315" x2="305" y2="325" stroke="#aaaaaa" stroke-width="1.1"/>
+
+  <!-- left agent boxes -->
+  <rect x="36" y="116" width="120" height="38" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="96" y="139" text-anchor="middle" font-size="12.5" fill="#222">Research agent</text>
+  <rect x="36" y="206" width="120" height="38" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="96" y="229" text-anchor="middle" font-size="12.5" fill="#222">Coding agent</text>
+  <rect x="36" y="296" width="120" height="38" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="96" y="319" text-anchor="middle" font-size="12.5" fill="#222">Report pipeline</text>
+
+  <!-- left service boxes -->
+  <rect x="305" y="98" width="105" height="34" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="357" y="119" text-anchor="middle" font-size="12" fill="#222">GitHub</text>
+  <rect x="305" y="168" width="105" height="34" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="357" y="189" text-anchor="middle" font-size="12" fill="#222">Google Drive</text>
+  <rect x="305" y="238" width="105" height="34" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="357" y="259" text-anchor="middle" font-size="12" fill="#222">Slack</text>
+  <rect x="305" y="308" width="105" height="34" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="357" y="329" text-anchor="middle" font-size="12" fill="#222">PostgreSQL</text>
+
+  <text x="225" y="382" text-anchor="middle" font-size="13" font-weight="600" fill="#b3554e">3 &#215; 4 = 12 integrations</text>
+  <text x="225" y="401" text-anchor="middle" font-size="11.5" fill="#666">a new agent adds 4 more</text>
+
+  <!-- divider -->
+  <line x1="450" y1="30" x2="450" y2="405" stroke="#cccccc" stroke-dasharray="4 4"/>
+
+  <!-- ================= right: MCP ================= -->
+  <text x="678" y="40" text-anchor="middle" font-size="16" font-weight="600" fill="#222">MCP</text>
+  <text x="678" y="60" text-anchor="middle" font-size="12.5" fill="#666">one protocol between agents and servers</text>
+
+  <!-- agent -> bus lines -->
+  <line x1="584" y1="135" x2="626" y2="135" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="584" y1="225" x2="626" y2="225" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="584" y1="315" x2="626" y2="315" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <!-- right agent boxes -->
+  <rect x="464" y="116" width="120" height="38" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="524" y="139" text-anchor="middle" font-size="12.5" fill="#222">Research agent</text>
+  <rect x="464" y="206" width="120" height="38" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="524" y="229" text-anchor="middle" font-size="12.5" fill="#222">Coding agent</text>
+  <rect x="464" y="296" width="120" height="38" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="524" y="319" text-anchor="middle" font-size="12.5" fill="#222">Report pipeline</text>
+
+  <!-- protocol bus -->
+  <rect x="630" y="100" width="36" height="250" rx="6" fill="#fff7e0" stroke="#c9a227"/>
+  <text x="648" y="225" text-anchor="middle" font-size="12.5" font-weight="600" fill="#222" transform="rotate(-90 648 225)">MCP protocol</text>
+
+  <!-- bus -> server lines -->
+  <line x1="666" y1="115" x2="696" y2="115" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="666" y1="185" x2="696" y2="185" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="666" y1="255" x2="696" y2="255" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="666" y1="325" x2="696" y2="325" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <!-- server wraps service: outer = MCP server, inner = service -->
+  <rect x="700" y="92" width="182" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="710" y="119" font-size="10.5" fill="#555">MCP server</text>
+  <rect x="778" y="101" width="96" height="28" rx="5" fill="#ffffff" stroke="#999"/>
+  <text x="826" y="119" text-anchor="middle" font-size="11.5" fill="#222">GitHub</text>
+
+  <rect x="700" y="162" width="182" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="710" y="189" font-size="10.5" fill="#555">MCP server</text>
+  <rect x="778" y="171" width="96" height="28" rx="5" fill="#ffffff" stroke="#999"/>
+  <text x="826" y="189" text-anchor="middle" font-size="11.5" fill="#222">Google Drive</text>
+
+  <rect x="700" y="232" width="182" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="710" y="259" font-size="10.5" fill="#555">MCP server</text>
+  <rect x="778" y="241" width="96" height="28" rx="5" fill="#ffffff" stroke="#999"/>
+  <text x="826" y="259" text-anchor="middle" font-size="11.5" fill="#222">Slack</text>
+
+  <rect x="700" y="302" width="182" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="710" y="329" font-size="10.5" fill="#555">MCP server</text>
+  <rect x="778" y="311" width="96" height="28" rx="5" fill="#ffffff" stroke="#999"/>
+  <text x="826" y="329" text-anchor="middle" font-size="11.5" fill="#222">PostgreSQL</text>
+
+  <!-- discovery / call annotation on the first server -->
+  <text x="791" y="78" text-anchor="middle" font-size="10.5" fill="#4a7dbe" font-family="Menlo, Consolas, monospace">tools/list &#183; tools/call</text>
+  <line x1="791" y1="82" x2="791" y2="90" stroke="#999" stroke-width="1"/>
+
+  <text x="678" y="382" text-anchor="middle" font-size="13" font-weight="600" fill="#4e8a52">3 + 4 = 7 connections</text>
+  <text x="678" y="401" text-anchor="middle" font-size="11.5" fill="#666">a new agent adds 1</text>
+</svg>

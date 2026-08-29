@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 350" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a7dbe"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="350" fill="white"/>
+
+  <!-- lane bands -->
+  <rect x="20" y="40" width="860" height="112" fill="#dbe7f5" fill-opacity="0.30"/>
+  <rect x="20" y="152" width="860" height="148" fill="#eeeeee" fill-opacity="0.50"/>
+  <rect x="20" y="40" width="860" height="260" fill="none" stroke="#cccccc"/>
+  <line x1="20" y1="152" x2="880" y2="152" stroke="#cccccc"/>
+  <text x="38" y="96" text-anchor="middle" font-size="13" font-weight="600" fill="#4a7dbe" transform="rotate(-90 38 96)">model</text>
+  <text x="38" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#555" transform="rotate(-90 38 226)">our code</text>
+
+  <!-- step 1: schema provision (code) -->
+  <text x="158" y="195" text-anchor="middle" font-size="11.5" font-weight="600" fill="#999">1</text>
+  <rect x="96" y="203" width="124" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="158" y="222" text-anchor="middle" font-size="13" fill="#222">Schema provision</text>
+  <text x="158" y="238" text-anchor="middle" font-size="11.5" fill="#555">tool list in prompt</text>
+
+  <!-- step 2: call generation (model) -->
+  <text x="309" y="65" text-anchor="middle" font-size="11.5" font-weight="600" fill="#999">2</text>
+  <rect x="250" y="73" width="118" height="46" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="309" y="92" text-anchor="middle" font-size="13" fill="#222">Call generation</text>
+  <text x="309" y="108" text-anchor="middle" font-size="11.5" fill="#555">call text or answer</text>
+
+  <!-- step 3: parsing (code) -->
+  <text x="443" y="195" text-anchor="middle" font-size="11.5" font-weight="600" fill="#999">3</text>
+  <rect x="398" y="203" width="90" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="443" y="222" text-anchor="middle" font-size="13" fill="#222">Parsing</text>
+  <text x="443" y="238" text-anchor="middle" font-size="11.5" fill="#555">name + input</text>
+
+  <!-- step 4: execution (code) -->
+  <text x="558" y="195" text-anchor="middle" font-size="11.5" font-weight="600" fill="#999">4</text>
+  <rect x="508" y="203" width="100" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="558" y="222" text-anchor="middle" font-size="13" fill="#222">Execution</text>
+  <text x="558" y="238" text-anchor="middle" font-size="11.5" fill="#555">run the function</text>
+
+  <!-- step 5: reinjection (code) -->
+  <text x="682" y="195" text-anchor="middle" font-size="11.5" font-weight="600" fill="#999">5</text>
+  <rect x="628" y="203" width="108" height="46" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="682" y="222" text-anchor="middle" font-size="13" fill="#222">Reinjection</text>
+  <text x="682" y="238" text-anchor="middle" font-size="11.5" fill="#555">result appended</text>
+
+  <!-- final answer (model) -->
+  <rect x="766" y="73" width="100" height="46" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="816" y="92" text-anchor="middle" font-size="13" fill="#222">Final answer</text>
+  <text x="816" y="108" text-anchor="middle" font-size="11.5" fill="#555">round trip ends</text>
+
+  <!-- arrows -->
+  <path d="M 220 226 L 235 226 L 235 96 L 246 96" fill="none" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="229" y="170" text-anchor="end" font-size="11.5" fill="#555">prompt</text>
+
+  <path d="M 368 96 L 383 96 L 383 226 L 394 226" fill="none" stroke="#4a7dbe" stroke-width="1.6" marker-end="url(#arrB)"/>
+  <text x="390" y="170" font-size="11.5" fill="#4a7dbe">call text</text>
+
+  <line x1="488" y1="226" x2="504" y2="226" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+  <line x1="608" y1="226" x2="624" y2="226" stroke="#555" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <path d="M 736 226 L 751 226 L 751 96 L 762 96" fill="none" stroke="#4a7dbe" stroke-width="1.6" marker-end="url(#arrB)"/>
+  <text x="745" y="170" text-anchor="end" font-size="11.5" fill="#4a7dbe">model called again</text>
+
+  <text x="450" y="330" text-anchor="middle" font-size="12.5" fill="#666">the model&#8217;s only share is judgment &#8212; every other step is ordinary code</text>
+</svg>
