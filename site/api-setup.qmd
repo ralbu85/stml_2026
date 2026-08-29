@@ -1,0 +1,5 @@
+---
+title: "API Setup Guide"
+---
+
+{{< include _api-setup-content.md >}}

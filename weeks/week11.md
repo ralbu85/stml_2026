@@ -1,4 +1,4 @@
-# Week 11. 멀티에이전트 + LangGraph 전환점 ⭐
+# Week 11. 멀티에이전트 + LangGraph + MCP 전환점 ⭐
 
 > **Part:** 협업·환경 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
@@ -6,7 +6,7 @@
 ⭐ **전환점.** 여러 에이전트의 협업과 프레임워크로의 전환. 이론에서 협업 아키텍처(핸드오프·라우터)를 다루고, 실습에서 직접 짠 멀티에이전트를 **LangGraph로 재구현·비교**한다(from-scratch→프레임워크 분기점). AutoGen·MetaGPT.
 
 ## 📖 보조읽기 (발표 대상 아님)
-LangChain — *Choosing the Right Multi-Agent Architecture* · MS02·08
+LangChain — *Choosing the Right Multi-Agent Architecture* · MS02·08·11 · GenAI `mcp-tutorial.ipynb`
 
 ## 📄 발표 논문
 #### 🟡 AutoGen: Multi-Agent Conversation Framework

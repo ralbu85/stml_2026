@@ -1,0 +1,5 @@
+{"question": "In which year was ReAct published, according to the catalog?", "keywords": ["2022"]}
+{"question": "Who are the authors of Toolformer, according to the catalog?", "keywords": ["schick"]}
+{"question": "Which was published earlier according to the catalog, Toolformer or chain-of-thought?", "keywords": ["chain-of-thought"]}
+{"question": "How many years passed between chain-of-thought and Toolformer, according to the catalog?", "keywords": ["1"]}
+{"question": "Who is the first author of self-consistency, and in which year was it published?", "keywords": ["wang", "2022"]}

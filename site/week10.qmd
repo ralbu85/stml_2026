@@ -1,0 +1,25 @@
+---
+title: "Week 10 — Context Engineering · Memory"
+---
+
+| Material | Where |
+|---|---|
+| Lecture notes | published before class |
+| Slides | published before class |
+| Lab | published before class |
+| Presentation papers | [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) · [LLMLingua (Jiang et al., 2023)](https://arxiv.org/abs/2310.05736) · [MemGPT (Packer et al., 2023)](https://arxiv.org/abs/2310.08560) · [Mem0 (2025)](https://arxiv.org/abs/2504.19413) |
+| References | [Anthropic, Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) |
+
+## This week
+
+The context window as a finite, priced, position-biased resource: Lost in the Middle, budget management by selection, ordering, and compression, and the harness. Then memory beyond the session: storage, retrieval, and update (MemGPT paging, Mem0 update operations).
+
+## Lab
+
+Long-term memory lab + wrapping the semester's modules as graph nodes (published before class).
+
+Run it in Colab: download the notebook, go to [colab.research.google.com](https://colab.research.google.com) → Upload, paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
+
+## Presentations
+
+Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

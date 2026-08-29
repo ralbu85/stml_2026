@@ -1,0 +1,27 @@
+---
+title: "Week 03 — Tool Use"
+---
+
+| Material | Where |
+|---|---|
+| Lecture notes | [English](week03-notes.qmd) |
+| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_lab_tools.ipynb) · [`W3_lab_tools.ipynb`](labs/W3_lab_tools.ipynb) · [read-only view](labs/W3_lab_tools.html) |
+| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_hw_new_tool.ipynb) · [`W3_hw_new_tool.ipynb`](labs/W3_hw_new_tool.ipynb) · [read-only view](labs/W3_hw_new_tool.html) — due before Week 4 |
+| Presentation papers | [Toolformer (Schick et al., 2023)](https://arxiv.org/abs/2302.04761) · [ToolLLM (Qin et al., 2023)](https://arxiv.org/abs/2307.16789) · optional: [ReTool (2025)](https://arxiv.org/abs/2504.11536) |
+| References | [Anthropic cookbook — tool use recipes](https://github.com/anthropics/anthropic-cookbook) · [Microsoft, AI Agents for Beginners — lesson 4 (tool use)](https://github.com/microsoft/ai-agents-for-beginners) |
+
+## This week
+
+The division of labor that gives a text-only model hands: judgment to the model as text, execution to code, under the convention that output is read as an execution request. Function calling as the standardized round trip; the tool schema as the entire interface; failures reinjected as readable results; the tool list as the capability boundary — and the honest closing observation that a loop has been running all along, inside the client.
+
+## Lab
+
+`W3_lab_tools.ipynb` — plain Python functions become tools through `aisuite` (docstring-derived schemas); the request–execute–reinject cycle traced; a bad-vs-improved docstring experiment; a measured routing score over a fixed task set (≥ 6/8); and an email assistant whose capability is set entirely by its tool list. Adapted from Andrew Ng's *Agentic AI* Module 3.
+
+Homework: `W3_hw_new_tool.ipynb` — extend the toolbox with a schedule-lookup tool of your own: the function, the docstring written to the checklist, and two routing tasks that prove the model finds it (≥ 7/8). Due before Week 4.
+
+Run it in Colab: click **Open in Colab** (links above), paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
+
+## Presentations
+
+Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

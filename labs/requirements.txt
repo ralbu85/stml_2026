@@ -2,7 +2,9 @@
 aisuite[openai,anthropic,ollama]
 python-dotenv
 pytest
-requests            # W1 원시 API 데모 · W12 웹 도구
-numpy               # W7 임베딩·코사인 유사도
-# langgraph         # W11부터 주석 해제 (프레임워크 전환점)
-# sentence-transformers  # (선택) W7에서 hash_embed 대신 진짜 임베딩을 쓰려면
+requests            # W1 원시 API · W4 검색 도구 · W12 웹 도구
+ddgs                # W4 연구 워크플로: DuckDuckGo 검색 (키 불필요)
+qrcode[pil]         # W4 도구 상자: QR 코드 생성 도구
+numpy               # W9 임베딩·코사인 유사도
+langgraph            # W11부터 프레임워크 전환점 (Python 3.10+ 필요)
+# sentence-transformers  # (선택) W9에서 hash_embed 대신 로컬 임베딩을 쓰려면

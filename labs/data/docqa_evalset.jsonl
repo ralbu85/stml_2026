@@ -1,0 +1,5 @@
+{"question": "이 수업의 논문 발표는 슬라이드 몇 장 상한인가?", "answer": "6"}
+{"question": "논문 발표는 몇 분 하드 스톱인가?", "answer": "15"}
+{"question": "실습 후반부는 어떤 프레임워크로 전환하는가?", "answer": "langgraph"}
+{"question": "9주차 실습은 무엇을 만드는가?", "answer": "rag"}
+{"question": "최종 산출물은 무슨 코퍼스에 기반한 에이전트인가?", "answer": "논문"}

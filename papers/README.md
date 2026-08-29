@@ -1,6 +1,6 @@
 # 발표 논문 PDF — 검증 매니페스트
 
-`docs/syllabus.md`(개념 의존성 순서 v4) 발표 논문 전체 — 필수 28 + 선택읽기 10 = **38편**.
+`docs/syllabus.md`(개념 의존성 순서 v5) 발표 논문 전체 — 필수 27 + 선택읽기 11 = **38편**.
 **검증:** 각 arXiv ID의 실제 초록 제목 대조 → **전량 일치, 다운로드 실패 0**. 재현: `python3 scripts/fetch_papers.py`.
 
 > PDF는 `.gitignore`(용량 큼, arXiv 재다운로드 가능). 이 목록과 스크립트만 버전관리.
@@ -8,16 +8,16 @@
 | 주 | 파일 | 논문 | arXiv |
 |---|---|---|---|
 | 2 | `W02_Chain-of-Thought_2201.11903.pdf` | Chain-of-Thought Prompting Elicits Reasoning in LLMs | [2201.11903](https://arxiv.org/abs/2201.11903) |
-| 3 | `W03_Toolformer_2302.04761.pdf` | Toolformer: Language Models Can Teach Themselves to Use Tools | [2302.04761](https://arxiv.org/abs/2302.04761) |
-| 3 | `W03_ToolLLM_2307.16789.pdf` | ToolLLM: Facilitating LLMs to Master 16000+ Real-world APIs | [2307.16789](https://arxiv.org/abs/2307.16789) |
-| 3 | `W03_opt-ReTool_2504.11536.pdf` | *(선택)* ReTool: RL for Strategic Tool Use in LLMs | [2504.11536](https://arxiv.org/abs/2504.11536) |
-| 4 | `W04_ReAct_2210.03629.pdf` | ReAct: Synergizing Reasoning and Acting in Language Models | [2210.03629](https://arxiv.org/abs/2210.03629) |
-| 4 | `W04_DeepSeek-R1_2501.12948.pdf` | DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL | [2501.12948](https://arxiv.org/abs/2501.12948) |
-| 4 | `W04_opt-STaR_2203.14465.pdf` | *(선택)* STaR: Bootstrapping Reasoning With Reasoning | [2203.14465](https://arxiv.org/abs/2203.14465) |
-| 5 | `W05_RAG-Lewis_2005.11401.pdf` | Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks | [2005.11401](https://arxiv.org/abs/2005.11401) |
-| 5 | `W05_HyDE_2212.10496.pdf` | HyDE: Precise Zero-Shot Dense Retrieval without Relevance Labels | [2212.10496](https://arxiv.org/abs/2212.10496) |
-| 6 | `W06_Adaptive-RAG_2403.14403.pdf` | Adaptive-RAG: Adapt Retrieval-Augmented LLMs by Query Complexity | [2403.14403](https://arxiv.org/abs/2403.14403) |
+| 3 | `W03_STaR_2203.14465.pdf` | STaR: Bootstrapping Reasoning With Reasoning | [2203.14465](https://arxiv.org/abs/2203.14465) |
+| 3 | `W03_DeepSeek-R1_2501.12948.pdf` | DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL | [2501.12948](https://arxiv.org/abs/2501.12948) |
+| 4 | `W04_Toolformer_2302.04761.pdf` | Toolformer: Language Models Can Teach Themselves to Use Tools | [2302.04761](https://arxiv.org/abs/2302.04761) |
+| 4 | `W04_ToolLLM_2307.16789.pdf` | ToolLLM: Facilitating LLMs to Master 16000+ Real-world APIs | [2307.16789](https://arxiv.org/abs/2307.16789) |
+| 4 | `W04_opt-ReTool_2504.11536.pdf` | *(선택)* ReTool: RL for Strategic Tool Use in LLMs | [2504.11536](https://arxiv.org/abs/2504.11536) |
+| 5 | `W05_ReAct_2210.03629.pdf` | ReAct: Synergizing Reasoning and Acting in Language Models | [2210.03629](https://arxiv.org/abs/2210.03629) |
+| 6 | `W06_RAG-Lewis_2005.11401.pdf` | Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks | [2005.11401](https://arxiv.org/abs/2005.11401) |
 | 6 | `W06_Self-RAG_2310.11511.pdf` | Self-RAG: Learning to Retrieve, Generate, and Critique | [2310.11511](https://arxiv.org/abs/2310.11511) |
+| 6 | `W06_opt-HyDE_2212.10496.pdf` | *(선택)* HyDE: Precise Zero-Shot Dense Retrieval without Relevance Labels | [2212.10496](https://arxiv.org/abs/2212.10496) |
+| 6 | `W06_opt-Adaptive-RAG_2403.14403.pdf` | *(선택)* Adaptive-RAG: Adapt Retrieval-Augmented LLMs by Query Complexity | [2403.14403](https://arxiv.org/abs/2403.14403) |
 | 7 | `W07_Tree-of-Thoughts_2305.10601.pdf` | Tree of Thoughts: Deliberate Problem Solving with LLMs | [2305.10601](https://arxiv.org/abs/2305.10601) |
 | 7 | `W07_ReWOO_2305.18323.pdf` | ReWOO: Decoupling Reasoning from Observations | [2305.18323](https://arxiv.org/abs/2305.18323) |
 | 8 | `W08_Reflexion_2303.11366.pdf` | Reflexion: Language Agents with Verbal Reinforcement Learning | [2303.11366](https://arxiv.org/abs/2303.11366) |

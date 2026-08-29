@@ -1,0 +1,114 @@
+---
+title: "Self-Consistency Improves Chain of Thought Reasoning in Language Models"
+subtitle: "Wang et al., ICLR 2023 · arXiv:2203.11171 — SAMPLE PRESENTATION (course template)"
+author: "STML 2026 · exemplar deck by the instructor"
+format:
+  revealjs:
+    theme: [default]
+    slide-number: c/t
+    footer: "STML 2026 · sample paper presentation · 6 slides / 15 minutes"
+    transition: none
+    center: false
+    width: 1280
+    height: 720
+    margin: 0.08
+    mermaid:
+      theme: neutral
+---
+
+## 1 · Contribution in one sentence
+
+> This paper solves the problem that **one greedy reasoning chain fails on problems the model can actually solve** — by **sampling many diverse reasoning paths and taking the majority answer**.
+
+- No training, no new model — a *decoding strategy* swap at inference time.
+- Works on top of chain-of-thought prompting as-is.
+
+::: notes
+[1 min] Template slide 1 = the whole paper in one sentence, in the "solves X by Y" shape.
+Say it, don't read it. Everything after this slide is evidence for this sentence.
+:::
+
+## 2 · Problem & motivation
+
+Chain-of-thought prompting made models *show* multi-step reasoning — but decoding stayed **greedy**: the model commits to a single chain, token by token.
+
+- One early wrong step poisons everything after it; the final answer is hostage to a single path.
+- Yet a complex problem usually admits **several different valid ways to reach its one correct answer** — greedy decoding throws that diversity away.
+- Prior fixes (trained verifiers, re-rankers) require **extra training**; nothing exploited the model's own sampling.
+
+::: notes
+[2 min] Template slide 2 = why now + what prior work couldn't do.
+The motivation is stated as a mechanism gap (greedy = one path), not as "accuracy was low."
+:::
+
+## 3 · Core mechanism
+
+```{mermaid}
+%%| fig-width: 11
+flowchart LR
+    Q["question<br/>+ CoT prompt"] --> S1["path 1 (sampled, T>0):<br/>...so 8 + 10 = 18"]
+    Q --> S2["path 2 (sampled):<br/>...therefore 26"]
+    Q --> S3["path 3 (sampled):<br/>...which gives 18"]
+    S1 --> E["extract final answers:<br/>18 · 26 · 18"]
+    S2 --> E
+    S3 --> E
+    E --> V["majority vote<br/>(marginalize over paths)"]
+    V --> A["answer: 18"]
+```
+
+1. **Sample** N reasoning chains with temperature > 0 (instead of one greedy chain).
+2. **Extract** only the final answer from each chain — the chain text itself is discarded.
+3. **Vote**: return the most frequent answer. Formally, this marginalizes out the reasoning paths.
+
+Wrong paths tend to scatter across *different* wrong answers; correct paths **agree**.
+
+::: notes
+[5 min] Template slide 3 = the mechanism, on a figure you drew yourself (this diagram is
+original — pasting the paper's Figure 1 is not allowed). Walk the three paths out loud;
+the 18/26/18 example carries the whole idea. The one term worth saying precisely:
+"marginalizing out reasoning paths" — voting is a sum over latent paths.
+:::
+
+## 4 · One key result
+
+**GSM8K (grade-school math): +17.9% absolute** over CoT with greedy decoding — from sampling alone, no training.
+
+| Benchmark | Gain over greedy CoT |
+|---|---|
+| GSM8K | **+17.9%** |
+| AQuA | +12.2% |
+| SVAMP | +11.0% |
+| StrategyQA | +6.4% |
+| ARC-challenge | +3.9% |
+
+What this proves: a large share of CoT's errors are **decoding accidents, not capability limits** — the model already contained the correct reasoning; greedy decoding just failed to surface it.
+
+::: notes
+[3 min] Template slide 4 = ONE result and what it proves — not a tour of every table.
+The claim sentence at the bottom is the slide's job; the table is only support.
+Numbers are from the paper's abstract (verified).
+:::
+
+## 5 · Weakest assumption
+
+**The vote needs answers that can be compared for equality.**
+
+- Works when the final answer is short and discrete (a number, a multiple-choice option). For open-ended outputs — a proof, an essay, code — "most consistent answer" has no exact-match definition.
+- Also assumes errors are *diverse* while truth *converges*: under a **systematic bias** (e.g. a consistent unit-conversion mistake), the majority converges on the same wrong answer, confidently.
+- And the cost is honest: N samples = **N× the inference cost** of one chain.
+
+::: notes
+[3 min] Template slide 5 = the critique you chose yourself — the rubric scores whether
+you found the load-bearing assumption, not whether you listed many small caveats.
+Ranked here: comparability (structural), error diversity (statistical), cost (practical).
+:::
+
+## 6 · Connection
+
+- **Successors relax slide 5's limits**: Tree of Thoughts (search instead of independent samples), trained verifiers / LLM judges (vote replaced by scoring — usable for open-ended outputs).
+- **In this course**: you implement exactly this loop in the **W3 lab** (N=5 vote, watching accuracy vs. N); the N× cost returns in **W11 inference economics** as the compute-optimal question — when is N samples of a small model better than 1 call to a large one?
+
+::: notes
+[1 min] Template slide 6 = one link forward (literature) + one link home (your work).
+Then slides off — cold questions are answered at the whiteboard.
+:::

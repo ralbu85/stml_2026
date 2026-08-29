@@ -1,0 +1,13 @@
+---
+title: "Week 14 — Final Presentations"
+---
+
+| Material | Where |
+|---|---|
+| Lecture notes | — |
+| Slides | — |
+| Lab | — (exam / presentation week)
+
+## This week
+
+Full-day team presentations of the final deliverable: a research-assistant agent over the course paper corpus, demonstrated live and defended with its evaluation-harness scorecard (claim → scores → limitations).

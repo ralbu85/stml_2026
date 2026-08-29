@@ -1,36 +1,30 @@
-# Week 05. 검색 증강 (RAG) — 1부: 기초
+# Week 05. 에이전트 루프 (ReAct)
 
-> **Part:** 지식 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
+> **Part:** 부품에서 루프까지 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-외부 지식을 끌어오는 **RAG 기초**. W4의 에이전트는 돌지만 아는 것이 없다 — 이론에서 임베딩·벡터검색, retriever–reader 구조를 다루고, 실습에서 임베딩→유사도→주입 검색을 직접 만든다 *(최종 프로젝트 부품 1)*. RAG(Lewis)·HyDE. *(보안 복선: 오늘 만든 '문서 입구'가 W14 간접 인젝션의 공격 통로가 된다 — 예고만.)*
+도구 왕복을 반복 구조로 확장해 **첫 완전한 에이전트**를 완성하는 주. 이론에서 결정권의 이양(에이전트 루프), 행동만 반복하는 구성(Act-only)의 실측 실패와 진단, 처방으로서의 **ReAct**를 다루고, 트레이스 리딩과 루프 가드를 익힌다. 이후 매주 쓰는 **미니 evalset**(5문항)을 시작한다. ReAct.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Contextual Retrieval* / LlamaIndex RAG 가이드 · MS05
+Lilian Weng — *LLM Powered Autonomous Agents* · Berkeley 에이전트 역사 강의
 
 ## 📄 발표 논문
-#### 🟡 Retrieval-Augmented Generation for Knowledge-Intensive NLP
-- **출처:** Lewis et al., NeurIPS 2020 · arXiv:2005.11401
-- **발표 필수:** 파라메트릭 vs 비파라메트릭(검색) 지식 결합
-- **선택 심화:** RAG-Sequence vs Token, retriever 공동학습
-- **PDF:** [`W05_RAG-Lewis_2005.11401.pdf`](../papers/W05_RAG-Lewis_2005.11401.pdf)
-
-#### 🟡 HyDE: Precise Zero-Shot Dense Retrieval without Labels
-- **출처:** Gao et al., ACL 2023 · arXiv:2212.10496
-- **발표 필수:** 가설 문서를 생성해 검색 품질을 올리는 발상
-- **선택 심화:** dense retriever와의 결합
-- **PDF:** [`W05_HyDE_2212.10496.pdf`](../papers/W05_HyDE_2212.10496.pdf)
+#### 🟢 ReAct: Synergizing Reasoning and Acting in LLMs
+- **출처:** Yao et al., ICLR 2023 · arXiv:2210.03629
+- **발표 필수:** Think–Act–Observe 루프 구조와 추론·행동을 엮는 이유
+- **선택 심화:** HotpotQA·ALFWorld 셋업
+- **PDF:** [`W05_ReAct_2210.03629.pdf`](../papers/W05_ReAct_2210.03629.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-언제 검색해야 하는가? 항상 검색이 답인가?
+CoT 없는 ReAct는 가능한가? 추론과 행동을 섞으면 왜 둘 다 좋아지나?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 임베딩→유사도→컨텍스트 주입 검색 직접 구현 *(최종 프로젝트 부품 1)*
+*이번 주 주제:* ReAct(Thought→Action→Observation) while 루프 직접 구현 — W4 도구 레지스트리 위에서 + 미니 evalset
 
-**추가 모듈:** `retriever.py` + 샘플 문서 — 청킹→임베딩→코사인 top-k 검색. 📦 *최종 부품*
-> ✅ **완료:** 문서 속 사실을 물으면 관련 청크로 답한다.
+**추가 모듈:** `loop.py` — ReAct while 루프 골격. W4의 `tools.py` 레지스트리를 호출한다. + 미니 evalset 5문항.
+> ✅ **완료:** 루프가 계산기 도구를 실제로 호출해 답하고, 미니 evalset 결과가 기록된다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

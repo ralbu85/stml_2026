@@ -1,0 +1,27 @@
+---
+title: "Week 02 — Prompting & Reasoning"
+---
+
+| Material | Where |
+|---|---|
+| Lecture notes | [English](week02-notes.qmd) |
+| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_lab_prompting.ipynb) · [`W2_lab_prompting.ipynb`](labs/W2_lab_prompting.ipynb) · [read-only view](labs/W2_lab_prompting.html) |
+| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_hw_build_evalset.ipynb) · [`W2_hw_build_evalset.ipynb`](labs/W2_hw_build_evalset.ipynb) · [read-only view](labs/W2_hw_build_evalset.html) — due before Week 3 |
+| Presentation papers | [Chain-of-Thought Prompting (Wei et al., 2022) — first student presentation](https://arxiv.org/abs/2201.11903) |
+| References | [Anthropic, Prompt Engineering Interactive Tutorial](https://github.com/anthropics/prompt-eng-interactive-tutorial) · [Berkeley LLM Agents MOOC — LLM Reasoning lecture](https://llmagents-learning.org/f24) |
+
+## This week
+
+Why the same model gets different accuracy depending on how it is asked: chain-of-thought externalizes intermediate steps onto the page, few-shot exemplars induce it in context, and sampling many solutions buys accuracy for compute (self-consistency, test-time compute).
+
+## Lab
+
+`W2_lab_prompting.ipynb` — adapted nearly as given from Anthropic's *Prompt Engineering Interactive Tutorial* (ch. 6–7) and *Prompt Evaluations* course (lesson 3): thinking-step-by-step observations, a code-graded eval improved to ≥ 11/12 with your own CoT prompt, few-shot email classification (4/4), and self-consistency on the hardest item.
+
+Homework: `W2_hw_build_evalset.ipynb` — design an eight-item code-graded evalset in a domain of your own and show your chain-of-thought template beating answer-only prompting on it (≥ 7/8). Due before Week 3.
+
+Run it in Colab: click **Open in Colab** (links above), paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
+
+## Presentations
+
+Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

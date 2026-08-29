@@ -1,0 +1,54 @@
+---
+title: "Paper Presentations"
+---
+
+The goal of a presentation is to **prove you understood the paper — not to summarize it**. No slide reading; reconstruct the paper in your own words, and be ready to answer questions with the slides off.
+
+## Format — fixed for every paper
+
+- **25 minutes per paper**: 15-minute talk (**hard stop**, timer shown) + 8-minute Q&A + 2-minute transition.
+- **6 slides maximum.** Exceeding the time or slide limit costs points.
+- Slide 3 must contain **a mechanism figure you drew yourself** — pasting the paper's figure is not allowed.
+- After the talk, slides go off: the instructor asks 1–2 **cold questions**, answered at the whiteboard, and the designated discussant asks one.
+
+## The 6-slide template
+
+| # | Slide | Time |
+|---|---|---|
+| 1 | **One-sentence contribution** — "This paper solves [problem] with [idea]" | 1 min |
+| 2 | **Problem & motivation** — why now, what prior work couldn't do | 2 min |
+| 3 | **Core mechanism** — your own hand-drawn figure | 5 min |
+| 4 | **One key result** — what the single most important experiment proves | 3 min |
+| 5 | **Weakest assumption / limitation** — your critique | 3 min |
+| 6 | **Connection** — to follow-up work or your own research | 1 min |
+
+## Sample presentation
+
+**[Sample deck — Self-Consistency (Wang et al., 2022)](lectures/presentation-sample/slides.html)** — a complete 6-slide presentation in exactly this template, prepared by the instructor. Open the speaker view (`S`) to see, slide by slide, *why* each slide is built the way it is. Use it as your model for structure and density — not as a source to copy.
+
+## Cold questions — the three types
+
+1. **Mechanism / ablation** — "What happens if you remove step X from this method?"
+2. **Reproduction** — "If you implemented this from scratch, what are the first three steps?" (directly tied to that week's lab)
+3. **Boundary / failure** — "Construct one input or situation where this method fails."
+
+A student who memorized the paper cannot answer without the slides; a student who understood it can. That is exactly what these questions separate.
+
+## Grading rubric
+
+| Item | Weight | Criterion |
+|---|---|---|
+| Core contribution | 30% | Is the paper's contribution compressed accurately into one sentence? |
+| Method understanding | 25% | Is the mechanism explained correctly? (intuition suffices for hard papers; cold-question answers count here) |
+| Critical analysis | 25% | Did you identify the weakest assumption yourself? (cold-question answers count here) |
+| Connection | 20% | Did you link to follow-up work or your own research? |
+
+## Discussant
+
+Each presentation has one pre-assigned **discussant**: after the talk, 2 minutes of challenge or follow-up (e.g. "Slide 5's limitation — is it actually fatal in practice?"). Both presenter and discussant are graded, so the audience reads the paper too.
+
+## Practical advice
+
+- Six slides force compression, and compression forces understanding. If a slide is crowded, you haven't decided what matters yet.
+- Draw the slide-3 figure *before* writing anything else — if you can't draw the mechanism, you don't understand it yet.
+- Rehearse once against the 15-minute timer. The hard stop is enforced.

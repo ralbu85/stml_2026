@@ -1,0 +1,62 @@
+---
+title: "Syllabus"
+---
+
+## Course Objectives
+
+Students learn the core principles of Large Language Model (LLM) agents in concept-dependency order, implementing each key component from scratch every week to build a complete research-assistant agent by the end of the term. The course covers tool use, the agent loop, retrieval augmentation, planning, self-reflection, context management, memory, multi-agent systems, inference economics, evaluation, and security. Students read and present foundational papers and develop the ability to critically evaluate agent systems in terms of both accuracy and cost.
+
+## Main Content
+
+- Reasoning and prompting (Chain-of-Thought, self-consistency); reasoning models and reinforcement learning
+- Tool use and function calling; the ReAct agent loop
+- Retrieval-Augmented Generation (RAG); planning and search; self-reflection
+- Context engineering and the harness; long-term memory
+- Multi-agent systems, frameworks (LangGraph), and the Model Context Protocol (MCP)
+- Inference economics (cost–accuracy trade-off; routing, caching, budgeting)
+- Evaluation and benchmarking; trustworthiness and security
+
+## Teaching Methods
+
+Each week combines a concept lecture, a hands-on implementation lab (Jupyter notebooks), and a team-based oral paper presentation. The weekly lab components accumulate into a complete research-assistant agent by the end of the term.
+
+## Textbooks
+
+There is no single required textbook. The primary readings are the field's foundational papers (the weekly presentation papers, all publicly available on arXiv). Supplementary references are:
+
+- Microsoft, "AI Agents for Beginners"
+- UC Berkeley, "Large Language Model Agents (MOOC)"
+- Hugging Face, "Agents Course"
+- Anthropic, "Building Effective Agents"
+
+## Assessment
+
+The midterm (Week 8) and final (Week 15) are written exams focused on understanding the structure and principles of agent systems. Paper presentations are given by teams orally, and weekly labs (assignments) and class participation are also assessed.
+
+| Component | Weight | Description |
+|---|---|---|
+| Midterm | 20% | Week 8 written exam — structure and principles of the system |
+| Final | 30% | Week 15 written exam — integrated understanding of the whole semester |
+| Assignments | 30% | Weekly implementation labs (notebooks) — automated completion and code-correctness checks, plus review of prompts and target metrics |
+| Quizzes | 0% | Not used |
+| Other | 20% | Team oral paper presentations and class participation |
+
+## Weekly Topics and Detailed Content
+
+| Week | Topic | Detailed Content |
+|---|---|---|
+| 1 | Introduction & Agent Overview | Definition of an agent (a system whose control flow is determined by LLM output), components (Model, Instructions, Tools, Memory), the autonomy spectrum; environment setup and an LLM call wrapper |
+| 2 | Prompting & Reasoning | Externalizing reasoning as text with Chain-of-Thought; self-consistency (majority voting) and the notion of test-time compute |
+| 3 | Tool Use | Division of labor between judgment (model) and execution (code); function calling; writing tool schemas; re-injecting failures; the tool list as the capability boundary; code execution as the alternative paradigm |
+| 4 | The Agent Loop (ReAct) | Owning the loop the client ran invisibly: Call–Judge–Execute–Reinject with an explicit bound; the measured failure of Act-only; the ReAct convention and grounding; the internalized protocol; trace reading |
+| 5 | Reflection & Evaluation | Commitment without verification; Self-Refine and Reflexion; Thought vs. reflection; the external-feedback condition — then the measuring discipline: evalsets, code grading, LLM-as-a-judge and its biases, error analysis, regression |
+| 6 | Multi-Agent Systems | Why to split (role interference, context growth, independent perspective); division-of-labor patterns; messages vs. shared store and context isolation; frameworks (LangGraph) and MCP in brief; adoption criteria |
+| 7 | Planning & Search | Greedy progression and its two absences (path, recovery); task decomposition and the plan–execute–replan loop; ReWOO's separation of planning from observation; Tree of Thoughts search |
+| 8 | Midterm Exam | Written exam (full session) — structure and principles of agent systems (Weeks 1–7) |
+| 9 | Retrieval-Augmented Generation (RAG) | Embeddings and cosine similarity; indexing and query pipelines; chunking and top-k; turning retrieval into a tool (agentic RAG) |
+| 10 | Context Engineering · Memory | The finite, paid, and uneven context; Lost-in-the-Middle; selection, ordering, compression; the harness; distinguishing context from memory; long-term memory storage/recall (MemGPT) and update (Mem0) |
+| 11 | Reasoning Models & RL | Reasoning models (o1/R1) and the thinking budget; STaR bootstrapping; reinforcement learning (policy and reward, RLHF vs. RLVR); GRPO |
+| 12 | Inference Economics · Benchmarks | Cost structure and the cost–accuracy trade-off; routing, caching, budgeting; agent-level benchmarks on top of Week 5: the cost axis, Pareto curves, pass^k; the evaluation harness |
+| 13 | Trustworthiness & Security · Retrospective | The new attack surface of agents; indirect prompt injection; guardrails and layered defense; semester synthesis (the brain–perception–action map) and open research problems |
+| 14 | Final Presentations | Team oral presentations of the final project (research-assistant agent) and peer assessment (full session) |
+| 15 | Final Exam | Written exam (full session) — integrated understanding of the whole semester |

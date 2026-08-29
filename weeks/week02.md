@@ -3,28 +3,29 @@
 > **Part:** 부품에서 루프까지 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트의 추론 능력을 프롬프트로 끌어내는 주. 이론에서 messages·역할 구조와 few-shot(in-context learning), **CoT**(생각의 외부화), **test-time compute**(self-consistency 다수결), 추론 모델(o1/R1)의 사용 관점(thinking budget·비용)을 다룬다. 실습은 CoT·self-consistency 비교 실험. 추론 모델의 훈련 원리(STaR·RLVR)는 W4 발표·선택읽기로 위임한다. **첫 학생 발표 주 — 부담 완화를 위해 1편만.**
+에이전트의 추론 능력을 프롬프트와 계산으로 끌어내는 주. 이론에서 추론의 정의, 직접 질의가 실패하는 원인(글밖에 없는 작업 공간), **CoT**(중간 단계의 외부화 — 지시와 풀이 예시), 그 확장인 **self-consistency**(표집과 다수결)와 **test-time compute**(예측 횟수·정확도의 교환)를 다룬다. 실습은 직접 질의 vs CoT 정답률 측정과 few-shot exemplar 작성(다수결 구현은 W3 실습). **첫 학생 발표 주 — 부담 완화를 위해 1편만.**
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Prompt Engineering Interactive Tutorial* · Lilian Weng — *Why We Think* (test-time compute 직관)
+Anthropic — *Prompt Engineering Interactive Tutorial* · Berkeley `llm-reasoning.pdf`
 
 ## 📄 발표 논문
 #### 🟢 Chain-of-Thought Prompting Elicits Reasoning in LLMs
 - **출처:** Wei et al., NeurIPS 2022 · arXiv:2201.11903
 - **발표 필수:** CoT 핵심 아이디어와 추론 창발 조건
-- **선택 심화:** 규모별 창발 곡선, self-consistency
+- **선택 심화:** 규모별 창발 곡선
 - **PDF:** [`W02_Chain-of-Thought_2201.11903.pdf`](../papers/W02_Chain-of-Thought_2201.11903.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-'더 오래 생각하기'는 왜 성능을 올리나? 언제 과한가?
+풀이를 쓰게 하면 왜 정답률이 오르나? 어떤 문제에서는 안 오르나?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* CoT 프롬프트 작성 + self-consistency(N샘플 다수결) 비교 실험
+*이번 주 주제:* 직접 질의 vs CoT 정답률 측정 + few-shot exemplar 작성으로 정답률 개선
 
-**추가 모듈:** `reasoning.py` — CoT 프롬프트 토글 + 같은 질문을 N번 샘플→다수결(self-consistency).
-> ✅ **완료:** 애매한 질문에서 단일 답보다 정확도가 오른다.
+**실험:** `reasoning.py`의 `COT_PROMPT`로 직접 질의 vs CoT 정답률을 측정하고, few-shot exemplar를 직접 작성해 정답률을 올린다.
+진행: 실습 노트북(`lectures/week02/W2_lab_prompting.ipynb`) → `demos/week02_cot.py`
+> ✅ **완료:** 직접 질의 대비 CoT, zero-shot 대비 exemplar의 정답률 표를 기록한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

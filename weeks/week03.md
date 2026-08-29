@@ -1,42 +1,37 @@
-# Week 03. 도구 사용 (Tool Use)
+# Week 03. 추론 모델과 강화학습 (Reasoning Models & RL)
 
 > **Part:** 부품에서 루프까지 · 난이도: 🟢 기초 · 🟡 중급 · 🔴 심화 · [📋 발표 가이드](../docs/presentation-guide.md)
 
 ## 🧭 개요
-에이전트가 외부 세계와 만나는 통로인 **도구**. 이론에서 function calling 파이프라인(스키마→호출 의도→파싱→실행→재주입)·스키마 설계·에러 설계와 **도구 절벽**을 다루고, 실습에서 도구 레지스트리·파싱·실행을 직접 만든다. 다음 주 이 레지스트리 위에서 루프가 돈다. Toolformer·ToolLLM.
+추론 능력을 모델의 가중치에 넣는 주. 이론에서 W2 test-time compute의 내재화인 **추론 모델**(o1/R1, thinking budget), 훈련 데이터의 문제(과정 레이블 부재), **STaR**(자가 생성·정오 필터), **강화학습**(정책·보상, RLHF vs RLVR), **R1**(GRPO, 창발)과 보상 해킹·증류를 다룬다. **RL 사전 지식 없음 가정** — 정의부터 강의에서 세운다. 실습은 self-consistency 구현(호출자 쪽 반복 절차의 실물)과 N=1 대비 비교.
 
 ## 📖 보조읽기 (발표 대상 아님)
-Anthropic — *Writing Effective Tools for Agents* · MS04
+Lilian Weng — *Why We Think* · Berkeley `Jason-Weston-Reasoning.pdf`
 
 ## 📄 발표 논문
-#### 🟡 Toolformer: LMs Can Teach Themselves to Use Tools
-- **출처:** Schick et al., NeurIPS 2023 · arXiv:2302.04761
-- **발표 필수:** self-supervised로 API 호출 위치를 학습하는 방식
-- **선택 심화:** 호출 필터링 손실, 데이터 파이프라인
-- **PDF:** [`W03_Toolformer_2302.04761.pdf`](../papers/W03_Toolformer_2302.04761.pdf)
+#### 🟡 STaR: Self-Taught Reasoner
+- **출처:** Zelikman et al., NeurIPS 2022 · arXiv:2203.14465
+- **발표 필수:** 스스로 만든 추론으로 추론을 부트스트랩하는 아이디어
+- **선택 심화:** rationalization 트릭
+- **PDF:** [`W03_STaR_2203.14465.pdf`](../papers/W03_STaR_2203.14465.pdf)
 
-#### 🟡 ToolLLM: Mastering 16000+ Real-world APIs
-- **출처:** Qin et al., ICLR 2024 · arXiv:2307.16789
-- **발표 필수:** 대규모 실세계 API 학습 프레임과 DFSDT 탐색
-- **선택 심화:** ToolBench 구축, pass/win rate
-- **PDF:** [`W03_ToolLLM_2307.16789.pdf`](../papers/W03_ToolLLM_2307.16789.pdf)
-
-#### 🔴 ReTool: RL for Strategic Tool Use (선택읽기·RL 보강) *(선택읽기)*
-- **출처:** 2025 · arXiv:2504.11536
-- **발표 필수:** 도구 사용 시점·방법을 RL로 최적화하는 핵심 직관
-- **선택 심화:** 코드 인터프리터 통합, outcome 보상
-- **PDF:** [`W03_opt-ReTool_2504.11536.pdf`](../papers/W03_opt-ReTool_2504.11536.pdf)
+#### 🟡 DeepSeek-R1: Incentivizing Reasoning via RL
+- **출처:** DeepSeek-AI, 2025 · arXiv:2501.12948
+- **발표 필수:** 순수 RL로 추론이 창발하는 큰 그림('aha moment')
+- **선택 심화:** GRPO, cold-start 데이터
+- **PDF:** [`W03_DeepSeek-R1_2501.12948.pdf`](../papers/W03_DeepSeek-R1_2501.12948.pdf)
 
 ## 💬 토론 포인트 (교수 백업 질문)
-도구가 많아질수록 좋은가? 도구 절벽(tool cliff)이 생기는 이유는?
+'더 오래 생각하기'는 왜 성능을 올리나? 언제 과한가?
 
 ## 🛠 실습 — 누적 빌드 `docqa-agent`
 **빌드 베이스:** from-scratch (내 모듈 직접 구현) · LLM 호출은 **aisuite** 래퍼(provider 무관)
 
-*이번 주 주제:* 도구 레지스트리·파싱·실행 직접 구현 (계산기 등)
+*이번 주 주제:* self-consistency(N샘플 다수결) 구현 — 추론 모델이 내재화한 호출자 쪽 반복 절차의 실물, N=1 대비 정확도·비용 비교
 
-**추가 모듈:** `tools.py` — 도구 등록(dict)·JSON 액션 파싱·실행(계산기·문자열검색).
-> ✅ **완료:** 모델의 도구 호출 출력을 파싱·실행해 결과를 재주입하는 단발 왕복이 성공한다. (반복 루프는 W4)
+**추가 모듈:** `reasoning.py` — 같은 질문을 N번 샘플→다수결(`majority_vote`·`self_consistency`).
+진행: 실습 노트북(`lectures/week03/W3_lab_selfconsistency.ipynb`) → `pytest tests/test_week03.py` → `demos/week03_selfconsistency.py`
+> ✅ **완료:** 애매한 질문에서 N=1보다 N=5의 정확도가 높고, 그 대가로 비용이 N배임을 함께 기록한다.
 
 > 한 학기 하나의 앱을 쌓는다 · 스캐폴드 빈칸 채우기 + 주차별 체크포인트 → 상세는 [실습 가이드](../docs/practice-guide.md).
 

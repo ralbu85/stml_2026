@@ -1,0 +1,25 @@
+---
+title: "Week 13 — Trust & Security · Retrospective"
+---
+
+| Material | Where |
+|---|---|
+| Lecture notes | published before class |
+| Slides | published before class |
+| Lab | published before class |
+| Presentation papers | [Indirect Prompt Injection (Greshake et al., 2023)](https://arxiv.org/abs/2302.12173) · [InjecAgent (Zhan et al., 2024)](https://arxiv.org/abs/2403.02691) |
+| References | [Agentless (2024) — retrospective reading](https://arxiv.org/abs/2407.01489) · [SWE-agent (2024) — retrospective reading](https://arxiv.org/abs/2405.15793) |
+
+## This week
+
+Agents create a new attack surface: attacks on the system, not the model. Direct vs. indirect prompt injection, the lethal trifecta, and structural vs. detection defenses. Closing retrospective: the semester map (brain / perception / action / operations) and open research problems.
+
+## Lab
+
+Guardrails and an in-class red-team exchange (published before class).
+
+Run it in Colab: download the notebook, go to [colab.research.google.com](https://colab.research.google.com) → Upload, paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
+
+## Presentations
+
+Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

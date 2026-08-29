@@ -1,0 +1,13 @@
+---
+title: "Week 15 — Final Exam"
+---
+
+| Material | Where |
+|---|---|
+| Lecture notes | — |
+| Slides | — |
+| Lab | — (exam / presentation week)
+
+## This week
+
+Written exam, full session. Scope: the entire semester — integrated understanding of agent-system concepts and their trade-offs. Essay format.

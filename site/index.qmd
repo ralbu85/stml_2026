@@ -1,0 +1,50 @@
+---
+title: "STML 2026 — LLM Agents"
+subtitle: "Special Topics in Machine Learning: LLM Agents · Graduate course · 15 weeks"
+toc: false
+---
+
+## Week by week
+
+Each week's page collects that week's lecture notes, lab notebook, homework, and references in one table.
+
+| Wk | Topic | Lecture | Lab |
+|---|---|---|---|
+| [1](week01.qmd) | Course intro · What is an agent? | agent = control flow decided by model output; components; autonomy | first API calls · prompting fundamentals |
+| [2](week02.qmd) | Prompting & reasoning | chain-of-thought · self-consistency · test-time compute | CoT & exemplars, measured on a math evalset |
+| [3](week03.qmd) | Tool use | function calling · tool schemas · the capability boundary · code execution | functions into tools (Ng M3) |
+| [4](week04.qmd) | The agent loop (ReAct) | loop anatomy · Act-only vs ReAct · the internalized protocol · trace reading | the loop built by hand |
+| [5](week05.qmd) | Reflection & evaluation | Self-Refine · Reflexion · evalsets · LLM-as-judge · error analysis | reflection, measured against an evalset (Ng M2+M4) |
+| [6](week06.qmd) | Multi-agent systems | division-of-labor patterns · handoffs · context isolation · MCP | multi-agent pipeline (Ng M5) |
+| [7](week07.qmd) | Planning & search | decomposition · plan–execute–replan · ReWOO · ToT | research-agent workflow (Ng final project) |
+| [8](week08.qmd) | **Midterm exam** | written, W1–7 | — |
+| [9](week09.qmd) | Retrieval augmentation (RAG) | embeddings · pipeline · agentic RAG | retriever for the final project |
+| [10](week10.qmd) | Context engineering · Memory | Lost in the Middle · select/order/compress · MemGPT · Mem0 | memory · graph integration |
+| [11](week11.qmd) | Reasoning models & RL | o1/R1 · STaR · RLVR · GRPO | thinking-budget measurement |
+| [12](week12.qmd) | Inference economics · Benchmarks | cost–accuracy trade · routing · Pareto · pass^k | routing + cost logging · eval harness |
+| [13](week13.qmd) | Safety & security · Retrospective | indirect prompt injection · defense layers | guardrails · red team |
+| [14](week14.qmd) | **Final presentations** | team demos + eval scorecard defense | — |
+| [15](week15.qmd) | **Final exam** | written, whole semester | — |
+
+Ordering principle: concept dependency — every week is understandable using only what came before it. Materials appear on each week's page as the semester progresses.
+
+## The course in one sentence
+
+You will learn how LLM agents work by **building one, week by week**, and by reading the papers that invented each part. The final deliverable is a research-assistant agent that searches and synthesizes answers over this course's own paper corpus.
+
+## Weekly rhythm (3 hours)
+
+| Block | Time |
+|---|---|
+| Theory lecture | 30–40 min |
+| Paper presentations ×2 | 50 min |
+| Break | 10 min |
+| Lab (Colab notebook) | 80 min |
+| Wrap-up · next-week preview | 10 min |
+
+Labs run in Google Colab through `aisuite` with your own API key — no local installation; every notebook opens in Colab with one click from its week page. From Week 3 most labs adapt Andrew Ng's *Agentic AI* (DeepLearning.AI) nearly as given (the Week 4 loop lab is course-built); Weeks 1–2 practice prompting, and every week from Week 2 adds a small graded homework.
+
+## Before the first class
+
+1. Read the [API Setup Guide](api-setup.qmd) and issue your own API key. The Week 1 lab needs it in class.
+2. Bring a laptop that can open [Google Colab](https://colab.research.google.com) in a browser.

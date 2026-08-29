@@ -1,0 +1,13 @@
+---
+title: "Week 08 — Midterm Exam"
+---
+
+| Material | Where |
+|---|---|
+| Lecture notes | — |
+| Slides | — |
+| Lab | — (exam / presentation week)
+
+## This week
+
+Written exam, full session. Scope: weeks 1–7 — the composition and principles of agent systems (definitions, the agent loop, tool use, retrieval, planning, reflection). Essay format; understanding of mechanisms over memorized numbers.

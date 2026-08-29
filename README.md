@@ -1,49 +1,55 @@
-# 머신러닝 특론 — LLM 에이전트 (2026)
+# 머신러닝 특론 — LLM 에이전트 (STML 2026)
 
-**논문 읽기와 함께 만들기** · 16주 · 매주 논문 발표(총 27편) + from-scratch 실습
-**대상:** 부산대/부경대 대학원 · **최종 산출물:** 연구보조 검색·종합 에이전트 (수업 논문 코퍼스 기반 RAG)
+**논문 읽기와 함께 만들기** · 15주 · 매주 논문 발표 + Colab 실습
+**대상:** 부경대학교 대학원 · **최종 산출물:** 연구보조 검색·종합 에이전트(수업 논문 코퍼스 기반 RAG)
 
-매주 3시간: **이론 · 실습 · 논문발표** 병행. 난이도 범례: 🟢 기초 · 🟡 중급 · 🔴 심화
+매주 3시간: 이론 강의 30–40분 · 논문 발표 2편 · 실습 80분.
+
+**강의 사이트: <https://stml.tailcce2b.ts.net>** — 주차별 강의노트·실습·과제·발표 안내가 모두 사이트에서 열린다. 실습 노트북은 각 주차 페이지의 **Open in Colab** 링크로 브라우저에서 바로 실행한다.
+
+## 자료 구성
+
+이론 자료는 주차별 영문 강의노트 단일본이다: `lectures/weekNN/notes.en.md` (슬라이드 없음). 실습(`WN_lab_*.ipynb`)과 과제(`WN_hw_*.ipynb`)는 같은 폴더에 있다. 집필 기준은 [`docs/style-guide.md`](docs/style-guide.md).
+
+## 주차 지도 (v10.1 · 14개 장)
+
+순서 원칙: 개념 의존성 — 각 주는 직전 주까지 배운 것만으로 이해 가능하다.
+
+| 주 | 장 | 주제 | | 주 | 장 | 주제 |
+|---|---|---|---|---|---|---|
+| 01 | 1 | 에이전트란 무엇인가 | | 09 | 8 | 검색 증강(RAG) |
+| 02 | 2 | 프롬프팅과 추론 | | 10 | 9·10 | 컨텍스트 엔지니어링 · 메모리 |
+| 03 | 3 | 도구 사용 | | 11 | 11 | 추론 모델과 강화학습 |
+| 04 | 4 | 에이전트 루프(ReAct) | | 12 | 12·13 | 추론 경제학 · 벤치마크 |
+| 05 | 5 | 자기반성과 평가 | | 13 | 14 | 안전·보안 · 회고 |
+| 06 | 6 | 멀티에이전트 시스템 | | 14 | — | 최종 발표 |
+| 07 | 7 | 계획과 탐색 | | 15 | — | 기말고사 |
+| 08 | — | 중간고사(1–7주 범위) | | | | |
 
 ## 문서
 
-- [`docs/syllabus.md`](docs/syllabus.md) — **강의계획서(현행판 v4)**: 개념 의존성 순서 재조정
-- [`docs/presentation-guide.md`](docs/presentation-guide.md) — **논문 발표 가이드**: 시간 배분·템플릿·이해 검증
-- [`docs/practice-guide.md`](docs/practice-guide.md) — **실습 가이드**: 누적 빌드(문서 QA 에이전트) 주차별 설계
-- [`docs/lecture-outlines.md`](docs/lecture-outlines.md) — **이론 강의 개요(30–40분)**: 주차별 핵심 개념·분 단위 진행·근거 자료
-- [`materials/README.md`](materials/README.md) — 참고자료(MS·Berkeley·HF…) + 주차별 이론 플랜
-- [`papers/README.md`](papers/README.md) — 발표 논문 38편 검증 매니페스트 (전량 arXiv 확인)
-
-## 주차 지도
-
-순서 원칙: **개념 의존성** — 각 주는 직전 주까지 배운 것만으로 이해 가능하다. 각 주차는 한 파일에서 다 보인다.
-
-| 주 | 주제 | | 주 | 주제 |
-|---|---|---|---|---|
-| [01](weeks/week01.md) | 강의소개 · 에이전트 개요 | | [09](weeks/week09.md) | 컨텍스트 엔지니어링(하네스) ⭐ |
-| [02](weeks/week02.md) | 프롬프팅과 추론 | | [10](weeks/week10.md) | 메모리 |
-| [03](weeks/week03.md) | 도구 사용 | | [11](weeks/week11.md) | 멀티에이전트 + LangGraph ⭐ |
-| [04](weeks/week04.md) | 에이전트 루프 (ReAct) | | [12](weeks/week12.md) | 컴퓨터/웹 사용 |
-| [05](weeks/week05.md) | RAG 1부: 기초 | | [13](weeks/week13.md) | 평가·벤치마크 |
-| [06](weeks/week06.md) | 에이전틱 RAG + MCP | | [14](weeks/week14.md) | 신뢰·보안 |
-| [07](weeks/week07.md) | 계획과 탐색 | | [15](weeks/week15.md) | 프로덕션·단순함 |
-| [08](weeks/week08.md) | 자기반성·메타인지 | | [16](weeks/week16.md) | 최종 발표 |
+- [`docs/syllabus.md`](docs/syllabus.md) — 강의계획서(현행판 v10.1): 주차·발표·평가 배치
+- [`docs/presentation-guide.md`](docs/presentation-guide.md) — 논문 발표 가이드: 시간 배분·템플릿·이해 검증
+- [`docs/style-guide.md`](docs/style-guide.md) — 강의자료 집필 규정
+- [`labs/README.md`](labs/README.md) — 실습 표준과 오프라인 검증 방법
+- [`papers/README.md`](papers/README.md) — 발표 논문 매니페스트(전량 arXiv 확인)
 
 ## 저장소 구조
 
 ```
-docs/          강의계획서 · 발표 가이드 · 이론 개요
-labs/          실습 스캐폴드(docqa-agent 누적 빌드: 빈칸+테스트+체크포인트)
-lectures/      주차별 강의 슬라이드(Marp)
-papers/        발표 논문 PDF(gitignore) + 검증 매니페스트
-scripts/       fetch_papers.py(논문 다운로드) · gen_weeks.py(주차 파일 생성)
-weeks/weekNN.md  주차별 한 파일 (필요해지면 weekNN/ 폴더로 확장)
+lectures/weekNN/  notes.en.md(강의노트) + 실습·과제 노트북
+labs/             실습 인프라: 데이터 · 드라이런 테스트(tests/) · 참조답안(checkpoints/)
+site/             Quarto 강의 사이트 (site/build.sh로 빌드)
+docs/             강의계획서 · 가이드 · 집필 규정
+papers/           발표 논문 PDF(gitignore) + 매니페스트
+scripts/          fetch_papers.py(논문 다운로드) · gen_weeks.py
 ```
 
 ## 재현
 
 ```bash
-python3 scripts/fetch_papers.py   # 논문 38편 arXiv 다운로드·검증 → papers/
-python3 scripts/gen_weeks.py      # 16주 파일 생성 → weeks/
+python3 scripts/fetch_papers.py       # 발표 논문 arXiv 다운로드·검증 → papers/
 bash    materials/fetch_materials.sh  # 참고 강의자료 레포 → materials/repos/
+bash    site/build.sh                 # 강의 사이트 빌드 → site/_site
+bash    labs/tests/dryrun_all.sh      # 전체 노트북 오프라인 검증(키 불필요)
 ```

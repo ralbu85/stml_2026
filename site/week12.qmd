@@ -1,0 +1,24 @@
+---
+title: "Week 12 — Inference Economics · Benchmarks"
+---
+
+| Material | Where |
+|---|---|
+| Lecture notes | published before class |
+| Slides | published before class |
+| Lab | published before class |
+| Presentation papers | [Scaling LLM Test-Time Compute Optimally (Snell et al., 2024)](https://arxiv.org/abs/2408.03314) · [FrugalGPT (Chen et al., 2023)](https://arxiv.org/abs/2305.05176) · [AI Agents That Matter (Kapoor et al., 2024)](https://arxiv.org/abs/2407.01502) · [τ-bench (Yao et al., 2024)](https://arxiv.org/abs/2406.12045) |
+
+## This week
+
+The inference an agent consumes — calls × tokens × model tier — placed on the same axis as accuracy: the cost–accuracy trade, compute-optimal allocation, and the levers (routing, cascades, caching, budgets). Then agent-level benchmarks on top of W5's component evaluation: the AI-Agents-That-Matter critique, cost–accuracy Pareto curves, and consistency metrics (τ-bench, pass^k). The course eval harness that final presentations must defend against.
+
+## Lab
+
+Routing with cost logging + the course evaluation harness (published before class).
+
+Run it in Colab: download the notebook, go to [colab.research.google.com](https://colab.research.google.com) → Upload, paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
+
+## Presentations
+
+Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

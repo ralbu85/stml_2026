@@ -1,0 +1,60 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+
+website:
+  title: "STML 2026 — LLM Agents"
+  description: "Special Topics in Machine Learning: LLM Agents · Graduate course, 2026"
+  navbar:
+    background: "#1a3a5c"
+    left:
+      - href: index.qmd
+        text: Home
+      - href: syllabus.qmd
+        text: Syllabus
+      - text: Weeks
+        menu:
+          - href: week01.qmd
+            text: "W01 · Course intro · What is an agent?"
+          - href: week02.qmd
+            text: "W02 · Prompting & reasoning"
+          - href: week03.qmd
+            text: "W03 · Tool use"
+          - href: week04.qmd
+            text: "W04 · The agent loop (ReAct)"
+          - href: week05.qmd
+            text: "W05 · Reflection & evaluation"
+          - href: week06.qmd
+            text: "W06 · Multi-agent systems"
+          - href: week07.qmd
+            text: "W07 · Planning & search"
+          - href: week08.qmd
+            text: "W08 · Midterm exam"
+          - href: week09.qmd
+            text: "W09 · Retrieval augmentation (RAG)"
+          - href: week10.qmd
+            text: "W10 · Context engineering · Memory"
+          - href: week11.qmd
+            text: "W11 · Reasoning models & RL"
+          - href: week12.qmd
+            text: "W12 · Inference economics · Benchmarks"
+          - href: week13.qmd
+            text: "W13 · Safety & security · Retrospective"
+          - href: week14.qmd
+            text: "W14 · Final presentations"
+          - href: week15.qmd
+            text: "W15 · Final exam"
+      - href: presentations.qmd
+        text: Presentations
+      - href: api-setup.qmd
+        text: API Setup
+  page-footer:
+    center: "STML 2026 · Special Topics in Machine Learning: LLM Agents"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    link-external-newwindow: true
