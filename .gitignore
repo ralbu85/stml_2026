@@ -44,5 +44,6 @@ lectures/presentation-sample/slides_files/
 
 # Rendered lecture decks (source: lectures/weekNN/slides.qmd)
 lectures/week*/slides.pptx
+lectures/week*/slides.pdf
 lectures/week*/slides.html
 lectures/week*/slides_files/

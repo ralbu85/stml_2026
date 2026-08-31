@@ -14,7 +14,7 @@ tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 
 for nn in $WEEKS; do
   mkdir -p "$tmp/lectures/week$nn"
-  rsync -a --exclude 'slides.pptx' --exclude 'slides.html' --exclude 'slides_files' \
+  rsync -a --exclude 'slides.pptx' --exclude 'slides.pdf' --exclude 'slides.html' --exclude 'slides_files' \
         --exclude '.ipynb_checkpoints' \
         "lectures/week$nn/" "$tmp/lectures/week$nn/"
   if [ -d "labs/checkpoints/week$nn" ]; then

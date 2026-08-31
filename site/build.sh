@@ -78,14 +78,14 @@ for d in ../lectures/week*/; do
   rm -f "_site/week$nn-notes.html"
 done
 
-# Lecture decks (pptx — downloadable, opens in Google Slides): published weeks with slides.qmd.
+# Lecture decks (Beamer PDF): published weeks with slides.qmd.
 for d in ../lectures/week*/; do
   week="$(basename "$d")"
   published "${week#week}" || continue
   [ -f "$d/slides.qmd" ] || continue
-  quarto render "$d/slides.qmd" --to pptx
+  quarto render "$d/slides.qmd" --to beamer
   mkdir -p "_site/lectures/$week"
-  mv "$d/slides.pptx" "_site/lectures/$week/"
+  mv "$d/slides.pdf" "_site/lectures/$week/"
 done
 
 echo "built: $(pwd)/_site"
