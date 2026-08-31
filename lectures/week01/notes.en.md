@@ -10,9 +10,9 @@ This difference did not come from changing the model. The same model serves on o
 
 An **LLM (large language model)** is an autoregressive generative model trained on large text corpora with the objective of next-token prediction. Autoregressive means that the model computes a probability distribution over the next token conditioned on the tokens generated so far, samples one token from it, and repeats this process to produce text. An LLM call therefore takes text in and returns text out, and has no other input or output channel. The model cannot open a file, cannot execute a search, and cannot verify whether its own output is factual. What it produces is a chain of tokens with high conditional probability, not an action on the external world.
 
-![one LLM call](figures/fig-1-1-llm-call.svg)
+![recursive token generation](figures/recursive-token-generation.png)
 
-*Figure 1.1 — One LLM call: a distribution over the next token, one sampled token appended, repeated — and no other input or output channel.*
+*Figure 1.1 — Autoregressive generation: each sampled token is appended to the input and fed back, one token per pass, until a stop token. Source: P.-M. Dartus, "How LLMs Generate Text for the Rest of Us" (2025), pm.dartus.fr.*
 
 Consequently, everything the model cannot do by itself — opening files, executing searches, validating output — is handled by code outside the model. That code decides which action to execute next, when to repeat, and when to stop. The totality of these decisions is called **control flow**.
 
