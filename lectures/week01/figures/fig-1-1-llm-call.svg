@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="la" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="lb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a7dbe"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="430" fill="white"/>
+
+  <text x="450" y="34" text-anchor="middle" font-size="14" font-weight="600" fill="#222">One LLM call — next-token prediction, repeated</text>
+
+  <!-- input -->
+  <rect x="40" y="80" width="270" height="70" rx="6" fill="#eeeeee" stroke="#888"/>
+  <text x="175" y="105" text-anchor="middle" font-size="11.5" fill="#777">text so far</text>
+  <text x="175" y="128" text-anchor="middle" font-size="13" font-family="DejaVu Sans Mono, monospace" fill="#222">The capital of France is</text>
+
+  <line x1="310" y1="115" x2="366" y2="115" stroke="#555" stroke-width="1.6" marker-end="url(#la)"/>
+
+  <!-- model -->
+  <rect x="370" y="75" width="215" height="80" rx="6" fill="#dbe7f5" stroke="#4a7dbe" stroke-width="1.5"/>
+  <text x="477" y="105" text-anchor="middle" font-size="14" font-weight="600" fill="#222">LLM</text>
+  <text x="477" y="128" text-anchor="middle" font-size="11.5" fill="#555">P( next token | text so far )</text>
+
+  <line x1="585" y1="115" x2="641" y2="115" stroke="#555" stroke-width="1.6" marker-end="url(#la)"/>
+
+  <!-- distribution -->
+  <rect x="645" y="55" width="215" height="120" rx="6" fill="white" stroke="#bbb"/>
+  <text x="752" y="75" text-anchor="middle" font-size="11.5" fill="#777">distribution over the next token</text>
+  <rect x="668" y="88"  width="140" height="14" fill="#4a7dbe"/>
+  <text x="664" y="99"  text-anchor="end" font-size="11.5" fill="#222">Paris</text>
+  <text x="814" y="99"  text-anchor="start" font-size="11" fill="#555">0.87</text>
+  <rect x="668" y="112" width="26" height="14" fill="#cccccc"/>
+  <text x="664" y="123" text-anchor="end" font-size="11.5" fill="#222">Lyon</text>
+  <text x="700" y="123" text-anchor="start" font-size="11" fill="#555">0.04</text>
+  <rect x="668" y="136" width="14" height="14" fill="#cccccc"/>
+  <text x="664" y="147" text-anchor="end" font-size="11.5" fill="#222">the</text>
+  <text x="688" y="147" text-anchor="start" font-size="11" fill="#555">0.02</text>
+  <text x="752" y="168" text-anchor="middle" font-size="11" fill="#777">…</text>
+
+  <!-- sample -->
+  <line x1="752" y1="175" x2="752" y2="211" stroke="#555" stroke-width="1.6" marker-end="url(#la)"/>
+  <text x="766" y="197" font-size="11.5" fill="#555">sample one token</text>
+
+  <rect x="697" y="215" width="110" height="40" rx="6" fill="#dbe7f5" stroke="#4a7dbe"/>
+  <text x="752" y="240" text-anchor="middle" font-size="13" font-family="DejaVu Sans Mono, monospace" fill="#222">Paris</text>
+
+  <!-- loop back -->
+  <path d="M 697 235 L 175 235 L 175 154" fill="none" stroke="#4a7dbe" stroke-width="1.6" marker-end="url(#lb)"/>
+  <text x="436" y="227" text-anchor="middle" font-size="11.5" fill="#4a7dbe">append to the text · repeat until done</text>
+
+  <!-- no other channels -->
+  <line x1="40" y1="290" x2="860" y2="290" stroke="#dddddd"/>
+  <text x="450" y="318" text-anchor="middle" font-size="13" fill="#222">and this is the whole interface — <tspan font-weight="600">no other input or output channel</tspan></text>
+
+  <g>
+    <rect x="150" y="340" width="170" height="44" rx="6" fill="#f7f7f7" stroke="#bbb"/>
+    <text x="235" y="366" text-anchor="middle" font-size="12" fill="#777">open a file</text>
+    <line x1="165" y1="378" x2="305" y2="346" stroke="#b3554e" stroke-width="2"/>
+  </g>
+  <g>
+    <rect x="365" y="340" width="170" height="44" rx="6" fill="#f7f7f7" stroke="#bbb"/>
+    <text x="450" y="366" text-anchor="middle" font-size="12" fill="#777">run a search</text>
+    <line x1="380" y1="378" x2="520" y2="346" stroke="#b3554e" stroke-width="2"/>
+  </g>
+  <g>
+    <rect x="580" y="340" width="170" height="44" rx="6" fill="#f7f7f7" stroke="#bbb"/>
+    <text x="665" y="366" text-anchor="middle" font-size="12" fill="#777">verify its own output</text>
+    <line x1="595" y1="378" x2="735" y2="346" stroke="#b3554e" stroke-width="2"/>
+  </g>
+  <text x="450" y="414" text-anchor="middle" font-size="12" fill="#666">what comes out is a chain of plausible tokens — not an action on the world</text>
+</svg>

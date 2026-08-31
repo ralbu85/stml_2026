@@ -10,6 +10,10 @@ This difference did not come from changing the model. The same model serves on o
 
 An **LLM (large language model)** is an autoregressive generative model trained on large text corpora with the objective of next-token prediction. Autoregressive means that the model computes a probability distribution over the next token conditioned on the tokens generated so far, samples one token from it, and repeats this process to produce text. An LLM call therefore takes text in and returns text out, and has no other input or output channel. The model cannot open a file, cannot execute a search, and cannot verify whether its own output is factual. What it produces is a chain of tokens with high conditional probability, not an action on the external world.
 
+![one LLM call](figures/fig-1-1-llm-call.svg)
+
+*Figure 1.1 — One LLM call: a distribution over the next token, one sampled token appended, repeated — and no other input or output channel.*
+
 Consequently, everything the model cannot do by itself — opening files, executing searches, validating output — is handled by code outside the model. That code decides which action to execute next, when to repeat, and when to stop. The totality of these decisions is called **control flow**.
 
 The difference that separated the chatbot from Deep Research lies precisely in who holds the authority over this control flow.
@@ -28,9 +32,9 @@ Translating the definition of an agent into an execution form yields the followi
 
 This iterative structure is called the **agent loop**, and it is implemented directly in Chapter 4. Deep Research and Claude Code differ in the form visible to the user, but the internal execution structure of both is this loop. The two systems differ only in which tools the loop holds and which instructions it follows; the skeleton of control is identical.
 
-![Figure 1.1 — control flow in a workflow versus an agent](figures/fig-1-1-loop-vs-workflow.svg)
+![control flow in a workflow versus an agent](figures/fig-1-2-loop-vs-workflow.svg)
 
-*Figure 1.1 — A workflow executes a path fixed in code; an agent's every next step is a branch taken by reading the model's output.*
+*Figure 1.2 — A workflow executes a path fixed in code; an agent's every next step is a branch taken by reading the model's output.*
 
 ## 1.3 Components
 
@@ -60,9 +64,9 @@ Moving down the table, the system can handle problems that cannot be fixed in ad
 
 Real systems occupy every band of this spectrum. Batch translation and summary-digest pipelines leave the model no control-flow decision. Commercial support agents (Intercom Fin, Sierra) run between router and bounded loop: the model classifies the ticket, drafts the reply, and decides escalation, inside guardrails fixed by code. Coding agents (Claude Code, Cursor's agent mode) are the third row's bounded loop in production form — edit, run the tests, read the failure, edit again, under an attempt cap. At the far end, Deep Research (OpenAI, Google) and the software-engineering agent Devin are handed a whole task and produce the plan themselves, and computer-use agents (OpenAI's Operator, Anthropic's computer use) do the same with the screen and mouse as their action surface.
 
-![Figure 1.2 — real systems on the autonomy spectrum](figures/fig-1-2-autonomy-spectrum.svg)
+![real systems on the autonomy spectrum](figures/fig-1-3-autonomy-spectrum.svg)
 
-*Figure 1.2 — The autonomy spectrum with deployed systems placed on it; rightward, flexibility grows while predictability and per-run cost control shrink.*
+*Figure 1.3 — The autonomy spectrum with deployed systems placed on it; rightward, flexibility grows while predictability and per-run cost control shrink.*
 
 The side that does not hand over decision authority — the workflow — also has an established design vocabulary. The following patterns for composing LLM calls are standard terms in framework documentation and papers, and later chapters of this course implement each of them.
 

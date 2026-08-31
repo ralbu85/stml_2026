@@ -8,7 +8,7 @@ format:
     aspectratio: 169
     navigation: empty
     theme: default
-    fontsize: 11pt
+    fontsize: 10pt
     pdf-engine: xelatex
     mainfont: "DejaVu Sans"
     sansfont: "DejaVu Sans"
@@ -21,306 +21,387 @@ format:
 
 ## Same Model, Different Work
 
-- Chatbot (~2022) — one question in, one answer out, done
-- Deep Research — a topic in, a cited report out, dozens of pages read
-- Claude Code — a bug report in; edit, test, re-edit until green
+Chatbots of around 2022 received a question, generated one answer, and ended the interaction. Systems that appeared afterward behave differently:
+
+- **Deep Research** — given a topic, searches and reads dozens of web pages on its own and produces a synthesized, cited report.
+- **Claude Code** — given a bug report, reads the code, edits it, runs the tests; when they fail, analyzes the cause and edits again.
 
 \vspace{2mm}
 
-**Same model on every side. What differs is the program around it.**
-
-<!-- 훅: 셋 다 같은 모델. 차이는 모델 밖 프로그램 — 여기서 수업 전체가 출발 -->
-
-## The LLM Call
-
-- Text in → text out. **No other channel.**
-- Cannot open a file, run a search, verify its own output
-- Produces plausible tokens — not actions on the world
+This difference did not come from changing the model — **the same model serves on every side**. What separates them is the *program surrounding the model*.
 
 \vspace{2mm}
 
-Everything the model cannot do → **code outside the model**
+To find what in that program separates a chatbot from an agent, we first need to establish what an LLM call itself can and cannot do.
 
-## Control Flow
+<!-- 훅: 셋 다 같은 모델. 차이는 모델 밖 프로그램 — 여기서 1장 전체가 출발 -->
 
-**Control flow** = which action next · repeat? · stop?
+## The LLM, Defined
 
-\vspace{2mm}
-
-- **Workflow** — control flow fixed in advance, by code
-- **Agent** — control flow decided by the model's output
+**LLM (large language model)** = an autoregressive generative model trained on large text corpora with the objective of next-token prediction.
 
 \vspace{2mm}
 
-Criterion: the **location of decision authority** — not capability
-\newline (*Building Effective Agents*, Anthropic 2024)
+*Autoregressive* means the model:
+
+1. computes a probability distribution over the **next token**, conditioned on the tokens so far;
+2. samples one token from that distribution;
+3. appends it and repeats — until the text is complete.
+
+\vspace{2mm}
+
+That is the entire mechanism. Everything a chat product appears to do — answering, summarizing, "reasoning" — is this loop of predict → sample → append.
+
+## One Call, as a Machine
+
+![](figures/fig-1-1-llm-call.png){width=80%}
+
+## What One Call Cannot Do
+
+An LLM call takes **text in and returns text out — and has no other input or output channel.** By itself it cannot:
+
+- open a file,
+- execute a search,
+- verify whether its own output is factual.
+
+What it produces is a chain of tokens with *high conditional probability* — not an action on the external world.
+
+\vspace{2mm}
+
+Consequently, everything the model cannot do — opening files, executing searches, validating output — is handled by **code outside the model**. That code decides which action to execute next, when to repeat, and when to stop.
+
+\vspace{2mm}
+
+**Control flow** = the totality of these decisions.
+
+## Workflow and Agent, Defined
+
+The difference between the chatbot and Deep Research lies in *who holds authority over control flow*:
+
+\vspace{2mm}
+
+- **Workflow** = a system whose control flow is fixed in advance by the developer's code. The LLM does predetermined work at predetermined points.
+- **Agent** = a system whose control flow is determined by the LLM's output. The model chooses the next action.
+
+\vspace{2mm}
+
+Introduced by Anthropic's *Building Effective Agents* (2024); now standard usage.
+
+\vspace{2mm}
+
+The criterion is **not capability but the location of decision authority.** Having a search feature does not make a system an agent.
 
 ## The Criterion, Applied
 
-Same search feature, two systems:
+The same search feature, in two systems:
 
 \vspace{2mm}
 
-- Fixed pipeline: translate → summarize → store (search inside) → **workflow**
-- Assistant that decides *whether* to search, and *with what query* → **agent**
+- A pipeline that performs *translate → summarize → store* in a fixed order remains a **workflow**, even if it contains search — the model decides nothing about the path.
+- The same search makes the system an **agent** when the model's output decides *whether* to search and *with what query* — the branch is taken by reading the model's output.
 
 \vspace{2mm}
 
-Having a capability ≠ deciding. **Deciding makes the agent.**
+Having a capability is not the test. **Deciding is.**
 
 ## Workflow versus Agent
 
-![](figures/fig-1-1-loop-vs-workflow.png){width=88%}
+![](figures/fig-1-2-loop-vs-workflow.png){width=88%}
 
 ## The Agent Loop
 
-1. Model reads the input so far → generates output
-2. Code interprets: action → execute · final answer → stop
-3. Result appended to the input
-4. Back to 1
+Translating the agent definition into an execution form gives an iterative structure:
+
+1. The model reads the input accumulated so far and **generates an output**.
+2. Code **interprets** that output — an action directive is executed; a final answer ends the iteration.
+3. The execution result is **appended** to the model's input.
+4. The model reads the updated input and generates the next output (back to 1).
 
 \vspace{2mm}
 
-Deep Research and Claude Code: same skeleton, different tools. (Built by hand — Ch. 4)
+Which iteration the loop ends on is determined by the results — it is written nowhere in the code.
+
+\vspace{2mm}
+
+Deep Research and Claude Code differ in tools and instructions, but the internal execution structure of both is this loop — **the skeleton of control is identical.** (We build it by hand in Chapter 4.)
 
 ## The Loop, Watched Live
 
-A Claude Code session, on screen:
+What a Claude Code session prints, turn by turn:
 
-- a line of judgment — *"tests fail in parse_date; regex misses 2-digit years"*
-- a tool call — edit the file, run the tests
-- the result — pass/fail log, appended
-- repeat, until green or the attempt cap
+- a line of judgment — *"tests fail in `parse_date`; the regex misses two-digit years"*
+- a tool call — edit the file, run the test suite
+- the result — a failing or passing log, appended to the record
+- repeat — until the tests pass, or the attempt cap is reached
 
 \vspace{2mm}
 
-That transcript **is** the loop — running in a shipped product.
+That visible transcript **is** the agent loop of the previous slide, running in a shipped product. When we debug agents in Week 4, this record — the *trace* — is what we read.
 
-<!-- 시연 포인트: 실제 Claude Code/Cursor 화면을 여기서 잠깐 보여주기 -->
+<!-- 시연: 실제 Claude Code/Cursor 화면을 여기서 잠깐 보여주면 효과적 -->
 
 ## Components
 
-| Component | Why it exists |
-|:--|:--|
-| Model | decides, through its output |
-| Instructions | the goal, the permissions |
-| Tools | text alone changes nothing |
-| Memory / Context | each step builds on the last |
+One iteration of the loop needs four things: a decision, grounds for the decision, a way to execute it, and a record of progress. The parts responsible are the components of an agent:
 
 \vspace{2mm}
 
-Four parts, every framework, every week's lab. (Ch. 2 · 3 · 9–10)
+| Component | Why it is needed |
+|:--|:--|
+| **Model** | control flow must be decided by its output |
+| **Instructions** (system prompt) | without the goal and what is permitted, decisions are meaningless |
+| **Tools** | text output alone cannot change the external world |
+| **Memory / Context** | each iteration must decide on top of the previous result |
+
+\vspace{2mm}
+
+The names vary across frameworks; the four parts do not. The labs build them week by week (Ch. 2 · 3 · 9–10).
 
 ## Autonomy — a Matter of Degree
 
-| Level | Example | LLM decides |
-|:--|:--|:--|
-| Fixed pipeline | translate → summarize | nothing |
-| Router | triage inquiries | one branch |
-| Bounded loop | edit until tests pass | iterate · stop |
-| Autonomous | "research this topic" | the plan |
+In real systems, decision authority is not all-or-nothing.
 
 \vspace{2mm}
 
-A trade: flexibility ↔ predictability, cost
+**Autonomy** = the degree to which control-flow decisions are entrusted to the LLM's output rather than to the developer's code.
+
+\vspace{2mm}
+
+Moving toward higher autonomy, the system can handle problems that cannot be fixed in advance — but its behavior becomes harder to predict, and the number of calls and the cost grow.
+
+\vspace{2mm}
+
+**Autonomy is a trade: flexibility, bought with predictability and cost.**
+
+## The Four Bands
+
+| Autonomy | Example | What the LLM decides |
+|:--|:--|:--|
+| Fixed pipeline | translate → summarize → store | nothing |
+| Router | classify inquiries, dispatch to handlers | one branch |
+| Bounded loop | edit code until tests pass (cap of 5) | iteration and termination |
+| Autonomous agent | "research this topic, produce a report" | the entire plan |
+
+\vspace{2mm}
+
+Every band is occupied by shipping products — the next four slides walk through them.
 
 ## Real Systems on the Spectrum
 
-![](figures/fig-1-2-autonomy-spectrum.png){width=96%}
+![](figures/fig-1-3-autonomy-spectrum.png){width=96%}
 
-## Case — Deep Research
+## Case — Deep Research (autonomous band)
 
-- OpenAI (2025) · Gemini (2024) · Perplexity
-- In: one topic. Out, minutes later: a cited report
-- The model decides: which searches, which pages, when enough
-- Delegated form: assign → review the deliverable
+OpenAI (2025), Google Gemini (2024); Perplexity runs a lighter variant.
 
-\vspace{2mm}
-
-Note for Ch. 7: these products write a **plan** first — some let you edit it.
-
-## Case — Coding Agents
-
-- Claude Code (terminal) · Cursor (IDE) · Devin (delegated) · Copilot (embedded)
-- The bounded loop, productized: edit → test → read failure → edit
-- Guardrails live in **code**: permission prompts, attempt caps
-- Same model as the chat products — the loop and tools differ
-
-## Case — Support Agents · Computer Use
-
-Support — Intercom Fin, Sierra:
-
-- model classifies, drafts, decides escalation
-- refund limits fixed by code → router ~ bounded loop
+- **In:** one research topic. **Out, minutes later:** a synthesized report with citations.
+- In between, the model decides everything the spectrum's right end implies: *which searches to run, which pages to open, which to trust, when the evidence suffices.*
+- The user cannot steer during the run — this is autonomy **inside a delegated task**, not an unbounded system.
 
 \vspace{2mm}
 
-Computer use — Operator (2025), Anthropic computer use (2024):
+One detail to hold for Chapter 7: these products draw up a **research plan first**, and some let the user edit it before execution — a control surface exactly where planning theory says it belongs.
 
-- the tool surface is the screen: look, click, type
+## Case — Coding Agents (bounded-loop band)
+
+Claude Code (terminal), Cursor agent mode (IDE), Devin (fully delegated), GitHub Copilot (embedded).
+
+- The bounded loop of the table, productized: **edit → run tests → read the failure → edit again**, under an attempt cap.
+- The cap exists because the loop cannot be trusted to always terminate — a run that cannot fix the bug must stop and report, not spin forever.
+- Guardrails live in **code, not in the model**: permission prompts before running commands, caps on attempts, restricted directories.
+
+\vspace{2mm}
+
+Same model as the chat products. The loop, the tools, and the guardrails are the whole difference.
+
+## Case — Support Agents (router → bounded band)
+
+Intercom Fin, Sierra (2024–): customer-service agents in production.
+
+- The model **classifies** the ticket, **drafts** the reply, and **decides escalation** — answer it, refund, or hand to a human.
+- What the model may decide is bounded by code: refund limits, forbidden actions, mandatory escalation rules.
+- This is the middle of the spectrum: more than a router (it composes multi-step resolutions), less than autonomous (the guardrails are not its to change).
+
+\vspace{2mm}
+
+A useful reading habit: for any agent product, ask *which decisions belong to the model, and which are fixed by code around it.*
+
+## Case — Computer Use (the far end)
+
+OpenAI Operator (2025), Anthropic computer use (2024).
+
+- The tool surface is the **screen itself**: the model looks at pixels, clicks, types — a GUI made for humans becomes the toolbox.
+- Nothing about the task is enumerated in advance; whatever a browser can do is in scope. This is why it sits at the spectrum's far end.
+- The price is the trade from the autonomy slide, at full strength: slow, expensive, and the hardest to predict — which is why these ship with confirmation prompts for consequential actions.
 
 ## Workflow Patterns
 
-| Pattern | Returns in |
-|:--|:--|
-| Prompt chaining | Ch. 7 planning |
-| Routing | Ch. 8 retrieval |
-| Parallelization | Ch. 2 self-consistency |
-| Orchestrator–workers | Ch. 6 multi-agent |
-| Evaluator–optimizer | Ch. 5 reflection |
+The side that does **not** hand over decision authority also has an established design vocabulary. Five patterns cover most LLM-call compositions — and this course implements each one:
+
+\vspace{2mm}
+
+| Pattern | Structure | Appears in |
+|:--|:--|:--|
+| Prompt chaining | one call's output → next call's input | Ch. 7 planning |
+| Routing | classify input, dispatch to paths | Ch. 8 retrieval |
+| Parallelization | parallel calls on one input, aggregate | Ch. 2 self-consistency |
+| Orchestrator–workers | a central call divides subtasks | Ch. 6 multi-agent |
+| Evaluator–optimizer | alternate generation and evaluation | Ch. 5 reflection |
 
 ## Patterns in Production
 
-- Orchestrator–workers — Anthropic research: lead agent + parallel searchers
-- Evaluator–optimizer — every coding agent's edit ↔ test cycle
-- Router — support triage: bot vs. human
-- Parallelization — "parallel thinking" premium tiers
-- Prompt chaining — fixed document pipelines
-
-## Form Factors
-
-| Form | Example |
-|:--|:--|
-| Conversational | ChatGPT, Claude |
-| Delegated | Deep Research, Devin |
-| Embedded | Copilot, Cursor |
-| Headless | a sub-agent inside an agent |
+The same five patterns, spotted in shipped systems:
 
 \vspace{2mm}
 
-The chatbot is one form factor — not the definition.
+- **Orchestrator–workers** — Anthropic's research feature: a lead agent decomposes the question and spawns parallel searchers.
+- **Evaluator–optimizer** — every coding agent's edit ↔ test cycle: generate a fix, let the tests evaluate it.
+- **Routing** — support triage: which tickets the bot resolves, which reach a human.
+- **Parallelization** — premium "parallel thinking" tiers: several candidate solutions, then selection.
+- **Prompt chaining** — fixed document pipelines: translate, then summarize, then store.
+
+## Form Factor, Defined
+
+The definition of an agent specifies where control flow resides — it says nothing about how the system meets people. The interface is independent of the internal structure.
+
+\vspace{2mm}
+
+**Form factor** = the deployment shape of an agent: how it is packaged for interaction.
+
+\vspace{2mm}
+
+| Form factor | Example | Unit of interaction |
+|:--|:--|:--|
+| Conversational | ChatGPT, Claude | exchange of messages |
+| Delegated | Deep Research, Devin | task in, deliverable out |
+| Embedded | GitHub Copilot, Cursor | assistance inside the workplace |
+| Headless | a sub-agent inside another agent | API call, no human |
+
+## The Four Forms, Explained
+
+- **Conversational** — turn-by-turn; a human steers at every step. The oldest form, and the one autonomy suits least: the human is already in the loop.
+- **Delegated** — assign a task, review the deliverable. Where the highest autonomy lives: Deep Research's run, Devin's ticket, a cloud coding agent's PR.
+- **Embedded** — the agent lives inside the workplace (IDE, document editor) and acts in place: Copilot's suggestions, Cursor's in-editor edits.
+- **Headless** — no human interface at all: a pipeline step, or one agent serving as another agent's tool (→ Ch. 6).
+
+\vspace{2mm}
+
+**The chatbot is not the definition of an agent — it is one form factor, historically the first.** This course covers the internal structure common to all four.
 
 ## Adoption Criteria
 
-An agent pays when:
+An agent is advantageous when **flexibility is genuinely required**:
 
-- the path cannot be fixed in code beforehand
-- the work crosses several tools, order unknown
-- feedback on intermediate results improves the outcome
+- open problems whose solution path cannot be fixed in code beforehand;
+- multi-step tasks that pass through several tools, order unknown upfront;
+- work that improves from feedback on intermediate results.
 
-Otherwise: a workflow — cheaper, more stable.
+Conversely, a **workflow** is cheaper and more stable when the procedure is fixed; when error tolerance is low and there is no means of verification, handing over decision authority is itself a risk; a single-turn question–answer task needs no iteration at all.
 
 \vspace{2mm}
 
-**Hand over only as much autonomy as the task requires.** (→ Ch. 12)
+**The governing principle: hand over only as much autonomy as the task requires.** (Reexamined as a cost question in Ch. 12.)
 
 ## When Not to Build an Agent
 
-- "Summarize every report, this exact format" — procedure never varies
-- "Answer FAQs from this list" — single turn, nothing to iterate
-- "Transfer money on request" — costly errors, no verification step
+Three requests that deserve a workflow:
+
+- *"Summarize every incoming report in this fixed format."* — The procedure never varies; an agent adds cost and variance, nothing else.
+- *"Answer FAQ questions from this list."* — Single turn; there is nothing for a loop to decide.
+- *"Transfer money when a customer asks."* — Errors are costly and there is no verification step; decision authority itself is the risk.
 
 \vspace{2mm}
 
-Default = workflow. **The agent must earn its place.**
+A practical checklist before splitting:
+
+1. Can the procedure be written down in advance? → workflow.
+2. Is there a way to verify results? If not → lower the autonomy.
+3. Several tools, order unknown upfront? → agent territory.
+4. What does one failure cost? → that sets the bound and the guardrails, in code.
 
 ## The Course, From the Deficit List
 
-- cannot act → tools (3) · the loop (4)
-- doesn't know when wrong → reflection & evaluation (5) · planning (7)
-- outgrows one agent → multi-agent (6)
-- knows nothing past cutoff → RAG (8) · memory (10)
-- input grows without bound → context (9)
-- procedures migrate into weights → reasoning models (11)
-- capability multiplies cost → economics (12) · benchmarks (13)
-- action = attack surface → security (14)
+An LLM call is text in, text out — and each deficit of that bare call is repaired by one part of this course:
+
+\vspace{2mm}
+
+- the model cannot **act** → tools (Ch. 3) · the agent loop (Ch. 4)
+- it does not know when it is **wrong** → reflection & evaluation (Ch. 5) · planning & search (Ch. 7)
+- tasks outgrow **one agent** → multi-agent systems (Ch. 6)
+- it knows nothing past its **training cutoff** → RAG (Ch. 8) · memory (Ch. 10)
+- iteration accumulates input **without bound** → context engineering (Ch. 9)
+- the caller's procedures **migrate into the weights** → reasoning models (Ch. 11)
+- capability **multiplies cost** → inference economics (Ch. 12) · benchmarks (Ch. 13)
+- a system that acts is an **attack surface** → security (Ch. 14)
 
 ## The Arc
 
-- **W2–W7** — build one agent, discipline it
-- **W8** — midterm (written, weeks 1–7)
-- **W9–W13** — ground it, operate it
-- **W14–15** — final: a research-assistant agent over our paper corpus
+- **First half (W2–W7)** — build one complete agent and discipline it: reasoning as raw material → tools → the loop → feedback and measurement → several agents → planned paths.
+- **Midterm (W8)** — written exam over weeks 1–7.
+- **Second half (W9–W13)** — ground the agent in knowledge it does not have, and turn it into an operated system.
+- **Final (W14–15)** — a research-assistant agent over this course's own paper corpus, demonstrated and defended with its evaluation scorecard.
+
+## Chapter 1 in Seven Terms
+
+- **LLM** — autoregressive next-token generator; text in, text out, nothing else.
+- **Control flow** — the decisions: next action, repetition, termination.
+- **Workflow** — control flow fixed in advance by code.
+- **Agent** — control flow decided by the model's output.
+- **Agent loop** — generate → interpret → execute → append → repeat.
+- **Autonomy** — how many control-flow decisions the model holds; a flexibility ↔ predictability/cost trade.
+- **Form factor** — how the system meets people; independent of the internals.
 
 ## Discussion — Classify Two Systems
 
-- A nightly job: every new arXiv abstract → summary → mail digest
-- A support bot: per ticket, decides **answer / refund / escalate**
+- A nightly job sends every new arXiv abstract in your field to an LLM, stores the summaries, and mails a digest.
+- A support bot reads each incoming ticket and decides: **answer it, refund the customer, or escalate to a human.**
 
 \vspace{2mm}
 
-Which is the agent — and what single decision settles it?
+Which is the agent — and what single decision settles the classification?
 
-<!-- 정답 축: 결정권 위치. 다이제스트 = 모델이 분기 결정 없음. 티켓 봇 = 분기가 모델 출력 -->
+<!-- 정답 축: 결정권의 위치. 다이제스트 잡 = 모델이 아무 분기도 결정하지 않음(고정 절차 안의 LLM 호출). 티켓 봇 = 분기(응답/환불/이관)가 모델 출력으로 결정 -->
 
-## Discussion — the RAG Chatbot
+## Discussion — Two Boundary Cases
 
-Always: retrieve top-5 passages → answer from them. Fixed sequence.
+**The RAG chatbot.** It always retrieves the top five passages for the question, then answers from them, in a fixed sequence.
 
-\vspace{2mm}
-
-- Agent or workflow?
-- The smallest change that flips your answer?
-
-<!-- 고정 시퀀스 = 워크플로. 최소 변화: 검색 여부·질의를 모델이 결정 (Ch. 8 예고) -->
-
-## Discussion — the Lowest Sufficient Autonomy
-
-"A fully autonomous agent that answers **all** customer email."
+- Agent or workflow, under today's definition?
+- What is the *smallest* change that would flip your answer?
 
 \vspace{2mm}
 
-- Argue for the lowest autonomy level that serves the goal
-- Name one observed failure that justifies moving up exactly one level
+**The lowest sufficient autonomy.** A team proposes "a fully autonomous agent that answers *all* customer email."
+
+- Argue for the lowest autonomy level that serves the goal.
+- Name one observed failure that would justify moving up exactly one level.
+
+<!-- RAG: 고정 시퀀스 = 워크플로. 최소 변화 = 검색 여부·질의를 모델이 결정 (Ch. 8 adaptive retrieval 예고). 이메일: 라우터(분류→템플릿/이관)부터 시작, 실패 관찰 후 한 단계씩 -->
+
+## Discussion — Products, Dissected
+
+- Pick one agentic product you have used. Identify its **form factor**, fill in its **four components**, and give one control-flow decision its **model** makes — and one its **code** fixes.
+- The same model serves as a chatbot and as a component of Deep Research. If the weights are identical, **where does the added capability come from** — and which of the components supply it?
 
 \vspace{2mm}
 
-(Questions 4–5: notes §1.8)
+(These five questions are notes §1.8 — they return as exam material.)
 
-## This Week's Lab
+## This Week's Lab · Next Week
 
-`W1_lab_setup.ipynb` — Colab, ~80 min:
+`W1_lab_setup.ipynb` — Google Colab, about 80 minutes:
 
-- paste your API key (**API Setup guide first**)
-- first calls via `aisuite` · roles · statelessness · temperature
-- final task: a system prompt forcing clean JSON — PASS/FAIL checked
+- paste your API key into the setup cell (**API Setup guide first**);
+- first calls through `aisuite`; message roles, statelessness, temperature;
+- final task: a system prompt that forces clean JSON — checked PASS/FAIL.
 
-\vspace{2mm}
-
-Open in Colab — from the Week 1 page of the course site.
-
-Next week: chain-of-thought, worked examples, self-consistency.
-
-# Backup
-
-## Term Sheet
-
-- **LLM** — next-token generator; text in, text out
-- **Control flow** — next action · repetition · termination
-- **Workflow** — control flow fixed by code
-- **Agent** — control flow decided by model output
-- **Agent loop** — generate → interpret → execute → append → repeat
-- **Autonomy** — how many decisions the model holds
-- **Form factor** — how the system meets people
-
-## Products by Autonomy Band
-
-- Fixed pipeline — batch translation, digests
-- Router — support triage (Fin, Sierra)
-- Bounded loop — Claude Code, Cursor: edit–test under a cap
-- Autonomous — Deep Research, Devin
-- Computer use — Operator: autonomy with a GUI as the toolbox
-
-## Deciding the Split — a Checklist
-
-1. Can the procedure be written down in advance? → workflow
-2. Any way to verify results? If not → lower the autonomy
-3. Several tools, order unknown upfront? → agent territory
-4. Cost of one failure? → sets the bound and the guardrails, in code
-
-## Discussion Questions 4–5
-
-4. Pick one agentic product you use. Its form factor? Its four components? One decision its model makes — one its code fixes?
-
-5. Same model as chatbot and inside Deep Research. Weights identical — where does the added capability come from? Which components supply it?
-
-## Preview — Chapter 2
-
-Same model, same question:
-
-- "23 apples, 20 used, 6 bought — answer only" → **27** (wrong)
-- same question, worked solution demanded → 23−20=3, 3+6=9 → **9**
+Open it from the Week 1 page of the course site (**Open in Colab**).
 
 \vspace{2mm}
 
-Why writing changes correctness — Week 2 starts there.
+**Next week — where Chapter 2 starts:** the same model, the same question, different accuracy:
+
+- *"23 apples, 20 used, 6 bought — answer only"* → **27** (wrong)
+- the same question, worked solution demanded → 23−20=3, 3+6=9 → **9** (correct)
+
+Why *writing* changes correctness — the model's only workspace is the text itself.
