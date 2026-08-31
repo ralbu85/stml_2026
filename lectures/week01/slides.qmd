@@ -222,51 +222,22 @@ Same model as the chat products. The loop, the tools, and the guardrails are the
 
 **Deep Research** = a mode of a commercial chat product in which the user submits one research question and receives, minutes later, a written report with source citations — the web browsing in between running unattended.
 
-Shipped by OpenAI (2025) and Google Gemini (2024); Perplexity runs a lighter variant. Devin's ticket-to-pull-request run belongs to this band as well.
+Shipped by OpenAI (2025) and Google Gemini (2024); Perplexity runs a lighter variant. Devin does the same for a software ticket, and computer-use agents (OpenAI Operator, Anthropic computer use) do it with the screen and mouse as their action surface.
 
 - Across those minutes the model decides the entire plan: *which searches to run, which pages to open, which to trust, when the evidence suffices.*
 - The user cannot steer during the run — this is autonomy **inside a delegated task**, not an unbounded system.
-
-One detail to hold for Chapter 7: these products draw up a research plan first, and some let the user edit it before execution — a control surface exactly where planning theory says it belongs.
-
-## Computer Use — the Autonomous Band's Far Edge
-
-**Computer use** = a system handed a browser or a virtual desktop and a goal stated in words, which then operates that machine as a person would — reading the screen, moving the cursor, clicking, typing — to carry out the task in ordinary web applications.
-
-OpenAI Operator (2025), Anthropic computer use (2024). A booking or a form submission is a representative errand.
-
-- Band 4 decides the plan within a fixed set of tools. Here the tool surface is the **screen itself**, so the set is no longer enumerated: whatever a browser can do is in scope.
-- The price is the autonomy trade at full strength: slow, expensive, hardest to predict — which is why these ship with confirmation prompts for consequential actions.
+- The autonomy trade arrives here at full strength: slow, expensive, hardest to predict — which is why these ship with confirmation prompts for consequential actions.
 
 A reading habit for any agent product: ask *which decisions belong to the model, and which are fixed by code around it.* That question is the whole of this chapter.
 
-## Workflow Patterns
-
-The side that does **not** hand over decision authority also has an established design vocabulary. Five patterns cover most LLM-call compositions — and this course implements each one:
-
-
-| Pattern | Structure | Appears in |
-|:--|:--|:--|
-| Prompt chaining | one call's output → next call's input | Ch. 7 planning |
-| Routing | classify input, dispatch to paths | Ch. 8 retrieval |
-| Parallelization | parallel calls on one input, aggregate | Ch. 2 self-consistency |
-| Orchestrator–workers | a central call divides subtasks | Ch. 6 multi-agent |
-| Evaluator–optimizer | alternate generation and evaluation | Ch. 5 reflection |
-
-## Patterns in Production
-
-The same five patterns, spotted in shipped systems:
-
-
-- **Orchestrator–workers** — Anthropic's research feature: a lead agent decomposes the question and spawns parallel searchers.
-- **Evaluator–optimizer** — every coding agent's edit ↔ test cycle: generate a fix, let the tests evaluate it.
-- **Routing** — support triage: which tickets the bot resolves, which reach a human.
-- **Parallelization** — premium "parallel thinking" tiers: several candidate solutions, then selection.
-- **Prompt chaining** — fixed document pipelines: translate, then summarize, then store.
-
 ## Form Factor, Defined
 
-The definition of an agent specifies where control flow resides — it says nothing about how the system meets people. The interface is independent of the internal structure.
+Two questions the spectrum cannot answer, because neither is about control flow:
+
+- ChatGPT holds a conversation; Deep Research runs unattended for minutes. Is only one of them an agent?
+- Copilot's suggestion appears inside the editor; Devin's arrives as a pull request. Is one of them more of an agent?
+
+Both ask how the system meets its user, not who decides its next action. That is a second axis, and it is independent of the first.
 
 
 **Form factor** = the deployment shape of an agent: how it is packaged for interaction.
@@ -301,6 +272,24 @@ Conversely, a **workflow** is cheaper and more stable when the procedure is fixe
 
 
 **The governing principle: hand over only as much autonomy as the task requires.** (Reexamined as a cost question in Ch. 12.)
+
+## Workflow Patterns
+
+"Build a workflow instead" is unusable advice while the only workflow on offer is Band 1's straight line. The fixed-control-flow side has a design vocabulary of its own.
+
+**Workflow pattern** = a named arrangement of LLM calls whose order is decided by the code, not by the model.
+
+
+| Pattern | Structure | Appears in |
+|:--|:--|:--|
+| Prompt chaining | one call's output → next call's input | Ch. 7 planning |
+| Routing | classify input, dispatch to paths | Ch. 8 retrieval |
+| Parallelization | parallel calls on one input, aggregate | Ch. 2 self-consistency |
+| Orchestrator–workers | a central call divides subtasks | Ch. 6 multi-agent |
+| Evaluator–optimizer | alternate generation and evaluation | Ch. 5 reflection |
+
+
+Three of the five are not pipelines: a fixed procedure is not the same thing as a simple one. Each returns in the chapter that builds it.
 
 ## When Not to Build an Agent
 

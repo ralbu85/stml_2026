@@ -47,3 +47,7 @@ lectures/week*/notes.html
 lectures/week*/slides.html
 lectures/week*/slides_files/
 lectures/week*/notes_files/
+
+# Review copies (regenerated: PDF export + contact sheets of the deck)
+lectures/week*/_review/slides.pdf
+lectures/week*/_review/slides-overview-*.png
