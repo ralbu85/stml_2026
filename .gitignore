@@ -56,3 +56,5 @@ lectures/week*/_review/slides-overview-*.png
 # they are the record the chapter is checked against, and materials/repos/ is not.
 # The one exception is the 7 MB OpenAI PDF; its text extraction is tracked instead.
 lectures/week*/reference/*.pdf
+# Zipped bundle of the reference folder (rebuild: cd lectures/weekNN && zip -r weekNN-reference.zip reference/)
+lectures/week*/week*-reference.zip
