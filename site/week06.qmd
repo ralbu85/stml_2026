@@ -4,9 +4,9 @@ title: "Week 06 — Multi-Agent Systems"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week06-notes.qmd) |
+| Lecture notes | published before class |
 | Slides | published before class |
-| Lab | [`W6_lab_multiagent.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week06/W6_lab_multiagent.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week06/W6_lab_multiagent.ipynb)<br>Homework: [`W6_hw_new_intent.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week06/W6_hw_new_intent.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week06/W6_hw_new_intent.ipynb) — due before Week 7 |
+| Lab | published before class |
 | Papers | [AutoGen (Wu et al., 2023)](https://arxiv.org/abs/2308.08155) ([PDF](https://arxiv.org/pdf/2308.08155)) · [MetaGPT (Hong et al., 2023)](https://arxiv.org/abs/2308.00352) ([PDF](https://arxiv.org/pdf/2308.00352)) |
 
 ## This week

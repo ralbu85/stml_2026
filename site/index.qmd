@@ -6,7 +6,7 @@ toc: false
 
 ## Week by week
 
-Each week's page collects that week's lecture notes, lab notebook, homework, and references in one table.
+Each week's page collects that week's lecture notes, slides, lab notebook, and presentation papers in one table. Every week's topic and papers are listed from the start; the materials for a week are released in the week it is taught.
 
 | Wk | Topic | Lecture | Lab |
 |---|---|---|---|
@@ -42,7 +42,7 @@ You will learn how LLM agents work by **building one, week by week**, and by rea
 | Lab (Colab notebook) | 80 min |
 | Wrap-up · next-week preview | 10 min |
 
-Labs run in Google Colab through `aisuite` with your own API key — no local installation; every notebook opens in Colab with one click from its week page. From Week 3 most labs adapt Andrew Ng's *Agentic AI* (DeepLearning.AI) nearly as given (the Week 4 loop lab is course-built); Weeks 1–2 practice prompting, and every week from Week 2 adds a small graded homework.
+Labs run in Google Colab through `aisuite` with your own API key — no local installation. Each week page offers its notebook as a `.ipynb` download; upload that file to [Colab](https://colab.research.google.com) yourself (**File → Upload notebook**) and run it there. From Week 3 most labs adapt Andrew Ng's *Agentic AI* (DeepLearning.AI) nearly as given (the Week 4 loop lab is course-built); Weeks 1–2 practice prompting, and every week from Week 2 adds a small graded homework.
 
 ## Before the first class
 

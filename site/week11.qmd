@@ -4,7 +4,7 @@ title: "Week 11 — Reasoning Models & RL"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week11-notes.qmd) |
+| Lecture notes | published before class |
 | Slides | published before class |
 | Lab | published before class |
 | Papers | [STaR (Zelikman et al., 2022)](https://arxiv.org/abs/2203.14465) ([PDF](https://arxiv.org/pdf/2203.14465)) · [DeepSeek-R1 (2025)](https://arxiv.org/abs/2501.12948) ([PDF](https://arxiv.org/pdf/2501.12948)) |

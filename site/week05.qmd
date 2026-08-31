@@ -4,9 +4,9 @@ title: "Week 05 — Reflection & Evaluation"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week05-notes.qmd) |
+| Lecture notes | published before class |
 | Slides | published before class |
-| Lab | [`W5_lab_reflection_evals.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb)<br>Homework: [`W5_hw_chart_reflection.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb) — due before Week 6 |
+| Lab | published before class |
 | Papers | [Reflexion (Shinn et al., 2023)](https://arxiv.org/abs/2303.11366) ([PDF](https://arxiv.org/pdf/2303.11366)) · [Judging LLM-as-a-Judge (Zheng et al., 2023)](https://arxiv.org/abs/2306.05685) ([PDF](https://arxiv.org/pdf/2306.05685)) · optional: [Self-Refine (Madaan et al., 2023)](https://arxiv.org/abs/2303.17651) ([PDF](https://arxiv.org/pdf/2303.17651)) |
 
 ## This week

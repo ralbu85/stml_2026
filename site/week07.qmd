@@ -4,9 +4,9 @@ title: "Week 07 — Planning & Search"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week07-notes.qmd) |
+| Lecture notes | published before class |
 | Slides | published before class |
-| Lab | [`W7_lab_research_agent.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week07/W7_lab_research_agent.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week07/W7_lab_research_agent.ipynb)<br>Homework: [`W7_hw_own_topic.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week07/W7_hw_own_topic.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week07/W7_hw_own_topic.ipynb) — due before the Week 8 midterm |
+| Lab | published before class |
 | Papers | [ReWOO (Xu et al., 2023)](https://arxiv.org/abs/2305.18323) ([PDF](https://arxiv.org/pdf/2305.18323)) · [Tree of Thoughts (Yao et al., 2023)](https://arxiv.org/abs/2305.10601) ([PDF](https://arxiv.org/pdf/2305.10601)) |
 
 ## This week

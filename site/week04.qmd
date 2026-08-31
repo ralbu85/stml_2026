@@ -4,9 +4,9 @@ title: "Week 04 — The Agent Loop (ReAct)"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week04-notes.qmd) |
+| Lecture notes | published before class |
 | Slides | published before class |
-| Lab | [`W4_lab_loop.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week04/W4_lab_loop.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week04/W4_lab_loop.ipynb)<br>Homework: [`W4_hw_loop_guard.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week04/W4_hw_loop_guard.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week04/W4_hw_loop_guard.ipynb) — due before Week 5 |
+| Lab | published before class |
 | Papers | [ReAct (Yao et al., 2022)](https://arxiv.org/abs/2210.03629) ([PDF](https://arxiv.org/pdf/2210.03629)) |
 
 ## This week

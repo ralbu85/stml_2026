@@ -4,11 +4,21 @@ title: "Week 01 — Course Intro · What is an Agent?"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week01-notes.qmd) |
-| Slides | [PDF](lectures/week01/slides.pdf) |
-| Lab | [`W1_lab_setup.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week01/W1_lab_setup.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week01/W1_lab_setup.ipynb) |
-| Papers | — |
+| Lecture notes | [read online](week01-notes.qmd) · [download PDF](notes/week01-notes.pdf) |
+| Slides | [download PDF](lectures/week01/slides.pdf) |
+| Lab | [`W1_lab_setup.ipynb`](labs/W1_lab_setup.ipynb) — download and upload to Colab |
+| Papers | — (no paper presentation in Week 1) |
 
 ## This week
 
 Orientation (grading, weekly rhythm, presentation assignment) followed by the first lecture: what separates an agent from a chatbot. An agent is a system whose control flow is decided by the model's output; the lecture builds that definition from what an LLM call can and cannot do, then covers the agent loop, the components (Model · Instructions · Tools · Memory), the autonomy spectrum, workflow patterns, and form factors — and closes with the course map: build the agent (W2–4), discipline it (W5), scale it (W6–7), ground and operate it (W9–13).
+
+## Lab
+
+`W1_lab_setup.ipynb` — first calls through `aisuite`; message roles, statelessness, temperature; and a final task: a system prompt that makes every answer come back as clean JSON, checked PASS/FAIL.
+
+Download the notebook from the table above, open [colab.research.google.com](https://colab.research.google.com), and upload it there (**File → Upload notebook**). Then paste your API key into the setup cell and run the notebook top to bottom. **Prerequisite:** your own API key — follow the [API Setup Guide](api-setup.qmd) *before* class.
+
+## Presentations
+
+No paper presentation in Week 1. Presenter slots are assigned during orientation, and presentations begin in Week 2 with Chain-of-Thought ([Wei et al., 2022](https://arxiv.org/abs/2201.11903) ([PDF](https://arxiv.org/pdf/2201.11903))). Before your slot, read the [presentation guide](presentations.qmd) and study the sample deck linked there.

@@ -4,9 +4,9 @@ title: "Week 03 — Tool Use"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week03-notes.qmd) |
+| Lecture notes | published before class |
 | Slides | published before class |
-| Lab | [`W3_lab_tools.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_lab_tools.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week03/W3_lab_tools.ipynb)<br>Homework: [`W3_hw_new_tool.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_hw_new_tool.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week03/W3_hw_new_tool.ipynb) — due before Week 4 |
+| Lab | published before class |
 | Papers | [Toolformer (Schick et al., 2023)](https://arxiv.org/abs/2302.04761) ([PDF](https://arxiv.org/pdf/2302.04761)) · [ToolLLM (Qin et al., 2023)](https://arxiv.org/abs/2307.16789) ([PDF](https://arxiv.org/pdf/2307.16789)) · optional: [ReTool (2025)](https://arxiv.org/abs/2504.11536) ([PDF](https://arxiv.org/pdf/2504.11536)) |
 
 ## This week

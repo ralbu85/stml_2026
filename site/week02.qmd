@@ -4,9 +4,9 @@ title: "Week 02 — Prompting & Reasoning"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week02-notes.qmd) |
+| Lecture notes | published before class |
 | Slides | published before class |
-| Lab | [`W2_lab_prompting.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_lab_prompting.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week02/W2_lab_prompting.ipynb)<br>Homework: [`W2_hw_build_evalset.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_hw_build_evalset.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week02/W2_hw_build_evalset.ipynb) — due before Week 3 |
+| Lab | published before class |
 | Papers | [Chain-of-Thought Prompting (Wei et al., 2022) — first student presentation](https://arxiv.org/abs/2201.11903) ([PDF](https://arxiv.org/pdf/2201.11903)) |
 
 ## This week
