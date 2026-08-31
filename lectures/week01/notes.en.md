@@ -14,23 +14,27 @@ An **LLM (large language model)** is an autoregressive generative model trained 
 
 *Figure 1.1 — Autoregressive generation: each sampled token is appended to the input and fed back, one token per pass, until a stop token. Source: P.-M. Dartus, "How LLMs Generate Text for the Rest of Us" (2025), pm.dartus.fr.*
 
-Consequently, everything the model cannot do by itself — opening files, executing searches, validating output — is handled by code outside the model. That code decides which action to execute next, when to repeat, and when to stop. The totality of these decisions is called **control flow**.
+Consequently, everything the model cannot do by itself — opening files, executing searches, validating output — is handled by code outside the model. That code decides which action to execute next, when to repeat, and when to stop.
 
-The difference that separated the chatbot from Deep Research lies precisely in who holds the authority over this control flow.
+The word *agent* has no single accepted definition, and the disagreement is worth stating before a definition is chosen. Anthropic's *Building Effective Agents* (2024) records it: some practitioners use the term for fully autonomous systems that operate independently over extended periods, others for prescriptive implementations that follow predefined workflows. That article groups all such variations under **agentic systems** and draws one architectural distinction inside the group, which this course adopts.
 
-- **Workflow** = a system whose control flow is fixed in advance by the developer's code. The LLM does predetermined work at predetermined points.
-- **Agent** = a system whose control flow is determined by the LLM's output. The model chooses the next action.
+- **Workflows** are systems where LLMs and tools are orchestrated through predefined code paths.
+- **Agents** are systems where LLMs dynamically direct their own processes and tool usage, maintaining control over how they accomplish tasks.
 
-This distinction was introduced by Anthropic's *Building Effective Agents* (2024) and is now standard usage. The criterion is not the system's capability but the location of decision authority. Having a search feature does not by itself make a system an agent. A pipeline that performs translation → summarization → storage in a fixed order remains a workflow even if it contains search. Conversely, the same search makes the system an agent when the model's output decides whether to search and with what query.
+OpenAI's *A Practical Guide to Building Agents* (2025) draws the same line from the other side. Its definition is that agents are systems which independently accomplish tasks on the user's behalf, and it excludes explicitly: applications that integrate an LLM but do not use it to control workflow execution — simple chatbots, single-turn LLM calls, sentiment classifiers — are not agents.
 
-Translating the definition of an agent into an execution form yields the following iterative structure.
+Both definitions turn on which party decides what happens next. The smolagents documentation states this as a property of the program itself, grading systems by how far the model's output controls program flow. This course uses **control flow** for the totality of those decisions — which action to execute next, whether to repeat, and when to stop — after which the definitions above reduce to a single criterion: control flow fixed in code is a workflow, control flow decided by model output is an agent.
+
+The criterion is the location of that decision, not the system's capability. Having a search feature does not by itself make a system an agent. A pipeline that translates, then summarizes, then stores, in a fixed order, remains a workflow even if it contains a search step, because the model decides nothing about the path. The same search makes the system an agent when the model's output decides whether to search and with what query.
+
+Anthropic describes agents in execution as, typically, LLMs using tools based on environmental feedback in a loop. Written out as steps:
 
 1. The model reads the input accumulated so far and generates an output.
 2. Code interprets that output. If the output is an action directive, the code executes the action; if it is a final answer, the iteration terminates.
 3. The execution result is appended to the model's input.
 4. The model reads the updated input and generates the next output (return to step 1).
 
-This iterative structure is called the **agent loop**, and it is implemented directly in Chapter 4. Deep Research and Claude Code differ in the form visible to the user, but the internal execution structure of both is this loop. The two systems differ only in which tools the loop holds and which instructions it follows; the skeleton of control is identical.
+This iterative structure is called the **agent loop**, and it is implemented directly in Chapter 4. Two of its properties matter from the outset. The same article insists that the agent obtain ground truth from the environment at each step — a tool result, a code execution — rather than judging its progress from its own text. And termination is not guaranteed by the loop itself, so implementations add stopping conditions such as a maximum number of iterations.
 
 ![control flow in a workflow versus an agent](figures/fig-1-2-loop-vs-workflow.svg)
 
@@ -38,74 +42,89 @@ This iterative structure is called the **agent loop**, and it is implemented dir
 
 ## 1.3 Components
 
-One iteration of the loop in 1.2 passes through the following steps. The model decides the next action; that decision refers to the given goal and constraints; code executes the decision; and the execution result remains as input for the next iteration. The parts responsible for each of these steps are the components of an agent, and in standard vocabulary they are as follows.
+OpenAI's guide states that in its most fundamental form an agent consists of three core components.
 
-| Component | Why it is needed | Standard name |
-|---|---|---|
-| A model that makes decisions | Control flow must be decided by output | Model |
-| Instructions that ground the decisions | Without what the goal is and what is permitted, decisions are meaningless | Instructions (system prompt) |
-| Means to execute decisions | Text output alone cannot change the external world | Tools (→ Ch. 3) |
-| A record of progress so far | Each iteration must decide on top of the previous iteration's result | Memory / Context (→ Ch. 9–10) |
+| Component | Definition |
+|---|---|
+| Model | The LLM powering the agent's reasoning and decision-making |
+| Tools | External functions or APIs the agent can use to take action |
+| Instructions | Explicit guidelines and guardrails defining how the agent behaves |
 
-These four elements appear under varying names across frameworks, and they are also what the labs of this course build week by week.
+*Table 1.1 — Source: OpenAI, "A Practical Guide to Building Agents" (2025).*
 
-## 1.4 Autonomy — A Matter of Degree
+The same guide divides tools into three types according to what they are for. **Data** tools retrieve the context needed to execute the workflow: querying a transaction database or a CRM, reading a PDF, searching the web. **Action** tools change something outside the model: sending mail, updating a record, handing a support ticket to a human. **Orchestration** tools are other agents, used as tools by an agent (→ Ch. 6).
 
-The distinction in 1.2 placed decision authority on one side, code or model, but in real systems decision authority is not all-or-nothing. How many decisions are handed to the model is a matter of degree. **Autonomy** is the degree to which control-flow decisions are entrusted to the LLM's output rather than to the developer's code.
+Anthropic describes the same building block as the **augmented LLM** — a model enhanced with retrieval, tools, and memory, able to generate its own search queries, select appropriate tools, and determine what information to retain. The difference between the two lists is memory, and the loop of 1.2 is what requires it: each iteration decides on top of the previous iteration's result, so the record of progress has to be held somewhere. This course therefore treats memory as a fourth component and gives it its own chapters (→ Ch. 9–10).
 
-| Autonomy | Example | What the LLM decides |
-|---|---|---|
-| Fixed pipeline | Translate → summarize → store | Nothing |
-| Router | Classify inquiries by type and dispatch to different handlers | One branch |
-| Bounded loop | Edit code until tests pass (cap of 5 attempts) | Iteration and termination |
-| Autonomous agent | "Research this topic and produce a report" | The entire plan |
+## 1.4 Levels of Agency
 
-Moving down the table, the system can handle problems that cannot be fixed in advance, but its behavior becomes harder to predict and the number of calls and the cost grow. Autonomy is a trade: flexibility is gained at the price of predictability and cost.
+The distinction in 1.2 places decision authority on one side or the other, code or model, but in real systems it is a matter of degree. The smolagents documentation grades systems by how much of the program's flow the model's output controls and names each level together with the code that implements it.
 
-Real systems occupy every band of this spectrum. The four paragraphs below take them in the order of the table, naming what each service does before placing it.
+| Agency | What the LLM output does | Name | Example code |
+|---|---|---|---|
+| ☆☆☆ | has no impact on program flow | Simple processor | `process_llm_output(llm_response)` |
+| ★☆☆ | controls an if/else switch | Router | `if llm_decision(): path_a() else: path_b()` |
+| ★★☆ | controls function execution | Tool call | `run_function(llm_chosen_tool, llm_chosen_args)` |
+| ★★☆ | controls iteration and program continuation | Multi-step agent | `while llm_should_continue(): execute_next_step()` |
+| ★★★ | starts another agentic workflow | Multi-agent | `if llm_trigger(): execute_agent()` |
+| ★★★ | acts in code, defining its own tools | Code agent | `def custom_tool(args): ...` |
 
-![real systems on the autonomy spectrum](figures/fig-1-3-autonomy-spectrum.svg)
+*Table 1.2 — Levels of agency. Source: Hugging Face, smolagents conceptual guide.*
 
-*Figure 1.3 — The autonomy spectrum with deployed systems placed on it; rightward, flexibility grows while predictability and per-run cost control shrink.*
+![levels of agency](figures/fig-1-3-autonomy-spectrum.svg)
 
-The fixed-pipeline band holds the document pipeline: a feature that runs every input through the same fixed sequence of LLM calls, so that a meeting recording becomes a transcript, then a summary, then a list of action items, in that order every time. Meeting-notes and summarization features (Otter.ai, Granola, Zoom AI Companion, Notion AI) are built this way, as are batch translation and summary-digest jobs. The model writes the summary but does not decide that a summary is what comes next, and no branch exists for it to take. Most shipping software described as an AI feature belongs to this band rather than to the three that follow.
+*Figure 1.3 — The same levels on one axis. Rightward, the model holds more of the program's flow; predictability and per-run cost control shrink.*
 
-The router band holds triage: a system that reads an incoming request, assigns it to one of a fixed set of categories, and dispatches it to that category's handler, which may be a template reply, a specialist queue, or a human. Customer-service products (Intercom Fin, Sierra, Zendesk intelligent triage) work this way, as does model routing inside LLM products, where a request is sent to a cheap or an expensive model according to its difficulty. The model makes exactly one control-flow decision and everything after the branch is ordinary code. The set of branches is fixed by the developer, so the model chooses among the categories but cannot introduce a new one. That single decision is enough to make the system an agent by the definition above, because the path is taken by reading the model's output.
+The code column carries the substance of the table. A router is one `if` statement whose branch is chosen by the model; a multi-step agent is one `while` loop whose continuation is chosen by the model. Everything this course builds from Chapter 4 onward lives inside that `while`.
 
-The bounded-loop band holds the coding agent: a development tool that receives a bug report or a feature request in ordinary language, then reads the repository, edits files, and runs the test suite on its own until the work is done or an attempt cap stops it. Claude Code, Cursor's agent mode, Devin, and GitHub Copilot package the same loop differently — a terminal program, a mode inside the IDE, a hosted service that opens pull requests, an assistant inside the editor — but the loop itself is one thing: edit, run the tests, read the failure, edit again. The model decides how many iterations to spend and when the work is finished, and the cap is the one number the code fixes, because a run that cannot repair the bug must stop and report rather than continue indefinitely. The remaining guardrails live in code as well: permission prompts before commands run, caps on attempts, restricted directories.
+Moving down the table, the system becomes able to handle problems whose path cannot be fixed in advance, but its behaviour becomes harder to predict and the number of calls and the cost grow. Autonomy is a trade: flexibility is bought with predictability and cost. Anthropic states the same trade as working advice — find the simplest solution possible and increase complexity only when needed, which may mean not building an agentic system at all.
 
-The autonomous band holds Deep Research: a mode of a commercial chat product in which one research question is submitted and a written report with source citations is returned minutes later, the web browsing in between running unattended. OpenAI and Google ship it and Perplexity runs a lighter variant; Devin does the same for a software ticket, and computer-use agents (OpenAI's Operator, Anthropic's computer use) do it with the screen and mouse as their action surface. Across those minutes the model decides the entire plan: which searches to run, which pages to open, which sources to trust, and when the evidence suffices. The user cannot steer during the run, so this is autonomy inside a delegated task rather than an unbounded system, and the trade stated above arrives here at full strength — slow, expensive, and the hardest to predict, which is why these products ask for confirmation before consequential actions.
+Anthropic reports two domains in which agents have demonstrated value with its customers, and both are worth reading closely because they show what these levels look like in production.
 
-## 1.5 Form Factor — Independence from the Interface
+Customer support combines a familiar chatbot interface with tool access. Support interactions naturally follow a conversational flow while requiring external information and actions, so tools pull customer data, order history, and knowledge-base articles, while actions such as issuing a refund or updating a ticket are handled programmatically. Success is measurable because a resolution is defined by the user, and the article notes that several companies price the product per successful resolution, which is a statement of confidence in the agent. The same article's routing example — directing general questions, refund requests, and technical support into different downstream processes, prompts, and tools — is the router level of the table applied to this domain.
 
-The spectrum places a system by how much it decides, and two questions fall outside it. ChatGPT holds a conversation while Deep Research runs unattended for minutes: is only one of them an agent? Copilot's suggestion appears inside the editor while Devin's arrives as a pull request: is one of them more of an agent than the other? Neither question is about control flow. Both ask how the system meets its user, which is a second axis and independent of the first. The same agent can therefore be deployed in different **form factors**, the form factor being the deployment shape of an agent — how it is packaged for interaction.
+Coding agents work because code is verifiable. Solutions can be checked by automated tests, the agent iterates using the test results as feedback, the problem space is well defined and structured, and output quality can be measured objectively. Anthropic reports its own implementation resolving real GitHub issues in SWE-bench Verified from the pull-request description alone. This is the multi-step level, where the model controls iteration and termination; the article adds that human review remains necessary, because automated tests verify function but not alignment with broader system requirements. Its second agent example is a computer-use reference implementation, in which the model operates a computer to accomplish tasks.
 
-| Form factor | Example | Unit of interaction |
-|---|---|---|
-| Conversational | ChatGPT, Claude — the chat products themselves | Exchange of messages |
-| Delegated | Deep Research, Devin, cloud coding agents | Assign a task, review the deliverable |
-| Embedded | GitHub Copilot, Cursor — inside the IDE | Assistance inside the workplace |
-| Headless | an extraction step inside a data pipeline; a sub-agent inside another agent | API call (no human) |
+## 1.5 Orchestration — One Agent or Several
 
-The chatbot is not the definition of an agent but one of its form factors, and historically the first to appear. What this course covers is the internal structure common to all four forms.
+The levels of 1.4 describe a single program. A second design question is how many agents that program contains, and OpenAI's guide warns against answering it too early: although it is tempting to build a fully autonomous agent with a complex architecture immediately, its customers typically achieve greater success with an incremental approach. It sorts orchestration into two categories.
+
+A **single-agent system** is one model, equipped with appropriate tools and instructions, executing workflows in a loop. Capability is added by adding tools, which keeps complexity manageable and keeps evaluation and maintenance simple; each new tool extends the agent without forcing a premature split into several agents.
+
+A **multi-agent system** distributes workflow execution across several coordinated agents. The guide names two broadly applicable patterns. In the **manager** pattern, a central agent coordinates specialized agents through tool calls, each handling one task or domain. In the **decentralized** pattern, agents operate as peers and hand tasks off to one another according to their specializations. Modeled as a graph with agents as nodes, the edges in the manager pattern are tool calls, and in the decentralized pattern they are handoffs that transfer execution from one agent to another.
+
+Anthropic's orchestrator–workers workflow has the shape of the manager pattern: a central LLM breaks a task down, delegates the pieces to worker LLMs, and synthesizes their results. Both sources make the same recommendation regardless of pattern — keep the components composable and driven by clear instructions — and this course returns to the subject in Chapter 6.
 
 ## 1.6 Adoption Criteria
 
-Since autonomy is a trade, choosing between an agent and a workflow becomes the problem of identifying the conditions under which the trade pays off. An agent is advantageous when flexibility is genuinely required: open problems whose solution path cannot be fixed in code beforehand, multi-step tasks that pass through several tools, and work that can improve from feedback on intermediate results. Conversely, when the procedure is fixed, a workflow is cheaper and more stable. When error tolerance is low and there is no means to verify results, handing over decision authority is itself a risk, and a single-turn question-answer task needs no iterative structure.
+Since autonomy is a trade, choosing between an agent and a workflow is the problem of identifying when the trade pays off. Anthropic's rule is to find the simplest solution possible and to increase complexity only when needed: agentic systems trade latency and cost for task performance, workflows offer predictability and consistency for well-defined tasks, agents are the better option when flexibility and model-driven decision-making are needed at scale, and for many applications optimizing single LLM calls with retrieval and in-context examples is enough.
 
-For the same problem, therefore, no single level of autonomy is uniquely correct. The governing principle is to hand over only as much autonomy as the task requires, and this principle is reexamined from the cost perspective in inference economics (→ Ch. 12) — for well-structured tasks, a fixed workflow can be cheaper than a complex agent and still sufficient.
+OpenAI's guide gives three conditions that identify workflows worth handing to an agent, each of them a case where deterministic and rule-based approaches fall short.
 
-The instruction to build a workflow instead is not usable while the only workflow in view is the fixed pipeline of the first band. The side that does not hand over decision authority has a design vocabulary of its own. A **workflow pattern** is a named arrangement of LLM calls whose order is decided by the code rather than by the model. The five below are standard terms in framework documentation and in the literature, and later chapters of this course implement each of them.
-
-| Pattern | Structure | Appears in |
+| Condition | Description | Example |
 |---|---|---|
-| Prompt chaining | One call's output connected serially as the next call's input | Ch. 7 planning |
-| Routing | Classify input and dispatch to different paths | Ch. 8 adaptive retrieval |
-| Parallelization | Call in parallel on the same input, then aggregate | Ch. 2 self-consistency |
-| Orchestrator–workers | A central call divides subtasks among subordinate calls | Ch. 6 multi-agent |
-| Evaluator–optimizer | Alternate generation and evaluation | Ch. 5 reflection |
+| Complex decision-making | Nuanced judgment, exceptions, or context-sensitive decisions | Refund approval in customer service |
+| Difficult-to-maintain rules | Rulesets grown so extensive and intricate that updates are costly or error-prone | Vendor security reviews |
+| Heavy reliance on unstructured data | Interpreting natural language, extracting meaning from documents, conversing with users | Processing a home insurance claim |
 
-Three of the five are not pipelines, so a fixed procedure is not the same thing as a simple one.
+*Table 1.3 — Source: OpenAI, "A Practical Guide to Building Agents" (2025).*
+
+The guide's instruction is to validate that a use case meets these conditions clearly before committing to an agent, since otherwise a deterministic solution suffices. Its illustration of the difference is payment fraud analysis: a traditional rules engine works like a checklist that flags transactions against preset criteria, whereas an agent functions like an investigator that weighs context and identifies suspicious activity even where no clear-cut rule is violated.
+
+The instruction to build a workflow instead is not usable while the only workflow in view is a straight line of calls. The side that does not hand over control flow has a design vocabulary of its own. A **workflow pattern** is a named arrangement of LLM calls whose order is decided by the code rather than by the model; the patterns below are the ones Anthropic reports seeing in production, and later chapters of this course implement each of them.
+
+| Pattern | Structure | Example | Appears in |
+|---|---|---|---|
+| Prompt chaining | A task is decomposed into a sequence of steps, each call processing the output of the previous one, with optional programmatic checks between steps | Write marketing copy, then translate it; write an outline, check it against criteria, then write the document | Ch. 7 planning |
+| Routing | An input is classified and directed to a specialized followup task | General questions, refund requests, and technical support to different processes; easy questions to a small model, hard ones to a capable model | Ch. 8 adaptive retrieval |
+| Parallelization — sectioning | A task is broken into independent subtasks run in parallel | One model instance answers the query while another screens it for inappropriate content; each call evaluates a different aspect in an automated eval | Ch. 5 evaluation |
+| Parallelization — voting | The same task is run several times to obtain diverse outputs | Several prompts review the same code for vulnerabilities; several prompts judge content with different vote thresholds | Ch. 2 self-consistency |
+| Orchestrator–workers | A central LLM dynamically breaks down tasks, delegates them to worker LLMs, and synthesizes their results | Coding products that change multiple files at once; search that gathers and analyzes across sources | Ch. 6 multi-agent |
+| Evaluator–optimizer | One call generates a response while another evaluates it and gives feedback, in a loop | Literary translation where an evaluator supplies the critique the translator missed; multi-round search where the evaluator decides whether to search again | Ch. 5 reflection |
+
+*Table 1.4 — Structures and examples from Anthropic, "Building Effective Agents" (2024); the chapter column is this course's.*
+
+Two of these are not sequences at all, and orchestrator–workers is separated from parallelization precisely by flexibility: its subtasks are not predefined but determined by the orchestrator from the input. A fixed procedure is therefore not the same thing as a simple one.
 
 ## 1.7 Organization of the Course
 
@@ -130,9 +149,9 @@ Each question is answerable with this chapter's definitions; several return as d
 
 1. A nightly job sends every new arXiv abstract in your field to an LLM, stores the summaries, and mails a digest. A support bot reads each incoming ticket and decides whether to answer, refund, or escalate to a human. Classify each as workflow or agent by the criterion of 1.2, and name the single decision that settles the classification.
 2. A RAG chatbot always retrieves the top five passages for the user's question and answers from them, in a fixed sequence. Is it an agent under 1.2? State the smallest change that would flip your answer.
-3. A team proposes "a fully autonomous agent that answers all customer email." Using 1.4 and 1.6, argue for the lowest autonomy level that serves the goal, and name one observed failure that would justify moving up exactly one level.
-4. Pick one agentic product you have used (1.4–1.5 name several). Identify its form factor, fill in its four components from the table in 1.3, and give one control-flow decision its model makes and one that its code fixes.
-5. The same model serves as a chatbot and as a component of Deep Research (1.1). If the weights are identical, where does the added capability come from — and which components of 1.3 supply it?
+3. Place a system you have used on each row of Table 1.2 that it occupies, and write the line of code from the table's last column that its program would contain. Which row is the highest it reaches, and what would have to change for it to reach the next one?
+4. OpenAI's guide excludes sentiment classifiers from the category of agents, while Anthropic's routing workflow classifies a support ticket and dispatches it. Both classify; explain why one is an agent under 1.2 and the other is not.
+5. The same model serves as a chatbot and as a component of Deep Research (1.1). If the weights are identical, where does the added capability come from — and which of the components of 1.3 supply it?
 
 **Presentation.** There is no paper presentation this week. Presentations begin in week 2; presenter assignment and format guidance take place during orientation.
 

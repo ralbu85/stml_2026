@@ -1,46 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" font-family="Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 300" font-family="Helvetica, Arial, sans-serif">
   <defs>
     <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
     </marker>
   </defs>
-  <rect x="0" y="0" width="900" height="320" fill="white"/>
+  <rect x="0" y="0" width="1180" height="300" fill="white"/>
 
   <!-- axis -->
-  <line x1="60" y1="120" x2="855" y2="120" stroke="#555" stroke-width="2" marker-end="url(#ar)"/>
-  <text x="855" y="140" font-size="13" fill="#555" text-anchor="end">autonomy</text>
+  <line x1="45" y1="126" x2="1140" y2="126" stroke="#555" stroke-width="2" marker-end="url(#ar)"/>
 
-  <!-- stop 1 -->
-  <circle cx="150" cy="120" r="6" fill="#4a7dbe"/>
-  <text x="150" y="70"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Fixed pipeline</text>
-  <text x="150" y="98"  text-anchor="middle" font-size="12" fill="#555">LLM decides: nothing</text>
-  <text x="150" y="152" text-anchor="middle" font-size="11.5" fill="#777">batch translation,</text>
-  <text x="150" y="168" text-anchor="middle" font-size="11.5" fill="#777">summary digests</text>
+  <!-- level 1 -->
+  <circle cx="118" cy="126" r="6" fill="#4a7dbe"/>
+  <text x="118" y="72"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Simple processor</text>
+  <text x="118" y="94"  text-anchor="middle" font-size="11.5" fill="#555">no impact on flow</text>
+  <text x="118" y="158" text-anchor="middle" font-size="11" font-family="monospace" fill="#777">process_llm_output(r)</text>
 
-  <!-- stop 2 -->
-  <circle cx="345" cy="120" r="6" fill="#4a7dbe"/>
-  <text x="345" y="70"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Router</text>
-  <text x="345" y="98"  text-anchor="middle" font-size="12" fill="#555">LLM decides: one branch</text>
-  <text x="345" y="152" text-anchor="middle" font-size="11.5" fill="#777">support triage</text>
-  <text x="345" y="168" text-anchor="middle" font-size="11.5" fill="#777">(Intercom Fin &#183; Sierra)</text>
+  <!-- level 2 -->
+  <circle cx="322" cy="126" r="6" fill="#4a7dbe"/>
+  <text x="322" y="72"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Router</text>
+  <text x="322" y="94"  text-anchor="middle" font-size="11.5" fill="#555">an if/else switch</text>
+  <text x="322" y="158" text-anchor="middle" font-size="11" font-family="monospace" fill="#777">if llm_decision():</text>
 
-  <!-- stop 3 -->
-  <circle cx="545" cy="120" r="6" fill="#4a7dbe"/>
-  <text x="545" y="70"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Bounded loop</text>
-  <text x="545" y="98"  text-anchor="middle" font-size="12" fill="#555">LLM decides: iteration &amp; stop</text>
-  <text x="545" y="152" text-anchor="middle" font-size="11.5" fill="#777">Claude Code &#183; Cursor:</text>
-  <text x="545" y="168" text-anchor="middle" font-size="11.5" fill="#777">edit&#8211;test loop, attempt cap</text>
+  <!-- level 3 -->
+  <circle cx="526" cy="126" r="6" fill="#4a7dbe"/>
+  <text x="526" y="72"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Tool call</text>
+  <text x="526" y="94"  text-anchor="middle" font-size="11.5" fill="#555">function execution</text>
+  <text x="526" y="158" text-anchor="middle" font-size="11" font-family="monospace" fill="#777">run_function(tool, args)</text>
 
-  <!-- stop 4 -->
-  <circle cx="750" cy="120" r="6" fill="#4a7dbe"/>
-  <text x="750" y="70"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Autonomous agent</text>
-  <text x="750" y="98"  text-anchor="middle" font-size="12" fill="#555">LLM decides: the whole plan</text>
-  <text x="750" y="152" text-anchor="middle" font-size="11.5" fill="#777">Deep Research &#183; Devin &#183;</text>
-  <text x="750" y="168" text-anchor="middle" font-size="11.5" fill="#777">Operator (computer use)</text>
+  <!-- level 4 -->
+  <circle cx="742" cy="126" r="6" fill="#4a7dbe"/>
+  <text x="742" y="72"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Multi-step agent</text>
+  <text x="742" y="94"  text-anchor="middle" font-size="11.5" fill="#555">iteration and continuation</text>
+  <text x="742" y="158" text-anchor="middle" font-size="11" font-family="monospace" fill="#777">while should_continue():</text>
+
+  <!-- level 5 -->
+  <circle cx="946" cy="126" r="6" fill="#4a7dbe"/>
+  <text x="946" y="72"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Multi-agent</text>
+  <text x="946" y="94"  text-anchor="middle" font-size="11.5" fill="#555">starts another workflow</text>
+  <text x="946" y="158" text-anchor="middle" font-size="11" font-family="monospace" fill="#777">if llm_trigger():</text>
+
+  <!-- level 6 -->
+  <circle cx="1108" cy="126" r="6" fill="#4a7dbe"/>
+  <text x="1108" y="72"  text-anchor="middle" font-size="14" font-weight="600" fill="#222">Code agent</text>
+  <text x="1108" y="94"  text-anchor="middle" font-size="11.5" fill="#555">defines its own tools</text>
+  <text x="1108" y="158" text-anchor="middle" font-size="11" font-family="monospace" fill="#777">def custom_tool():</text>
 
   <!-- trade annotation -->
-  <line x1="60" y1="240" x2="840" y2="240" stroke="#aaa" stroke-width="1.4" marker-start="url(#ar)" marker-end="url(#ar)"/>
-  <text x="60"  y="268" font-size="12.5" fill="#555" text-anchor="start">predictable &#183; cheap per run</text>
-  <text x="840" y="268" font-size="12.5" fill="#555" text-anchor="end">flexible &#183; harder to predict &#183; costlier</text>
-  <text x="450" y="296" text-anchor="middle" font-size="12" fill="#888">hand over only as much autonomy as the task requires (&#167;1.6)</text>
+  <line x1="45" y1="212" x2="1130" y2="212" stroke="#aaa" stroke-width="1.4" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text x="45"   y="240" font-size="12.5" fill="#555" text-anchor="start">predictable &#183; cheap per run</text>
+  <text x="1130" y="240" font-size="12.5" fill="#555" text-anchor="end">flexible &#183; harder to predict &#183; costlier</text>
+  <text x="588"  y="196" text-anchor="middle" font-size="12" fill="#666">share of program flow held by the model output</text>
+  <text x="588"  y="272" text-anchor="middle" font-size="12" fill="#888">Levels after Hugging Face, smolagents conceptual guide &#8212; increase complexity only when needed (&#167;1.6)</text>
 </svg>
