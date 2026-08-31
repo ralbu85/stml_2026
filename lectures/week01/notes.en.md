@@ -62,25 +62,23 @@ The distinction in 1.2 placed decision authority on one side, code or model, but
 
 Moving down the table, the system can handle problems that cannot be fixed in advance, but its behavior becomes harder to predict and the number of calls and the cost grow. Autonomy is a trade: flexibility is gained at the price of predictability and cost.
 
-Real systems occupy every band of this spectrum. Batch translation and summary-digest pipelines leave the model no control-flow decision. Commercial support agents (Intercom Fin, Sierra) run between router and bounded loop: the model classifies the ticket, drafts the reply, and decides escalation, inside guardrails fixed by code. Coding agents (Claude Code, Cursor's agent mode) are the third row's bounded loop in production form — edit, run the tests, read the failure, edit again, under an attempt cap. At the far end, Deep Research (OpenAI, Google) and the software-engineering agent Devin are handed a whole task and produce the plan themselves, and computer-use agents (OpenAI's Operator, Anthropic's computer use) do the same with the screen and mouse as their action surface.
+Real systems occupy every band of this spectrum. The four paragraphs below take them in the order of the table, naming what each service does before placing it.
 
 ![real systems on the autonomy spectrum](figures/fig-1-3-autonomy-spectrum.svg)
 
 *Figure 1.3 — The autonomy spectrum with deployed systems placed on it; rightward, flexibility grows while predictability and per-run cost control shrink.*
 
-The side that does not hand over decision authority — the workflow — also has an established design vocabulary. The following patterns for composing LLM calls are standard terms in framework documentation and papers, and later chapters of this course implement each of them.
+The fixed-pipeline band holds the document pipeline: a feature that runs every input through the same fixed sequence of LLM calls, so that a meeting recording becomes a transcript, then a summary, then a list of action items, in that order every time. Meeting-notes and summarization features (Otter.ai, Granola, Zoom AI Companion, Notion AI) are built this way, as are batch translation and summary-digest jobs. The model writes the summary but does not decide that a summary is what comes next, and no branch exists for it to take. Most shipping software described as an AI feature belongs to this band rather than to the three that follow.
 
-| Pattern | Structure | Appears in |
-|---|---|---|
-| Prompt chaining | One call's output connected serially as the next call's input | Ch. 7 planning |
-| Routing | Classify input and dispatch to different paths | Ch. 8 adaptive retrieval |
-| Parallelization | Call in parallel on the same input, then aggregate | Ch. 2 self-consistency |
-| Orchestrator–workers | A central call divides subtasks among subordinate calls | Ch. 6 multi-agent |
-| Evaluator–optimizer | Alternate generation and evaluation | Ch. 5 reflection |
+The router band holds triage: a system that reads an incoming request, assigns it to one of a fixed set of categories, and dispatches it to that category's handler, which may be a template reply, a specialist queue, or a human. Customer-service products (Intercom Fin, Sierra, Zendesk intelligent triage) work this way, as does model routing inside LLM products, where a request is sent to a cheap or an expensive model according to its difficulty. The model makes exactly one control-flow decision and everything after the branch is ordinary code. The set of branches is fixed by the developer, so the model chooses among the categories but cannot introduce a new one. That single decision is enough to make the system an agent by the definition above, because the path is taken by reading the model's output.
+
+The bounded-loop band holds the coding agent: a development tool that receives a bug report or a feature request in ordinary language, then reads the repository, edits files, and runs the test suite on its own until the work is done or an attempt cap stops it. Claude Code, Cursor's agent mode, Devin, and GitHub Copilot package the same loop differently — a terminal program, a mode inside the IDE, a hosted service that opens pull requests, an assistant inside the editor — but the loop itself is one thing: edit, run the tests, read the failure, edit again. The model decides how many iterations to spend and when the work is finished, and the cap is the one number the code fixes, because a run that cannot repair the bug must stop and report rather than continue indefinitely. The remaining guardrails live in code as well: permission prompts before commands run, caps on attempts, restricted directories.
+
+The autonomous band holds Deep Research: a mode of a commercial chat product in which one research question is submitted and a written report with source citations is returned minutes later, the web browsing in between running unattended. OpenAI and Google ship it and Perplexity runs a lighter variant; Devin does the same for a software ticket, and computer-use agents (OpenAI's Operator, Anthropic's computer use) do it with the screen and mouse as their action surface. Across those minutes the model decides the entire plan: which searches to run, which pages to open, which sources to trust, and when the evidence suffices. The user cannot steer during the run, so this is autonomy inside a delegated task rather than an unbounded system, and the trade stated above arrives here at full strength — slow, expensive, and the hardest to predict, which is why these products ask for confirmation before consequential actions.
 
 ## 1.5 Form Factor — Independence from the Interface
 
-The definition so far specifies only where control flow resides; it does not specify how the system meets people. The interface is independent of the internal structure, so the same agent can be deployed in different **form factors**.
+The spectrum places a system by how much it decides, and two questions fall outside it. ChatGPT holds a conversation while Deep Research runs unattended for minutes: is only one of them an agent? Copilot's suggestion appears inside the editor while Devin's arrives as a pull request: is one of them more of an agent than the other? Neither question is about control flow. Both ask how the system meets its user, which is a second axis and independent of the first. The same agent can therefore be deployed in different **form factors**, the form factor being the deployment shape of an agent — how it is packaged for interaction.
 
 | Form factor | Example | Unit of interaction |
 |---|---|---|
@@ -96,6 +94,18 @@ The chatbot is not the definition of an agent but one of its form factors, and h
 Since autonomy is a trade, choosing between an agent and a workflow becomes the problem of identifying the conditions under which the trade pays off. An agent is advantageous when flexibility is genuinely required: open problems whose solution path cannot be fixed in code beforehand, multi-step tasks that pass through several tools, and work that can improve from feedback on intermediate results. Conversely, when the procedure is fixed, a workflow is cheaper and more stable. When error tolerance is low and there is no means to verify results, handing over decision authority is itself a risk, and a single-turn question-answer task needs no iterative structure.
 
 For the same problem, therefore, no single level of autonomy is uniquely correct. The governing principle is to hand over only as much autonomy as the task requires, and this principle is reexamined from the cost perspective in inference economics (→ Ch. 12) — for well-structured tasks, a fixed workflow can be cheaper than a complex agent and still sufficient.
+
+The instruction to build a workflow instead is not usable while the only workflow in view is the fixed pipeline of the first band. The side that does not hand over decision authority has a design vocabulary of its own. A **workflow pattern** is a named arrangement of LLM calls whose order is decided by the code rather than by the model. The five below are standard terms in framework documentation and in the literature, and later chapters of this course implement each of them.
+
+| Pattern | Structure | Appears in |
+|---|---|---|
+| Prompt chaining | One call's output connected serially as the next call's input | Ch. 7 planning |
+| Routing | Classify input and dispatch to different paths | Ch. 8 adaptive retrieval |
+| Parallelization | Call in parallel on the same input, then aggregate | Ch. 2 self-consistency |
+| Orchestrator–workers | A central call divides subtasks among subordinate calls | Ch. 6 multi-agent |
+| Evaluator–optimizer | Alternate generation and evaluation | Ch. 5 reflection |
+
+Three of the five are not pipelines, so a fixed procedure is not the same thing as a simple one.
 
 ## 1.7 Organization of the Course
 

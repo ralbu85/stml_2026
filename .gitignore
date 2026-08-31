@@ -51,3 +51,6 @@ lectures/week*/notes_files/
 # Review copies (regenerated: PDF export + contact sheets of the deck)
 lectures/week*/_review/slides.pdf
 lectures/week*/_review/slides-overview-*.png
+
+# Third-party source copies in lectures/week*/reference/ are tracked on purpose:
+# they are the record the chapter is checked against, and materials/repos/ is not.
