@@ -176,7 +176,7 @@ Moving toward higher autonomy, the system can handle problems that cannot be fix
 | Autonomous agent | "research this topic, produce a report" | the entire plan |
 
 
-Every band is occupied by shipping products — the next four slides walk through them.
+Every band is occupied by shipping products. The next four slides take one band each: what the service does, and which decisions it holds.
 
 ## Real Systems on the Spectrum
 
@@ -184,10 +184,11 @@ Every band is occupied by shipping products — the next four slides walk throug
 
 ## Case — Deep Research (autonomous band)
 
-OpenAI (2025), Google Gemini (2024); Perplexity runs a lighter variant.
+**Deep Research** = a mode of a commercial chat product in which the user submits one research question and receives, minutes later, a written report with source citations — the web browsing in between running unattended.
 
-- **In:** one research topic. **Out, minutes later:** a synthesized report with citations.
-- In between, the model decides everything the spectrum's right end implies: *which searches to run, which pages to open, which to trust, when the evidence suffices.*
+Shipped by OpenAI (2025) and Google Gemini (2024); Perplexity runs a lighter variant.
+
+- Across those minutes the model decides everything the spectrum's right end implies: *which searches to run, which pages to open, which to trust, when the evidence suffices.*
 - The user cannot steer during the run — this is autonomy **inside a delegated task**, not an unbounded system.
 
 
@@ -195,7 +196,9 @@ One detail to hold for Chapter 7: these products draw up a **research plan first
 
 ## Case — Coding Agents (bounded-loop band)
 
-Claude Code (terminal), Cursor agent mode (IDE), Devin (fully delegated), GitHub Copilot (embedded).
+**Coding agent** = a development tool that receives a bug report or feature request in ordinary language, then reads the repository, edits files, and runs the test suite on its own until the work is done or the attempt cap stops it.
+
+Sold in four packagings: Claude Code (a terminal program), Cursor agent mode (inside the IDE), Devin (a hosted service that opens pull requests), GitHub Copilot (inside the editor).
 
 - The bounded loop of the table, productized: **edit → run tests → read the failure → edit again**, under an attempt cap.
 - The cap exists because the loop cannot be trusted to always terminate — a run that cannot fix the bug must stop and report, not spin forever.
@@ -206,7 +209,9 @@ Same model as the chat products. The loop, the tools, and the guardrails are the
 
 ## Case — Support Agents (router → bounded band)
 
-Intercom Fin, Sierra (2024–): customer-service agents in production.
+**Support agent** = a system placed on a company's help desk that reads an incoming customer message and settles it — answering the question, performing an account action such as a refund, or handing the conversation to a human.
+
+Sold to companies as the first tier of customer service: Intercom Fin, Sierra (2024–).
 
 - The model **classifies** the ticket, **drafts** the reply, and **decides escalation** — answer it, refund, or hand to a human.
 - What the model may decide is bounded by code: refund limits, forbidden actions, mandatory escalation rules.
@@ -217,7 +222,9 @@ A useful reading habit: for any agent product, ask *which decisions belong to th
 
 ## Case — Computer Use (the far end)
 
-OpenAI Operator (2025), Anthropic computer use (2024).
+**Computer use** = a system handed a browser or a virtual desktop and a goal stated in words, which then operates that machine as a person would — reading the screen, moving the cursor, clicking, typing — to carry out the task in ordinary web applications.
+
+OpenAI Operator (2025), Anthropic computer use (2024). A booking or a form submission is a representative errand.
 
 - The tool surface is the **screen itself**: the model looks at pixels, clicks, types — a GUI made for humans becomes the toolbox.
 - Nothing about the task is enumerated in advance; whatever a browser can do is in scope. This is why it sits at the spectrum's far end.
