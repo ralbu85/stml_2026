@@ -176,59 +176,69 @@ Moving toward higher autonomy, the system can handle problems that cannot be fix
 | Autonomous agent | "research this topic, produce a report" | the entire plan |
 
 
-Every band is occupied by shipping products. The next four slides take one band each: what the service does, and which decisions it holds.
+Every band is occupied by shipping products. The next four slides take the bands in this order — one band each: what the service does, and which decisions it holds — and a fifth looks past the far end.
 
 ## Real Systems on the Spectrum
 
 ![](figures/fig-1-3-autonomy-spectrum.png){width=96%}
 
-## Case — Deep Research (autonomous band)
+## Band 1 — Fixed Pipeline
 
-**Deep Research** = a mode of a commercial chat product in which the user submits one research question and receives, minutes later, a written report with source citations — the web browsing in between running unattended.
+**Document pipeline** = a feature that runs every input through the same fixed sequence of LLM calls. A meeting recording becomes a transcript, then a summary, then a list of action items — that order, every time.
 
-Shipped by OpenAI (2025) and Google Gemini (2024); Perplexity runs a lighter variant.
+Shipped as meeting-notes and summarization features: Otter.ai, Granola, Zoom AI Companion, Notion AI, and the "summarize this thread" button in most productivity software.
 
-- Across those minutes the model decides everything the spectrum's right end implies: *which searches to run, which pages to open, which to trust, when the evidence suffices.*
-- The user cannot steer during the run — this is autonomy **inside a delegated task**, not an unbounded system.
+- The LLM writes the summary; it does not decide that a summary is what comes next. Predetermined work at predetermined points.
+- No branch exists to take: the same recording always visits the same steps in the same order.
+- Under today's definition this is a **workflow** — control flow fixed in advance by code, however good the writing is.
 
+Worth stating plainly: most shipping "AI features" are this band, not the ones that follow.
 
-One detail to hold for Chapter 7: these products draw up a **research plan first**, and some let the user edit it before execution — a control surface exactly where planning theory says it belongs.
+## Band 2 — Router
 
-## Case — Coding Agents (bounded-loop band)
+**Triage** = a system that reads an incoming request, assigns it to one of a fixed set of categories, and dispatches it to that category's handler — a template reply, a specialist queue, or a human.
+
+Shipped in customer service (Intercom Fin, Sierra, Zendesk intelligent triage), and inside LLM products themselves, where a request is routed to a cheap or an expensive model by difficulty.
+
+- The model makes exactly **one** control-flow decision: which branch. Everything after the branch is ordinary code.
+- The branch set is fixed by the developer. The model chooses among the categories; it cannot invent a new one.
+- One decision is enough to cross the line — the path is taken by reading the model's output, so this is already an agent, the smallest one.
+
+Where a router grows into the next band: when the chosen handler itself loops — draft the reply, check it against refund limits, escalate if the check fails.
+
+## Band 3 — Bounded Loop
 
 **Coding agent** = a development tool that receives a bug report or feature request in ordinary language, then reads the repository, edits files, and runs the test suite on its own until the work is done or the attempt cap stops it.
 
 Sold in four packagings: Claude Code (a terminal program), Cursor agent mode (inside the IDE), Devin (a hosted service that opens pull requests), GitHub Copilot (inside the editor).
 
-- The bounded loop of the table, productized: **edit → run tests → read the failure → edit again**, under an attempt cap.
-- The cap exists because the loop cannot be trusted to always terminate — a run that cannot fix the bug must stop and report, not spin forever.
-- Guardrails live in **code, not in the model**: permission prompts before running commands, caps on attempts, restricted directories.
-
+- The band's loop, productized: **edit → run tests → read the failure → edit again**. The model decides how many iterations to spend and when the work is finished.
+- The cap is the one number code fixes, because the loop cannot be trusted to always terminate — a run that cannot fix the bug must stop and report, not spin forever.
+- Guardrails live in code, not in the model: permission prompts before running commands, caps on attempts, restricted directories.
 
 Same model as the chat products. The loop, the tools, and the guardrails are the whole difference.
 
-## Case — Support Agents (router → bounded band)
+## Band 4 — Autonomous Agent
 
-**Support agent** = a system placed on a company's help desk that reads an incoming customer message and settles it — answering the question, performing an account action such as a refund, or handing the conversation to a human.
+**Deep Research** = a mode of a commercial chat product in which the user submits one research question and receives, minutes later, a written report with source citations — the web browsing in between running unattended.
 
-Sold to companies as the first tier of customer service: Intercom Fin, Sierra (2024–).
+Shipped by OpenAI (2025) and Google Gemini (2024); Perplexity runs a lighter variant. Devin's ticket-to-pull-request run belongs to this band as well.
 
-- The model **classifies** the ticket, **drafts** the reply, and **decides escalation** — answer it, refund, or hand to a human.
-- What the model may decide is bounded by code: refund limits, forbidden actions, mandatory escalation rules.
-- This is the middle of the spectrum: more than a router (it composes multi-step resolutions), less than autonomous (the guardrails are not its to change).
+- Across those minutes the model decides the entire plan: *which searches to run, which pages to open, which to trust, when the evidence suffices.*
+- The user cannot steer during the run — this is autonomy **inside a delegated task**, not an unbounded system.
 
+One detail to hold for Chapter 7: these products draw up a research plan first, and some let the user edit it before execution — a control surface exactly where planning theory says it belongs.
 
-A useful reading habit: for any agent product, ask *which decisions belong to the model, and which are fixed by code around it.*
-
-## Case — Computer Use (the far end)
+## Computer Use — the Autonomous Band's Far Edge
 
 **Computer use** = a system handed a browser or a virtual desktop and a goal stated in words, which then operates that machine as a person would — reading the screen, moving the cursor, clicking, typing — to carry out the task in ordinary web applications.
 
 OpenAI Operator (2025), Anthropic computer use (2024). A booking or a form submission is a representative errand.
 
-- The tool surface is the **screen itself**: the model looks at pixels, clicks, types — a GUI made for humans becomes the toolbox.
-- Nothing about the task is enumerated in advance; whatever a browser can do is in scope. This is why it sits at the spectrum's far end.
-- The price is the trade from the autonomy slide, at full strength: slow, expensive, and the hardest to predict — which is why these ship with confirmation prompts for consequential actions.
+- Band 4 decides the plan within a fixed set of tools. Here the tool surface is the **screen itself**, so the set is no longer enumerated: whatever a browser can do is in scope.
+- The price is the autonomy trade at full strength: slow, expensive, hardest to predict — which is why these ship with confirmation prompts for consequential actions.
+
+A reading habit for any agent product: ask *which decisions belong to the model, and which are fixed by code around it.* That question is the whole of this chapter.
 
 ## Workflow Patterns
 
