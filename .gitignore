@@ -41,3 +41,8 @@ labs/_legacy/
 # Rendered presentation sample (source: slides.qmd)
 lectures/presentation-sample/slides.html
 lectures/presentation-sample/slides_files/
+
+# Rendered lecture decks (source: lectures/weekNN/slides.qmd)
+lectures/week*/slides.pptx
+lectures/week*/slides.html
+lectures/week*/slides_files/

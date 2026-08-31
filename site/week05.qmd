@@ -4,10 +4,10 @@ title: "Week 05 — Reflection & Evaluation"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week05-notes.qmd) |
-| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [`W5_lab_reflection_evals.ipynb`](labs/W5_lab_reflection_evals.ipynb) · [read-only view](labs/W5_lab_reflection_evals.html) |
-| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb) · [`W5_hw_chart_reflection.ipynb`](labs/W5_hw_chart_reflection.ipynb) · [read-only view](labs/W5_hw_chart_reflection.html) — due before Week 6 |
-| Presentation papers | [Reflexion (Shinn et al., 2023)](https://arxiv.org/abs/2303.11366) · [Judging LLM-as-a-Judge (Zheng et al., 2023)](https://arxiv.org/abs/2306.05685) · optional: [Self-Refine (Madaan et al., 2023)](https://arxiv.org/abs/2303.17651) |
+| Lecture notes | published before class |
+| Lab | published before class |
+| Homework | published before class |
+| Presentation papers | [Reflexion (Shinn et al., 2023)](https://arxiv.org/abs/2303.11366) ([PDF](https://arxiv.org/pdf/2303.11366)) · [Judging LLM-as-a-Judge (Zheng et al., 2023)](https://arxiv.org/abs/2306.05685) ([PDF](https://arxiv.org/pdf/2306.05685)) · optional: [Self-Refine (Madaan et al., 2023)](https://arxiv.org/abs/2303.17651) ([PDF](https://arxiv.org/pdf/2303.17651)) |
 | References | [Microsoft, AI Agents for Beginners — lesson 9 (metacognition)](https://github.com/microsoft/ai-agents-for-beginners) |
 
 ## This week
@@ -20,8 +20,6 @@ One chapter, two halves of one subject. A finished output can be fed back into t
 
 Homework: `W5_hw_chart_reflection.ipynb` — the reflection loop where the output is a rendered matplotlib chart and the critique reads the image itself. Due before Week 6.
 
-Run it in Colab: click **Open in Colab** (links above), paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
-
 ## Presentations
 
-Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
+Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

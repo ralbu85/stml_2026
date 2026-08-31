@@ -4,10 +4,10 @@ title: "Week 04 — The Agent Loop (ReAct)"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week04-notes.qmd) |
-| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week04/W4_lab_loop.ipynb) · [`W4_lab_loop.ipynb`](labs/W4_lab_loop.ipynb) · [read-only view](labs/W4_lab_loop.html) |
-| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week04/W4_hw_loop_guard.ipynb) · [`W4_hw_loop_guard.ipynb`](labs/W4_hw_loop_guard.ipynb) · [read-only view](labs/W4_hw_loop_guard.html) — due before Week 5 |
-| Presentation papers | [ReAct (Yao et al., 2022)](https://arxiv.org/abs/2210.03629) |
+| Lecture notes | published before class |
+| Lab | published before class |
+| Homework | published before class |
+| Presentation papers | [ReAct (Yao et al., 2022)](https://arxiv.org/abs/2210.03629) ([PDF](https://arxiv.org/pdf/2210.03629)) |
 | References | [Hugging Face Agents Course — unit 1 (an agent from scratch)](https://huggingface.co/learn/agents-course) · [Berkeley LLM Agents MOOC — agent history lecture](https://llmagents-learning.org/f24) |
 
 ## This week
@@ -20,8 +20,6 @@ The loop, owned: last week it ran invisibly inside the client; this week it is b
 
 Homework: `W4_hw_loop_guard.ipynb` — add the repetition guard, show it converting a spinning run into a finished answer, and grow the evalset with two multi-hop questions of your own. Due before Week 5.
 
-Run it in Colab: click **Open in Colab** (links above), paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
-
 ## Presentations
 
-Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
+Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

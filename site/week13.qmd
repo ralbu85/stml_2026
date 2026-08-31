@@ -7,8 +7,8 @@ title: "Week 13 — Trust & Security · Retrospective"
 | Lecture notes | published before class |
 | Slides | published before class |
 | Lab | published before class |
-| Presentation papers | [Indirect Prompt Injection (Greshake et al., 2023)](https://arxiv.org/abs/2302.12173) · [InjecAgent (Zhan et al., 2024)](https://arxiv.org/abs/2403.02691) |
-| References | [Agentless (2024) — retrospective reading](https://arxiv.org/abs/2407.01489) · [SWE-agent (2024) — retrospective reading](https://arxiv.org/abs/2405.15793) |
+| Presentation papers | [Indirect Prompt Injection (Greshake et al., 2023)](https://arxiv.org/abs/2302.12173) ([PDF](https://arxiv.org/pdf/2302.12173)) · [InjecAgent (Zhan et al., 2024)](https://arxiv.org/abs/2403.02691) ([PDF](https://arxiv.org/pdf/2403.02691)) |
+| References | [Agentless (2024) — retrospective reading](https://arxiv.org/abs/2407.01489) ([PDF](https://arxiv.org/pdf/2407.01489)) · [SWE-agent (2024) — retrospective reading](https://arxiv.org/abs/2405.15793) ([PDF](https://arxiv.org/pdf/2405.15793)) |
 
 ## This week
 
@@ -22,4 +22,4 @@ Run it in Colab: download the notebook, go to [colab.research.google.com](https:
 
 ## Presentations
 
-Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
+Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

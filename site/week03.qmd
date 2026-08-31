@@ -4,10 +4,10 @@ title: "Week 03 — Tool Use"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week03-notes.qmd) |
-| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_lab_tools.ipynb) · [`W3_lab_tools.ipynb`](labs/W3_lab_tools.ipynb) · [read-only view](labs/W3_lab_tools.html) |
-| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_hw_new_tool.ipynb) · [`W3_hw_new_tool.ipynb`](labs/W3_hw_new_tool.ipynb) · [read-only view](labs/W3_hw_new_tool.html) — due before Week 4 |
-| Presentation papers | [Toolformer (Schick et al., 2023)](https://arxiv.org/abs/2302.04761) · [ToolLLM (Qin et al., 2023)](https://arxiv.org/abs/2307.16789) · optional: [ReTool (2025)](https://arxiv.org/abs/2504.11536) |
+| Lecture notes | published before class |
+| Lab | published before class |
+| Homework | published before class |
+| Presentation papers | [Toolformer (Schick et al., 2023)](https://arxiv.org/abs/2302.04761) ([PDF](https://arxiv.org/pdf/2302.04761)) · [ToolLLM (Qin et al., 2023)](https://arxiv.org/abs/2307.16789) ([PDF](https://arxiv.org/pdf/2307.16789)) · optional: [ReTool (2025)](https://arxiv.org/abs/2504.11536) ([PDF](https://arxiv.org/pdf/2504.11536)) |
 | References | [Anthropic cookbook — tool use recipes](https://github.com/anthropics/anthropic-cookbook) · [Microsoft, AI Agents for Beginners — lesson 4 (tool use)](https://github.com/microsoft/ai-agents-for-beginners) |
 
 ## This week
@@ -20,8 +20,6 @@ The division of labor that gives a text-only model hands: judgment to the model 
 
 Homework: `W3_hw_new_tool.ipynb` — extend the toolbox with a schedule-lookup tool of your own: the function, the docstring written to the checklist, and two routing tasks that prove the model finds it (≥ 7/8). Due before Week 4.
 
-Run it in Colab: click **Open in Colab** (links above), paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
-
 ## Presentations
 
-Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
+Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

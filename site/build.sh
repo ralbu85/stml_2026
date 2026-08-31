@@ -10,7 +10,7 @@ cd "$(dirname "$0")"
 # Weeks whose materials (notes, lab, homework) are published. To open a new week:
 # add its number here, move its weekNN-notes.qmd page back from _unpublished/,
 # and restore the material links in weekNN.qmd ("published before class" rows).
-PUBLISH_WEEKS="01 02 03 04 05 06 07"
+PUBLISH_WEEKS="01"
 published() { case " $PUBLISH_WEEKS " in *" $1 "*) return 0;; *) return 1;; esac; }
 
 # API guide: strip the H1 (the page adds its own title), fix the README link.
@@ -58,6 +58,7 @@ mkdir -p _site/labs/data
 cp ../labs/data/*.csv _site/labs/data/ 2>/dev/null || true
 
 # Figures referenced by the notes (lectures/weekNN/figures/) — published weeks only.
+rm -rf _site/figures
 mkdir -p _site/figures
 for d in ../lectures/week*/figures; do
   [ -d "$d" ] || continue
@@ -75,6 +76,16 @@ for d in ../lectures/week*/; do
   published "$nn" && continue
   rm -rf _site/labs/W$((10#$nn))_lab_* _site/labs/W$((10#$nn))_hw_*
   rm -f "_site/week$nn-notes.html"
+done
+
+# Lecture decks (pptx — downloadable, opens in Google Slides): published weeks with slides.qmd.
+for d in ../lectures/week*/; do
+  week="$(basename "$d")"
+  published "${week#week}" || continue
+  [ -f "$d/slides.qmd" ] || continue
+  quarto render "$d/slides.qmd" --to pptx
+  mkdir -p "_site/lectures/$week"
+  mv "$d/slides.pptx" "_site/lectures/$week/"
 done
 
 echo "built: $(pwd)/_site"

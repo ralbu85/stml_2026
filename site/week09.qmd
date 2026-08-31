@@ -7,7 +7,7 @@ title: "Week 09 — Retrieval Augmentation (RAG)"
 | Lecture notes | published before class |
 | Slides | published before class |
 | Lab | published before class |
-| Presentation papers | [RAG (Lewis et al., 2020)](https://arxiv.org/abs/2005.11401) · [Self-RAG (Asai et al., 2023)](https://arxiv.org/abs/2310.11511) |
+| Presentation papers | [RAG (Lewis et al., 2020)](https://arxiv.org/abs/2005.11401) ([PDF](https://arxiv.org/pdf/2005.11401)) · [Self-RAG (Asai et al., 2023)](https://arxiv.org/abs/2310.11511) ([PDF](https://arxiv.org/pdf/2310.11511)) |
 | References | [NirDiamant, RAG_Techniques notebooks](https://github.com/NirDiamant/RAG_Techniques) · [Microsoft, AI Agents for Beginners — lesson 5 (agentic RAG)](https://github.com/microsoft/ai-agents-for-beginners) |
 
 ## This week
@@ -22,4 +22,4 @@ Run it in Colab: download the notebook, go to [colab.research.google.com](https:
 
 ## Presentations
 
-Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
+Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

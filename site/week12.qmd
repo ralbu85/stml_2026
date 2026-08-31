@@ -7,7 +7,7 @@ title: "Week 12 — Inference Economics · Benchmarks"
 | Lecture notes | published before class |
 | Slides | published before class |
 | Lab | published before class |
-| Presentation papers | [Scaling LLM Test-Time Compute Optimally (Snell et al., 2024)](https://arxiv.org/abs/2408.03314) · [FrugalGPT (Chen et al., 2023)](https://arxiv.org/abs/2305.05176) · [AI Agents That Matter (Kapoor et al., 2024)](https://arxiv.org/abs/2407.01502) · [τ-bench (Yao et al., 2024)](https://arxiv.org/abs/2406.12045) |
+| Presentation papers | [Scaling LLM Test-Time Compute Optimally (Snell et al., 2024)](https://arxiv.org/abs/2408.03314) ([PDF](https://arxiv.org/pdf/2408.03314)) · [FrugalGPT (Chen et al., 2023)](https://arxiv.org/abs/2305.05176) ([PDF](https://arxiv.org/pdf/2305.05176)) · [AI Agents That Matter (Kapoor et al., 2024)](https://arxiv.org/abs/2407.01502) ([PDF](https://arxiv.org/pdf/2407.01502)) · [τ-bench (Yao et al., 2024)](https://arxiv.org/abs/2406.12045) ([PDF](https://arxiv.org/pdf/2406.12045)) |
 
 ## This week
 
@@ -21,4 +21,4 @@ Run it in Colab: download the notebook, go to [colab.research.google.com](https:
 
 ## Presentations
 
-Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
+Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

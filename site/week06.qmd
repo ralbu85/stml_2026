@@ -4,10 +4,10 @@ title: "Week 06 — Multi-Agent Systems"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week06-notes.qmd) |
-| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week06/W6_lab_multiagent.ipynb) · [`W6_lab_multiagent.ipynb`](labs/W6_lab_multiagent.ipynb) · [read-only view](labs/W6_lab_multiagent.html) |
-| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week06/W6_hw_new_intent.ipynb) · [`W6_hw_new_intent.ipynb`](labs/W6_hw_new_intent.ipynb) · [read-only view](labs/W6_hw_new_intent.html) — due before Week 7 |
-| Presentation papers | [AutoGen (Wu et al., 2023)](https://arxiv.org/abs/2308.08155) · [MetaGPT (Hong et al., 2023)](https://arxiv.org/abs/2308.00352) |
+| Lecture notes | published before class |
+| Lab | published before class |
+| Homework | published before class |
+| Presentation papers | [AutoGen (Wu et al., 2023)](https://arxiv.org/abs/2308.08155) ([PDF](https://arxiv.org/pdf/2308.08155)) · [MetaGPT (Hong et al., 2023)](https://arxiv.org/abs/2308.00352) ([PDF](https://arxiv.org/pdf/2308.00352)) |
 | References | [Microsoft, AI Agents for Beginners — lessons 2 & 8 (agentic frameworks, multi-agent)](https://github.com/microsoft/ai-agents-for-beginners) · [Anthropic, *Building Effective Agents* — orchestration patterns](https://www.anthropic.com/research/building-effective-agents) |
 
 ## This week
@@ -20,8 +20,6 @@ When one context holds too many roles, the work splits: several agents — each 
 
 Homework: `W6_hw_new_intent.ipynb` — push a new intent (an exchange) through a condensed pipeline end to end: the tool, its docstring, the planner extension, and a scored request (4/4). Due before Week 7.
 
-Run it in Colab: click **Open in Colab** (links above), paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
-
 ## Presentations
 
-Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
+Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

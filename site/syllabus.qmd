@@ -18,7 +18,7 @@ Students learn the core principles of Large Language Model (LLM) agents in conce
 
 ## Teaching Methods
 
-Each week combines a concept lecture, a hands-on implementation lab (Jupyter notebooks), and a team-based oral paper presentation. The weekly lab components accumulate into a complete research-assistant agent by the end of the term.
+Each week combines a concept lecture, a hands-on implementation lab (Jupyter notebooks), and individual oral paper presentations. The weekly lab components accumulate into a complete research-assistant agent by the end of the term.
 
 ## Textbooks
 
@@ -31,7 +31,7 @@ There is no single required textbook. The primary readings are the field's found
 
 ## Assessment
 
-The midterm (Week 8) and final (Week 15) are written exams focused on understanding the structure and principles of agent systems. Paper presentations are given by teams orally, and weekly labs (assignments) and class participation are also assessed.
+The midterm (Week 8) and final (Week 15) are written exams focused on understanding the structure and principles of agent systems. Paper presentations are given individually, and weekly labs (assignments) and class participation are also assessed.
 
 | Component | Weight | Description |
 |---|---|---|
@@ -39,7 +39,7 @@ The midterm (Week 8) and final (Week 15) are written exams focused on understand
 | Final | 30% | Week 15 written exam — integrated understanding of the whole semester |
 | Assignments | 30% | Weekly implementation labs (notebooks) — automated completion and code-correctness checks, plus review of prompts and target metrics |
 | Quizzes | 0% | Not used |
-| Other | 20% | Team oral paper presentations and class participation |
+| Other | 20% | Individual oral paper presentations and class participation |
 
 ## Weekly Topics and Detailed Content
 

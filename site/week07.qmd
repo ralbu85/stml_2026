@@ -4,10 +4,10 @@ title: "Week 07 — Planning & Search"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [English](week07-notes.qmd) |
-| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week07/W7_lab_research_agent.ipynb) · [`W7_lab_research_agent.ipynb`](labs/W7_lab_research_agent.ipynb) · [read-only view](labs/W7_lab_research_agent.html) |
-| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week07/W7_hw_own_topic.ipynb) · [`W7_hw_own_topic.ipynb`](labs/W7_hw_own_topic.ipynb) · [read-only view](labs/W7_hw_own_topic.html) — due before the Week 8 midterm |
-| Presentation papers | [ReWOO (Xu et al., 2023)](https://arxiv.org/abs/2305.18323) · [Tree of Thoughts (Yao et al., 2023)](https://arxiv.org/abs/2305.10601) |
+| Lecture notes | published before class |
+| Lab | published before class |
+| Homework | published before class |
+| Presentation papers | [ReWOO (Xu et al., 2023)](https://arxiv.org/abs/2305.18323) ([PDF](https://arxiv.org/pdf/2305.18323)) · [Tree of Thoughts (Yao et al., 2023)](https://arxiv.org/abs/2305.10601) ([PDF](https://arxiv.org/pdf/2305.10601)) |
 | References | [Microsoft, AI Agents for Beginners — lesson 7 (planning design)](https://github.com/microsoft/ai-agents-for-beginners) · [Berkeley LLM Agents MOOC — language agents lectures](https://llmagents-learning.org/f24) |
 
 ## This week
@@ -20,8 +20,6 @@ The greedy loop commits to one action per turn and never backtracks; on multi-st
 
 Homework: `W7_hw_own_topic.ipynb` — the workflow run on a topic from your own research interests, with two self-designed checks added to the checklist. Due before the Week 8 midterm.
 
-Run it in Colab: click **Open in Colab** (links above), paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
-
 ## Presentations
 
-Presenter teams for this week were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
+Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
