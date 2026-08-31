@@ -54,7 +54,9 @@ That is the entire mechanism. Everything a chat product appears to do — answer
 
 ## One Call, as a Machine
 
-![](figures/fig-1-1-llm-call.png){width=80%}
+![](figures/recursive-token-generation.png){height=72%}
+
+\footnotesize Each output token is appended to the input and fed back, until a stop token. Source: P.-M. Dartus, *How LLMs Generate Text for the Rest of Us* (2025), pm.dartus.fr.
 
 ## What One Call Cannot Do
 
