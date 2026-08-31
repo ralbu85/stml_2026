@@ -40,7 +40,9 @@ Chatbots of around 2022 received a question, generated one answer, and ended the
 This difference did not come from changing the model — **the same model serves on every side**. What separates them is the *program surrounding the model*.
 
 
-To find what in that program separates a chatbot from an agent, we first need to establish what an LLM call itself can and cannot do.
+Ng's *Agentic AI* puts the contrast at its sharpest. A single-shot prompt asks for what a person would produce if told to *"type out an essay on topic X from start to finish in one go, **without using backspace**."* The alternative is a process: outline → decide whether to research → draft → consider what needs revision → revise.
+
+**Agentic AI workflow** = a process in which an LLM-based application executes multiple steps to complete a task. [(Ng, DeepLearning.AI)]{style="font-size:0.7em"}
 
 <!-- 훅: 셋 다 같은 모델. 차이는 모델 밖 프로그램 — 여기서 1장 전체가 출발 -->
 
@@ -103,6 +105,21 @@ OpenAI's *A Practical Guide to Building Agents* (2025) draws the same line from 
 
 Both turn on one question: which party decides what happens next.
 
+## Degrees, Not Boxes
+
+The sources disagree here, and the disagreement is this chapter's subject:
+
+- **Anthropic** draws a line — a system *is* a workflow or *is* an agent.
+- **smolagents** refuses it — *"'agent' is not a discrete, 0 or 1 definition: instead, 'agency' evolves on a continuous spectrum, as you give more or less power to the LLM on your workflow."*
+
+It has consequences: Anthropic files **routing** under *workflows*; smolagents places a router on the agency scale already.
+
+**Ng settles it by declining it:** *"Rather than arguing over which work to include or exclude as being a true agent, we can acknowledge that there are different degrees to which systems can be agentic."*
+
+This course takes that position: keep the axis, grade along it.
+
+<!-- 여기가 1장의 핵심. 정의 싸움을 하지 말고 정도로 보자는 것 -->
+
 ## The Criterion, Applied
 
 The same search feature, in two systems:
@@ -164,6 +181,20 @@ OpenAI's guide sorts tools by what they are for:
 
 The third row is the one to hold: an agent can be another agent's tool. Chapter 6 is built on it.
 
+## Degrees of Agenticness
+
+Ng's course sorts systems into three bands by how much the application decides for itself:
+
+| Band | What holds |
+|:--|:--|
+| **Less autonomous** | all steps predetermined; all tool use hard-coded; the autonomy is in text generation alone |
+| **Semi-autonomous** | the agent makes some decisions and chooses tools — but all tools are predefined |
+| **Highly autonomous** | the agent makes many decisions on its own, and can create new tools on the fly |
+
+[Source: Andrew Ng, *Agentic AI* (DeepLearning.AI), Module 1.]{style="font-size:0.6em"}
+
+Three bands are enough to place a system in conversation, and too coarse to design with.
+
 ## Levels of Agency
 
 The smolagents documentation grades systems by how much of the program's flow the model's output controls, and names each level with the code that implements it.
@@ -187,6 +218,21 @@ A router is one `if` whose branch the model chooses. A multi-step agent is one `
 
 Downward, the system handles paths that cannot be fixed in advance — and becomes harder to predict, with more calls and more cost. Anthropic states the trade as advice: find the simplest solution possible, increase complexity only when needed, which may mean **not building an agentic system at all**.
 
+## How the Two Tables Nest
+
+- **Less autonomous** = the simple processor. The model writes text; the program's path is unaffected by it.
+- **Semi-autonomous** = router, tool call, multi-step agent. The model decides — among tools the developer defined.
+- **Highly autonomous** = multi-agent and code agent, where the system starts other workflows or writes new tools.
+
+## Every Level, Occupied
+
+- **Simple processor** — OpenAI names these and excludes them from the category: simple chatbots, single-turn calls, sentiment classifiers.
+- **Router** — Anthropic's routing workflow: general questions, refunds, technical support to different processes; or easy questions to a small model, hard ones to a capable one.
+- **Tool call** — Anthropic's *augmented LLM*: generates its own search queries, selects tools, decides what to retain. OpenAI's minimal case is an agent given a `get_weather` function.
+- **Multi-step agent** — Anthropic's coding agent on SWE-bench Verified, from the pull-request description alone.
+- **Multi-agent** — OpenAI's manager pattern: `translate_to_spanish`, `translate_to_french`, `translate_to_italian`, each of them an agent (→ Ch. 6).
+- **Code agent** — the model writes code that defines its own tools; the level smolagents exists to support.
+
 ## Case — Customer Support
 
 Anthropic reports two domains where agents have demonstrated value with customers. The first:
@@ -206,27 +252,9 @@ The second domain, and it works because code is **verifiable**:
 - the problem space is well defined and structured;
 - output quality can be measured objectively.
 
-Anthropic reports its own implementation resolving real GitHub issues in SWE-bench Verified from the pull-request description alone — the multi-step level, where the model controls iteration and termination. The article adds that **human review remains necessary**: tests verify function, not fit with broader system requirements.
+Anthropic reports its own implementation resolving real GitHub issues in SWE-bench Verified from the pull-request description alone. The article adds the limit in the same breath: **human review remains necessary** — tests verify function, not fit with broader system requirements.
 
-## Orchestration — One Agent or Several
-
-The levels describe one program. The next question is how many agents it contains, and OpenAI's guide warns against answering it early — customers typically succeed with an **incremental** approach rather than a complex architecture built up front.
-
-- **Single-agent system** — one model with appropriate tools and instructions, executing workflows in a loop. Capability is added by adding tools, which keeps evaluation and maintenance simple.
-- **Multi-agent system** — workflow execution distributed across several coordinated agents.
-
-Each new tool extends the agent without forcing a premature split.
-
-## Manager and Decentralized
-
-OpenAI's guide names two broadly applicable multi-agent patterns:
-
-- **Manager** (agents as tools) — a central agent coordinates specialized agents through *tool calls*, each handling one task or domain.
-- **Decentralized** (agents handing off) — agents operate as peers, *handing off* tasks to one another by specialization.
-
-Modeled as a graph with agents as nodes: manager edges are tool calls, decentralized edges are handoffs that transfer execution.
-
-Anthropic's orchestrator–workers workflow has the manager shape — a central LLM breaks the task down, delegates to workers, synthesizes results. Chapter 6 builds both.
+Neither domain was chosen for its level on the scale. Both were chosen because their outputs can be **checked** — the condition that makes iteration worth anything.
 
 ## Adoption Criteria
 
@@ -249,7 +277,25 @@ Its illustration of the difference is payment fraud analysis:
 - a traditional **rules engine** works like a checklist, flagging transactions against preset criteria;
 - an **agent** works like an investigator, weighing context and identifying suspicious activity where no clear-cut rule is violated.
 
-The nuanced-judgment case is what justifies the trade. Nothing else does.
+Ng grades the **task** rather than the system, along three dimensions:
+
+| Easier | Harder |
+|:--|:--|
+| clear, step-by-step process | steps not known ahead of time |
+| standard procedures to follow | plan and solve as you go |
+| text assets only | multimodal — sound, vision |
+
+A task on the left of all three is one an agent adds nothing to.
+
+## The Test, Worked
+
+smolagents states the default first: for a surfing-trip site whose requests fall into two known buckets — *want trip information* or *want to talk to sales* — two predetermined paths handle everything, and then *"by all means just code everything."* A deterministic workflow is fully reliable, with no risk from letting an unpredictable model into the flow. Its stated default is to **regularize toward not using agentic behaviour at all**.
+
+The request that breaks it:
+
+> *"I can come on Monday, but I forgot my passport so risk being delayed to Wednesday, is it possible to take me and my stuff to surf on Tuesday morning, with a cancellation insurance?"*
+
+No predetermined bucket holds it. The criterion follows: **if the predetermined workflow falls short too often, that is what a need for flexibility looks like.**
 
 ## Workflow Patterns
 
@@ -278,6 +324,26 @@ Anthropic's own examples for each:
 
 Orchestrator–workers differs from parallelization by flexibility: its subtasks are *not predefined* but determined from the input.
 
+## Orchestration — One Agent or Several
+
+The levels describe one program. The next question is how many agents it contains, and OpenAI's guide warns against answering it early — customers typically succeed with an **incremental** approach rather than a complex architecture built up front.
+
+- **Single-agent system** — one model with appropriate tools and instructions, executing workflows in a loop. Capability is added by adding tools, which keeps evaluation and maintenance simple.
+- **Multi-agent system** — workflow execution distributed across several coordinated agents.
+
+Each new tool extends the agent without forcing a premature split.
+
+## Manager and Decentralized
+
+OpenAI's guide names two broadly applicable multi-agent patterns:
+
+- **Manager** (agents as tools) — a central agent coordinates specialized agents through *tool calls*, each handling one task or domain.
+- **Decentralized** (agents handing off) — agents operate as peers, *handing off* tasks to one another by specialization.
+
+Modeled as a graph with agents as nodes: manager edges are tool calls, decentralized edges are handoffs that transfer execution.
+
+Anthropic's orchestrator–workers workflow has the manager shape — a central LLM breaks the task down, delegates to workers, synthesizes results. Chapter 6 builds both.
+
 ## The Course, From the Deficit List
 
 An LLM call is text in, text out — and each deficit of that bare call is repaired by one part of this course:
@@ -297,6 +363,8 @@ An LLM call is text in, text out — and each deficit of that bare call is repai
 - **Midterm (W8)** — written exam over weeks 1–7.
 - **Second half (W9–W13)** — ground the agent in knowledge it does not have, and turn it into an operated system.
 - **Final (W14–15)** — a research-assistant agent over this course's own paper corpus, demonstrated and defended with its evaluation scorecard.
+
+The same arc closes Ng's introductory module as four **agentic design patterns** — reflection, tool use, planning, multi-agent collaboration. Each is a chapter here (Ch. 5 · Ch. 3 · Ch. 7 · Ch. 6), which is not a coincidence: from week 3 the labs adapt Ng's modules.
 
 ## Chapter 1 in Seven Terms
 
