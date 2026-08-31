@@ -4,22 +4,11 @@ title: "Week 03 — Tool Use"
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
-| Lab | published before class |
-| Homework | published before class |
-| Presentation papers | [Toolformer (Schick et al., 2023)](https://arxiv.org/abs/2302.04761) ([PDF](https://arxiv.org/pdf/2302.04761)) · [ToolLLM (Qin et al., 2023)](https://arxiv.org/abs/2307.16789) ([PDF](https://arxiv.org/pdf/2307.16789)) · optional: [ReTool (2025)](https://arxiv.org/abs/2504.11536) ([PDF](https://arxiv.org/pdf/2504.11536)) |
-| References | [Anthropic cookbook — tool use recipes](https://github.com/anthropics/anthropic-cookbook) · [Microsoft, AI Agents for Beginners — lesson 4 (tool use)](https://github.com/microsoft/ai-agents-for-beginners) |
+| Lecture notes | [English](week03-notes.qmd) |
+| Slides | published before class |
+| Lab | [`W3_lab_tools.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_lab_tools.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week03/W3_lab_tools.ipynb)<br>Homework: [`W3_hw_new_tool.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_hw_new_tool.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week03/W3_hw_new_tool.ipynb) — due before Week 4 |
+| Papers | [Toolformer (Schick et al., 2023)](https://arxiv.org/abs/2302.04761) ([PDF](https://arxiv.org/pdf/2302.04761)) · [ToolLLM (Qin et al., 2023)](https://arxiv.org/abs/2307.16789) ([PDF](https://arxiv.org/pdf/2307.16789)) · optional: [ReTool (2025)](https://arxiv.org/abs/2504.11536) ([PDF](https://arxiv.org/pdf/2504.11536)) |
 
 ## This week
 
 The division of labor that gives a text-only model hands: judgment to the model as text, execution to code, under the convention that output is read as an execution request. Function calling as the standardized round trip; the tool schema as the entire interface; failures reinjected as readable results; the tool list as the capability boundary — and the honest closing observation that a loop has been running all along, inside the client.
-
-## Lab
-
-`W3_lab_tools.ipynb` — plain Python functions become tools through `aisuite` (docstring-derived schemas); the request–execute–reinject cycle traced; a bad-vs-improved docstring experiment; a measured routing score over a fixed task set (≥ 6/8); and an email assistant whose capability is set entirely by its tool list. Adapted from Andrew Ng's *Agentic AI* Module 3.
-
-Homework: `W3_hw_new_tool.ipynb` — extend the toolbox with a schedule-lookup tool of your own: the function, the docstring written to the checklist, and two routing tasks that prove the model finds it (≥ 7/8). Due before Week 4.
-
-## Presentations
-
-Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

@@ -4,22 +4,11 @@ title: "Week 09 — Retrieval Augmentation (RAG)"
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
+| Lecture notes | [English](week09-notes.qmd) |
 | Slides | published before class |
 | Lab | published before class |
-| Presentation papers | [RAG (Lewis et al., 2020)](https://arxiv.org/abs/2005.11401) ([PDF](https://arxiv.org/pdf/2005.11401)) · [Self-RAG (Asai et al., 2023)](https://arxiv.org/abs/2310.11511) ([PDF](https://arxiv.org/pdf/2310.11511)) |
-| References | [NirDiamant, RAG_Techniques notebooks](https://github.com/NirDiamant/RAG_Techniques) · [Microsoft, AI Agents for Beginners — lesson 5 (agentic RAG)](https://github.com/microsoft/ai-agents-for-beginners) |
+| Papers | [RAG (Lewis et al., 2020)](https://arxiv.org/abs/2005.11401) ([PDF](https://arxiv.org/pdf/2005.11401)) · [Self-RAG (Asai et al., 2023)](https://arxiv.org/abs/2310.11511) ([PDF](https://arxiv.org/pdf/2310.11511)) |
 
 ## This week
 
 Parametric knowledge ends at the training cutoff; retrieval augmentation adds a non-parametric store. Embeddings and cosine similarity, the chunk–index–retrieve–inject pipeline, and the turn from "always retrieve" to retrieval as a tool (agentic RAG, Self-RAG). The final project's retriever starts here.
-
-## Lab
-
-Course-specific retriever lab for the final project (published before class).
-
-Run it in Colab: download the notebook, go to [colab.research.google.com](https://colab.research.google.com) → Upload, paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
-
-## Presentations
-
-Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

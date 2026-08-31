@@ -4,22 +4,11 @@ title: "Week 04 — The Agent Loop (ReAct)"
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
-| Lab | published before class |
-| Homework | published before class |
-| Presentation papers | [ReAct (Yao et al., 2022)](https://arxiv.org/abs/2210.03629) ([PDF](https://arxiv.org/pdf/2210.03629)) |
-| References | [Hugging Face Agents Course — unit 1 (an agent from scratch)](https://huggingface.co/learn/agents-course) · [Berkeley LLM Agents MOOC — agent history lecture](https://llmagents-learning.org/f24) |
+| Lecture notes | [English](week04-notes.qmd) |
+| Slides | published before class |
+| Lab | [`W4_lab_loop.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week04/W4_lab_loop.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week04/W4_lab_loop.ipynb)<br>Homework: [`W4_hw_loop_guard.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week04/W4_hw_loop_guard.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week04/W4_hw_loop_guard.ipynb) — due before Week 5 |
+| Papers | [ReAct (Yao et al., 2022)](https://arxiv.org/abs/2210.03629) ([PDF](https://arxiv.org/pdf/2210.03629)) |
 
 ## This week
 
 The loop, owned: last week it ran invisibly inside the client; this week it is built by hand — Call, Judge, Execute, Reinject, with an explicit bound. The measured failure of an Act-only protocol, the ReAct convention (a written Thought before every action, grounding), why today's tool-calling models carry that convention in their weights, and trace reading as the basic debugging procedure.
-
-## Lab
-
-`W4_lab_loop.ipynb` — the agent loop in about twenty-five lines, with the Judge step as your fill-in; Act-only vs. ReAct compared on a five-question mini evalset that re-scores every later week; trace reading on a run that fabricates; the step bound as an honest exit. Built for this course, following the from-scratch pattern of Hugging Face's Agents Course unit 1.
-
-Homework: `W4_hw_loop_guard.ipynb` — add the repetition guard, show it converting a spinning run into a finished answer, and grow the evalset with two multi-hop questions of your own. Due before Week 5.
-
-## Presentations
-
-Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

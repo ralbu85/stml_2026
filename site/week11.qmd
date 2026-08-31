@@ -4,22 +4,11 @@ title: "Week 11 — Reasoning Models & RL"
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
+| Lecture notes | [English](week11-notes.qmd) |
 | Slides | published before class |
 | Lab | published before class |
-| Presentation papers | [STaR (Zelikman et al., 2022)](https://arxiv.org/abs/2203.14465) ([PDF](https://arxiv.org/pdf/2203.14465)) · [DeepSeek-R1 (2025)](https://arxiv.org/abs/2501.12948) ([PDF](https://arxiv.org/pdf/2501.12948)) |
-| References | [Lilian Weng, "Why We Think"](https://lilianweng.github.io/posts/2025-05-01-thinking/) |
+| Papers | [STaR (Zelikman et al., 2022)](https://arxiv.org/abs/2203.14465) ([PDF](https://arxiv.org/pdf/2203.14465)) · [DeepSeek-R1 (2025)](https://arxiv.org/abs/2501.12948) ([PDF](https://arxiv.org/pdf/2501.12948)) |
 
 ## This week
 
 Reasoning models internalize the caller-side procedures of W2: thinking budgets as a billable resource, the training problem (no process labels), STaR bootstrapping, reinforcement learning fundamentals (policy, reward, RLHF vs. RLVR), and DeepSeek-R1 with GRPO.
-
-## Lab
-
-Thinking-budget measurement: vary a reasoning model's budget on a fixed evalset and plot the accuracy–cost curve (published before class).
-
-Run it in Colab: download the notebook, go to [colab.research.google.com](https://colab.research.google.com) → Upload, paste your API key into the setup cell ([API Setup](api-setup.qmd)), and run top to bottom.
-
-## Presentations
-
-Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).

@@ -4,22 +4,11 @@ title: "Week 05 — Reflection & Evaluation"
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
-| Lab | published before class |
-| Homework | published before class |
-| Presentation papers | [Reflexion (Shinn et al., 2023)](https://arxiv.org/abs/2303.11366) ([PDF](https://arxiv.org/pdf/2303.11366)) · [Judging LLM-as-a-Judge (Zheng et al., 2023)](https://arxiv.org/abs/2306.05685) ([PDF](https://arxiv.org/pdf/2306.05685)) · optional: [Self-Refine (Madaan et al., 2023)](https://arxiv.org/abs/2303.17651) ([PDF](https://arxiv.org/pdf/2303.17651)) |
-| References | [Microsoft, AI Agents for Beginners — lesson 9 (metacognition)](https://github.com/microsoft/ai-agents-for-beginners) |
+| Lecture notes | [English](week05-notes.qmd) |
+| Slides | published before class |
+| Lab | [`W5_lab_reflection_evals.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb)<br>Homework: [`W5_hw_chart_reflection.ipynb` — open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb) · [source](https://github.com/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb) — due before Week 6 |
+| Papers | [Reflexion (Shinn et al., 2023)](https://arxiv.org/abs/2303.11366) ([PDF](https://arxiv.org/pdf/2303.11366)) · [Judging LLM-as-a-Judge (Zheng et al., 2023)](https://arxiv.org/abs/2306.05685) ([PDF](https://arxiv.org/pdf/2306.05685)) · optional: [Self-Refine (Madaan et al., 2023)](https://arxiv.org/abs/2303.17651) ([PDF](https://arxiv.org/pdf/2303.17651)) |
 
 ## This week
 
 One chapter, two halves of one subject. A finished output can be fed back into the attempt so the next version is better — reflection (Self-Refine on one output, Reflexion across attempts, and the external-feedback condition that decides when self-correction works at all) — or scored against a fixed standard so change itself becomes measurable — evaluation (evalsets, code grading, LLM-as-a-judge and its biases, error analysis, regression). The lecture also draws the line students most often blur: ReAct's Thought versus reflection.
-
-## Lab
-
-`W5_lab_reflection_evals.ipynb` — the two halves run as one experiment: draft → critique → revise on an essay, then the claim "V2 beats V1" put through a five-criterion binary judge over a fixed set, error analysis, and prompt iteration against a numeric target. Adapted from Andrew Ng's *Agentic AI* Modules 2 and 4.
-
-Homework: `W5_hw_chart_reflection.ipynb` — the reflection loop where the output is a rendered matplotlib chart and the critique reads the image itself. Due before Week 6.
-
-## Presentations
-
-Paper presentations are individual; this week's presenters were assigned in the Week 1 orientation. Format and sample deck: [Presentations](presentations.qmd).
