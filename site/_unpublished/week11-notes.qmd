@@ -1,7 +1,0 @@
----
-title: "Week 11 — Lecture Notes"
----
-
-back to [Week 11](week11.qmd)
-
-{{< include _week11-notes-en.md >}}

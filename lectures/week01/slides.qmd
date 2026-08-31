@@ -1,22 +1,32 @@
 ---
 title: "What is an Agent?"
 subtitle: "STML 2026 · Week 1 · Special Topics in ML: LLM Agents"
-author: "Reading: lecture notes, Chapter 1 — stml.tailcce2b.ts.net"
+author: "Reading: lecture notes, Chapter 1"
 date: ""
 format:
-  beamer:
-    aspectratio: 169
-    navigation: empty
-    theme: default
-    fontsize: 10pt
-    pdf-engine: xelatex
-    mainfont: "DejaVu Sans"
-    sansfont: "DejaVu Sans"
-    monofont: "DejaVu Sans Mono"
-    header-includes:
-      - \setbeamertemplate{footline}[frame number]
-      - \setbeamerfont{frametitle}{series=\bfseries}
-      - \setbeamersize{text margin left=9mm, text margin right=9mm}
+  revealjs:
+    theme: white
+    slide-number: true
+    embed-resources: true
+    width: 1280
+    height: 720
+    margin: 0.04
+    center: false
+    fig-align: center
+    include-in-header:
+      text: |
+        <style>
+          /* Lecture density: the deck carries argument, not headlines, so the
+             body runs smaller than the reveal default and starts at the top. */
+          .reveal { font-size: 25px; }
+          .reveal h1 { font-size: 1.9em; }
+          .reveal h2 { font-size: 1.28em; margin-bottom: .5em; }
+          .reveal p, .reveal li { line-height: 1.35; }
+          .reveal ul, .reveal ol { margin-bottom: .55em; }
+          .reveal li + li { margin-top: .22em; }
+          .reveal table { font-size: .88em; }
+          .reveal section img { max-height: 62vh; width: auto; }
+        </style>
 ---
 
 ## Same Model, Different Work
@@ -26,11 +36,9 @@ Chatbots of around 2022 received a question, generated one answer, and ended the
 - **Deep Research** — given a topic, searches and reads dozens of web pages on its own and produces a synthesized, cited report.
 - **Claude Code** — given a bug report, reads the code, edits it, runs the tests; when they fail, analyzes the cause and edits again.
 
-\vspace{2mm}
 
 This difference did not come from changing the model — **the same model serves on every side**. What separates them is the *program surrounding the model*.
 
-\vspace{2mm}
 
 To find what in that program separates a chatbot from an agent, we first need to establish what an LLM call itself can and cannot do.
 
@@ -40,7 +48,6 @@ To find what in that program separates a chatbot from an agent, we first need to
 
 **LLM (large language model)** = an autoregressive generative model trained on large text corpora with the objective of next-token prediction.
 
-\vspace{2mm}
 
 *Autoregressive* means the model:
 
@@ -48,7 +55,6 @@ To find what in that program separates a chatbot from an agent, we first need to
 2. samples one token from that distribution;
 3. appends it and repeats — until the text is complete.
 
-\vspace{2mm}
 
 That is the entire mechanism. Everything a chat product appears to do — answering, summarizing, "reasoning" — is this loop of predict → sample → append.
 
@@ -56,7 +62,7 @@ That is the entire mechanism. Everything a chat product appears to do — answer
 
 ![](figures/recursive-token-generation.png){height=72%}
 
-\footnotesize Each output token is appended to the input and fed back, until a stop token. Source: P.-M. Dartus, *How LLMs Generate Text for the Rest of Us* (2025), pm.dartus.fr.
+[Each output token is appended to the input and fed back, until a stop token. Source: P.-M. Dartus, *How LLMs Generate Text for the Rest of Us* (2025), pm.dartus.fr.]{style="font-size:0.55em"}
 
 ## What One Call Cannot Do
 
@@ -68,11 +74,9 @@ An LLM call takes **text in and returns text out — and has no other input or o
 
 What it produces is a chain of tokens with *high conditional probability* — not an action on the external world.
 
-\vspace{2mm}
 
 Consequently, everything the model cannot do — opening files, executing searches, validating output — is handled by **code outside the model**. That code decides which action to execute next, when to repeat, and when to stop.
 
-\vspace{2mm}
 
 **Control flow** = the totality of these decisions.
 
@@ -80,16 +84,13 @@ Consequently, everything the model cannot do — opening files, executing search
 
 The difference between the chatbot and Deep Research lies in *who holds authority over control flow*:
 
-\vspace{2mm}
 
 - **Workflow** = a system whose control flow is fixed in advance by the developer's code. The LLM does predetermined work at predetermined points.
 - **Agent** = a system whose control flow is determined by the LLM's output. The model chooses the next action.
 
-\vspace{2mm}
 
 Introduced by Anthropic's *Building Effective Agents* (2024); now standard usage.
 
-\vspace{2mm}
 
 The criterion is **not capability but the location of decision authority.** Having a search feature does not make a system an agent.
 
@@ -97,12 +98,10 @@ The criterion is **not capability but the location of decision authority.** Havi
 
 The same search feature, in two systems:
 
-\vspace{2mm}
 
 - A pipeline that performs *translate → summarize → store* in a fixed order remains a **workflow**, even if it contains search — the model decides nothing about the path.
 - The same search makes the system an **agent** when the model's output decides *whether* to search and *with what query* — the branch is taken by reading the model's output.
 
-\vspace{2mm}
 
 Having a capability is not the test. **Deciding is.**
 
@@ -119,11 +118,9 @@ Translating the agent definition into an execution form gives an iterative struc
 3. The execution result is **appended** to the model's input.
 4. The model reads the updated input and generates the next output (back to 1).
 
-\vspace{2mm}
 
 Which iteration the loop ends on is determined by the results — it is written nowhere in the code.
 
-\vspace{2mm}
 
 Deep Research and Claude Code differ in tools and instructions, but the internal execution structure of both is this loop — **the skeleton of control is identical.** (We build it by hand in Chapter 4.)
 
@@ -136,7 +133,6 @@ What a Claude Code session prints, turn by turn:
 - the result — a failing or passing log, appended to the record
 - repeat — until the tests pass, or the attempt cap is reached
 
-\vspace{2mm}
 
 That visible transcript **is** the agent loop of the previous slide, running in a shipped product. When we debug agents in Week 4, this record — the *trace* — is what we read.
 
@@ -146,7 +142,6 @@ That visible transcript **is** the agent loop of the previous slide, running in 
 
 One iteration of the loop needs four things: a decision, grounds for the decision, a way to execute it, and a record of progress. The parts responsible are the components of an agent:
 
-\vspace{2mm}
 
 | Component | Why it is needed |
 |:--|:--|
@@ -155,7 +150,6 @@ One iteration of the loop needs four things: a decision, grounds for the decisio
 | **Tools** | text output alone cannot change the external world |
 | **Memory / Context** | each iteration must decide on top of the previous result |
 
-\vspace{2mm}
 
 The names vary across frameworks; the four parts do not. The labs build them week by week (Ch. 2 · 3 · 9–10).
 
@@ -163,15 +157,12 @@ The names vary across frameworks; the four parts do not. The labs build them wee
 
 In real systems, decision authority is not all-or-nothing.
 
-\vspace{2mm}
 
 **Autonomy** = the degree to which control-flow decisions are entrusted to the LLM's output rather than to the developer's code.
 
-\vspace{2mm}
 
 Moving toward higher autonomy, the system can handle problems that cannot be fixed in advance — but its behavior becomes harder to predict, and the number of calls and the cost grow.
 
-\vspace{2mm}
 
 **Autonomy is a trade: flexibility, bought with predictability and cost.**
 
@@ -184,7 +175,6 @@ Moving toward higher autonomy, the system can handle problems that cannot be fix
 | Bounded loop | edit code until tests pass (cap of 5) | iteration and termination |
 | Autonomous agent | "research this topic, produce a report" | the entire plan |
 
-\vspace{2mm}
 
 Every band is occupied by shipping products — the next four slides walk through them.
 
@@ -200,7 +190,6 @@ OpenAI (2025), Google Gemini (2024); Perplexity runs a lighter variant.
 - In between, the model decides everything the spectrum's right end implies: *which searches to run, which pages to open, which to trust, when the evidence suffices.*
 - The user cannot steer during the run — this is autonomy **inside a delegated task**, not an unbounded system.
 
-\vspace{2mm}
 
 One detail to hold for Chapter 7: these products draw up a **research plan first**, and some let the user edit it before execution — a control surface exactly where planning theory says it belongs.
 
@@ -212,7 +201,6 @@ Claude Code (terminal), Cursor agent mode (IDE), Devin (fully delegated), GitHub
 - The cap exists because the loop cannot be trusted to always terminate — a run that cannot fix the bug must stop and report, not spin forever.
 - Guardrails live in **code, not in the model**: permission prompts before running commands, caps on attempts, restricted directories.
 
-\vspace{2mm}
 
 Same model as the chat products. The loop, the tools, and the guardrails are the whole difference.
 
@@ -224,7 +212,6 @@ Intercom Fin, Sierra (2024–): customer-service agents in production.
 - What the model may decide is bounded by code: refund limits, forbidden actions, mandatory escalation rules.
 - This is the middle of the spectrum: more than a router (it composes multi-step resolutions), less than autonomous (the guardrails are not its to change).
 
-\vspace{2mm}
 
 A useful reading habit: for any agent product, ask *which decisions belong to the model, and which are fixed by code around it.*
 
@@ -240,7 +227,6 @@ OpenAI Operator (2025), Anthropic computer use (2024).
 
 The side that does **not** hand over decision authority also has an established design vocabulary. Five patterns cover most LLM-call compositions — and this course implements each one:
 
-\vspace{2mm}
 
 | Pattern | Structure | Appears in |
 |:--|:--|:--|
@@ -254,7 +240,6 @@ The side that does **not** hand over decision authority also has an established 
 
 The same five patterns, spotted in shipped systems:
 
-\vspace{2mm}
 
 - **Orchestrator–workers** — Anthropic's research feature: a lead agent decomposes the question and spawns parallel searchers.
 - **Evaluator–optimizer** — every coding agent's edit ↔ test cycle: generate a fix, let the tests evaluate it.
@@ -266,11 +251,9 @@ The same five patterns, spotted in shipped systems:
 
 The definition of an agent specifies where control flow resides — it says nothing about how the system meets people. The interface is independent of the internal structure.
 
-\vspace{2mm}
 
 **Form factor** = the deployment shape of an agent: how it is packaged for interaction.
 
-\vspace{2mm}
 
 | Form factor | Example | Unit of interaction |
 |:--|:--|:--|
@@ -286,7 +269,6 @@ The definition of an agent specifies where control flow resides — it says noth
 - **Embedded** — the agent lives inside the workplace (IDE, document editor) and acts in place: Copilot's suggestions, Cursor's in-editor edits.
 - **Headless** — no human interface at all: a pipeline step, or one agent serving as another agent's tool (→ Ch. 6).
 
-\vspace{2mm}
 
 **The chatbot is not the definition of an agent — it is one form factor, historically the first.** This course covers the internal structure common to all four.
 
@@ -300,7 +282,6 @@ An agent is advantageous when **flexibility is genuinely required**:
 
 Conversely, a **workflow** is cheaper and more stable when the procedure is fixed; when error tolerance is low and there is no means of verification, handing over decision authority is itself a risk; a single-turn question–answer task needs no iteration at all.
 
-\vspace{2mm}
 
 **The governing principle: hand over only as much autonomy as the task requires.** (Reexamined as a cost question in Ch. 12.)
 
@@ -312,7 +293,6 @@ Three requests that deserve a workflow:
 - *"Answer FAQ questions from this list."* — Single turn; there is nothing for a loop to decide.
 - *"Transfer money when a customer asks."* — Errors are costly and there is no verification step; decision authority itself is the risk.
 
-\vspace{2mm}
 
 A practical checklist before splitting:
 
@@ -325,7 +305,6 @@ A practical checklist before splitting:
 
 An LLM call is text in, text out — and each deficit of that bare call is repaired by one part of this course:
 
-\vspace{2mm}
 
 - the model cannot **act** → tools (Ch. 3) · the agent loop (Ch. 4)
 - it does not know when it is **wrong** → reflection & evaluation (Ch. 5) · planning & search (Ch. 7)
@@ -358,7 +337,6 @@ An LLM call is text in, text out — and each deficit of that bare call is repai
 - A nightly job sends every new arXiv abstract in your field to an LLM, stores the summaries, and mails a digest.
 - A support bot reads each incoming ticket and decides: **answer it, refund the customer, or escalate to a human.**
 
-\vspace{2mm}
 
 Which is the agent — and what single decision settles the classification?
 
@@ -371,7 +349,6 @@ Which is the agent — and what single decision settles the classification?
 - Agent or workflow, under today's definition?
 - What is the *smallest* change that would flip your answer?
 
-\vspace{2mm}
 
 **The lowest sufficient autonomy.** A team proposes "a fully autonomous agent that answers *all* customer email."
 
@@ -385,7 +362,6 @@ Which is the agent — and what single decision settles the classification?
 - Pick one agentic product you have used. Identify its **form factor**, fill in its **four components**, and give one control-flow decision its **model** makes — and one its **code** fixes.
 - The same model serves as a chatbot and as a component of Deep Research. If the weights are identical, **where does the added capability come from** — and which of the components supply it?
 
-\vspace{2mm}
 
 (These five questions are notes §1.8 — they return as exam material.)
 
@@ -397,9 +373,7 @@ Which is the agent — and what single decision settles the classification?
 - first calls through `aisuite`; message roles, statelessness, temperature;
 - final task: a system prompt that forces clean JSON — checked PASS/FAIL.
 
-Open it from the Week 1 page of the course site (**Open in Colab**).
-
-\vspace{2mm}
+Download it from the Week 1 page of the course site, then upload it to Colab (**File → Upload notebook**).
 
 **Next week — where Chapter 2 starts:** the same model, the same question, different accuracy:
 

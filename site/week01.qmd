@@ -4,14 +4,16 @@ title: "Week 01 — Course Intro · What is an Agent?"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [read online](week01-notes.qmd) · [download PDF](notes/week01-notes.pdf) |
-| Slides | [download PDF](lectures/week01/slides.pdf) |
-| Lab | [`W1_lab_setup.ipynb`](labs/W1_lab_setup.ipynb) — download and upload to Colab |
+| Lecture notes | [read](lectures/week01/notes.html) |
+| Slides | [open](lectures/week01/slides.html) |
+| Lab | [`W1_lab_setup.ipynb`](lectures/week01/W1_lab_setup.ipynb) — download and upload to Colab |
 | Papers | — (no paper presentation in Week 1) |
 
 ## This week
 
 Orientation (grading, weekly rhythm, presentation assignment) followed by the first lecture: what separates an agent from a chatbot. An agent is a system whose control flow is decided by the model's output; the lecture builds that definition from what an LLM call can and cannot do, then covers the agent loop, the components (Model · Instructions · Tools · Memory), the autonomy spectrum, workflow patterns, and form factors — and closes with the course map: build the agent (W2–4), discipline it (W5), scale it (W6–7), ground and operate it (W9–13).
+
+The notes and the slides open as ordinary web pages; print either one from the browser to get a PDF.
 
 ## Lab
 
