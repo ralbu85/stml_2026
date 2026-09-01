@@ -18,6 +18,8 @@ Quality, on this view, is not extracted from a better single guess. It is accumu
 
 ## 1.2 Control Flow and Degrees of Agency
 
+Section 1.1 established that executing a task in steps beats demanding it in one. It did not say who decides what the next step is, and that decision is the whole design question — one the field has not even agreed on a vocabulary for. This section supplies the axis on which the decision is measured, a scale for placing a system on it, the boundary below which nothing is an agent, and a way to read the right level off the task rather than off preference.
+
 An **LLM (large language model)** is an autoregressive generative model trained on large text corpora with the objective of next-token prediction. Autoregressive means that the model computes a probability distribution over the next token conditioned on the tokens generated so far, samples one token from it, and repeats this process to produce text. An LLM call therefore takes text in and returns text out, and has no other input or output channel. The model cannot open a file, cannot execute a search, and cannot verify whether its own output is factual. What it produces is a chain of tokens with high conditional probability, not an action on the external world.
 
 ![recursive token generation](figures/recursive-token-generation.png)
@@ -82,6 +84,8 @@ The level is not chosen by preference; it is read off the task. Ng grades the ta
 
 ## 1.3 The Four Components
 
+Section 1.2 answers how much authority to hand over. It says nothing about what to build. A system anywhere on the scale — a router, a multi-step agent, a fleet of them — is assembled from the same small set of parts, and this section names them and states what each is responsible for.
+
 OpenAI's guide states that in its most fundamental form an agent consists of three core components.
 
 | Component | Definition |
@@ -103,6 +107,8 @@ Anthropic describes the same building block as the **augmented LLM** — a model
 **Memory** is the record of what has happened so far in the run, together with what should persist beyond it. The failure it prevents is specific. The model sees only its input; drop the record of the last attempt and the agent cannot know that a tool has already failed, so it selects the same action again, receives the same error, and repeats — a loop that runs until a cap stops it, having made no progress. Short-term context holds the current run: the task, the actions taken, the results returned, the working state. A long-term store holds what must survive it: durable facts, user preferences, retrieved documents (→ Ch. 9–10). Memory is what makes iteration iteration rather than repetition.
 
 ## 1.4 Workflow Patterns
+
+Section 1.2 closed on a rule: hand over only as much as the task requires. Acting on it requires knowing what the low-autonomy side actually offers, and the answer is not one shape. This section is the vocabulary of the side where the code, not the model, decides the order — everything worth building before control flow is handed over at all.
 
 Before any pattern, Anthropic states a governing rule: when building applications with LLMs, find the simplest solution possible and increase complexity only when needed, which may mean not building an agentic system at all. Agentic systems trade latency and cost for task performance, and the trade has to be worth making. Workflows offer predictability and consistency for well-defined tasks; agents are the better option where flexibility and model-driven decision-making are needed at scale; and for many applications, optimizing a single call with retrieval and in-context examples is enough.
 
@@ -135,6 +141,8 @@ The five patterns of 1.4 describe how calls are composed. Ng's four design patte
 **Multi-agent collaboration** solves the degradation that follows when one agent holds every instruction and every tool. OpenAI's guide is precise about the cause: "the issue isn't solely the number of tools, but their similarity or overlap. Some implementations successfully manage more than 15 well-defined, distinct tools while others struggle with fewer than 10 overlapping tools." Its second trigger is complex logic — when a prompt accumulates so many conditional branches that the template stops scaling, each logical segment is better divided into its own agent. The design separates agents by role, each holding a small and distinct tool set and communicating with the others. Ng cites Multiagent Debate (Du et al., 2023) as evidence: biographies improve from 66.0 to 73.8, MMLU from 63.9 to 71.1, and chess move selection from 29.3 to 45.2. Chapter 6 builds this.
 
 ## 1.6 Domain Evidence and the Safe Loop
+
+Sections 1.3 to 1.5 are design vocabulary, and vocabulary proves nothing. Two questions remain: where this has actually paid off with users, and what keeps an autonomous loop from running away or from reporting a success it never achieved.
 
 Anthropic reports two domains in which agents have demonstrated value with its customers.
 

@@ -26,13 +26,18 @@ format:
           .reveal li + li { margin-top: .22em; }
           .reveal table { font-size: .88em; }
           .reveal section img { max-height: 62vh; width: auto; }
-          .reveal .part { color: #1a3a5c; font-weight: 600; letter-spacing: .04em; }
+          .reveal .divider { padding-top: 6%; }
+          .reveal .divider h2 { font-size: 1.75em; color: #1a3a5c;
+            border-bottom: 3px solid #1a3a5c; padding-bottom: .22em; margin-bottom: .55em; }
+          .reveal .divider .eyebrow { color: #6b7f96; font-weight: 600;
+            letter-spacing: .14em; font-size: .78em; text-transform: uppercase; }
+          .reveal .divider .left { color: #8a6a4a; }
+          .reveal .divider p { font-size: 1.02em; }
         </style>
 ---
 
 ## Session Overview
 
-[Part 1 · Understanding the agentic paradigm]{.part}
 
 This session assembles one design guide out of four sources that have converged on the same architecture: **Andrew Ng** (DeepLearning.AI), **Anthropic**, **OpenAI**, and **Hugging Face**.
 
@@ -58,6 +63,16 @@ Where the sources disagree — and they do, on the definition itself — this de
 | **6** | Domain evidence and the conditions for success | 29–30 |
 
 Parts 1 and 2 settle what an agent is. Parts 3 to 5 are the construction vocabulary. Part 6 is the evidence and the safety boundary.
+
+## The Agentic Paradigm {.divider}
+
+[Part 1 · Slides 1–7]{.eyebrow}
+
+[Where this starts.]{.left} Two products built on the same model do entirely different work. The difference is not in the weights, so it has to be in the program around them.
+
+This part establishes what that program does, and why a single call is not enough to do it — the shift from asking for a finished answer to executing a task in steps.
+
+**It answers:** what changes when work is done across passes rather than in one.
 
 ## Deep Research versus Claude Code
 
@@ -114,9 +129,18 @@ Ng ends the argument by declining it:
 
 What it buys in design terms: the question stops being *"is this an agent?"* and becomes *"how much of the control flow have I handed over, and is that the amount this task and this risk tolerance warrant?"* — a dial tuned per system, rather than a label argued over.
 
+## The Definition and the Autonomy Spectrum {.divider}
+
+[Part 2 · Slides 8–12]{.eyebrow}
+
+[What Part 1 left open.]{.left} Steps help — but Part 1 never said *who decides what the next step is*. That decision is the entire design question, and the industry does not even agree on what to call a system that makes it.
+
+This part supplies the axis (control flow), a scale to place a system on it, the boundary below which nothing is an agent, and a way to read the right level off the task instead of off preference.
+
+**It answers:** how much authority to hand over, and how to tell.
+
 ## Control Flow
 
-[Part 2 · The definition and the autonomy spectrum]{.part}
 
 **Control flow** = the decisions that determine what a program does next: which function to execute, which tool to load, whether to repeat, when to stop.
 
@@ -184,9 +208,18 @@ Autonomy is not chosen by preference. It is read off the task. Ng grades the tas
 
 A task on the left of all three gains nothing from an agent. The further right it sits, the more a semi- or highly-autonomous design earns its cost.
 
+## The Four Core Components {.divider}
+
+[Part 3 · Slides 13–17]{.eyebrow}
+
+[What Parts 1–2 left open.]{.left} They answer *how much* to hand over. They say nothing about *what to build*.
+
+A system anywhere on the scale — a router, a multi-step agent, a fleet — is assembled from the same four parts. This part names them and states what each is responsible for, and what fails when one is missing.
+
+**It answers:** what an agent is made of.
+
 ## The Four Pillars
 
-[Part 3 · The four core components]{.part}
 
 OpenAI's guide: in its most fundamental form an agent consists of **three** core components.
 
@@ -247,9 +280,18 @@ Ambiguity here surfaces as erratic decisions, because the instructions are what 
 
 Memory is what makes iteration *iteration* rather than repetition.
 
+## Workflow Patterns {.divider}
+
+[Part 4 · Slides 18–23]{.eyebrow}
+
+[Why this comes before the agent patterns.]{.left} Part 2 ended with a rule — hand over only as much as the task requires — and Anthropic states it more bluntly still: find the simplest solution possible, which may mean not building an agentic system at all.
+
+That rule is unusable while the only alternative on offer is a straight line of calls. This part is the vocabulary of the low-autonomy side: five arrangements in which **the code, not the model, decides the order**.
+
+**It answers:** everything worth building *before* handing over control flow.
+
 ## The Simplest Solution Possible
 
-[Part 4 · Anthropic's five workflow patterns]{.part}
 
 Anthropic's governing rule, stated before any pattern:
 
@@ -316,9 +358,18 @@ Anthropic's governing rule, stated before any pattern:
 
 **Anthropic's examples.** Literary translation, where nuances the translator missed can be named by an evaluator. Complex multi-round search, where the evaluator decides whether another round is warranted.
 
+## Agentic Design Patterns {.divider}
+
+[Part 5 · Slides 24–28]{.eyebrow}
+
+[How this differs from Part 4.]{.left} Part 4 arranged calls, with the code holding the order. This part is the other axis: what a system is made able to **do** once the model does hold some of the flow — judge its own output, reach outside the weights, plan a route, divide the work.
+
+Composition and capability are independent, and production systems combine them freely.
+
+**It answers:** what capability to engineer, once autonomy has been granted. These four are also this course's syllabus — Ch. 3, 5, 6, 7.
+
 ## Agentic Design Patterns
 
-[Part 5 · Ng's four design patterns]{.part}
 
 Anthropic's five patterns describe how calls are *composed*. Ng's four describe what a system is made to *do* — capabilities engineered on top of a model rather than waited for from the next one.
 
@@ -380,9 +431,18 @@ Its second trigger is **complex logic** — when a prompt accumulates so many if
 
 **The evidence.** Ng cites Multiagent Debate (Du et al., 2023): biographies 66.0 → 73.8, MMLU 63.9 → 71.1, chess move 29.3 → 45.2.
 
+## Evidence and the Conditions for Success {.divider}
+
+[Part 6 · Slides 29–30]{.eyebrow}
+
+[What is still missing.]{.left} Parts 3 to 5 are design vocabulary, and vocabulary proves nothing.
+
+Two questions remain. Where has any of this actually paid off with users — and what keeps an autonomous loop from running away, or from reporting a success it never achieved?
+
+**It answers:** the evidence, and the boundary that makes the loop safe to run.
+
 ## Domain Evidence
 
-[Part 6 · Evidence and the conditions for success]{.part}
 
 Anthropic reports two domains where agents have demonstrated value with customers.
 
