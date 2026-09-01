@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 470" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="bg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f7d54"/>
+    </marker>
+    <marker id="br" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b4433a"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1060" height="470" fill="white"/>
+
+  <!-- the loop -->
+  <rect x="250" y="60" width="180" height="52" rx="6" fill="white" stroke="#444" stroke-width="1.9"/>
+  <text x="340" y="92" text-anchor="middle" font-size="14.5" fill="#222">Model generates</text>
+
+  <rect x="250" y="172" width="180" height="52" rx="6" fill="white" stroke="#444" stroke-width="1.9"/>
+  <text x="340" y="197" text-anchor="middle" font-size="14.5" fill="#222">Code interprets</text>
+  <text x="340" y="215" text-anchor="middle" font-size="11.5" fill="#777">action, or final answer</text>
+
+  <rect x="250" y="284" width="180" height="52" rx="6" fill="white" stroke="#444" stroke-width="1.9"/>
+  <text x="340" y="316" text-anchor="middle" font-size="14.5" fill="#222">Execute</text>
+
+  <line x1="340" y1="114" x2="340" y2="168" stroke="#555" stroke-width="1.8" marker-end="url(#b)"/>
+  <line x1="340" y1="226" x2="340" y2="280" stroke="#555" stroke-width="1.8" marker-end="url(#b)"/>
+  <path d="M 248 310 C 170 310 170 86 248 86" fill="none" stroke="#555" stroke-width="1.8" marker-end="url(#b)"/>
+  <text x="150" y="192" text-anchor="end" font-size="13" fill="#555">append</text>
+  <text x="150" y="210" text-anchor="end" font-size="13" fill="#555">result</text>
+
+  <!-- ground truth -->
+  <rect x="520" y="272" width="230" height="76" rx="6" fill="#eef5ef" stroke="#3f7d54" stroke-width="1.6"/>
+  <text x="635" y="298" text-anchor="middle" font-size="14" font-weight="600" fill="#2c5c3d">Environment</text>
+  <text x="635" y="318" text-anchor="middle" font-size="12" fill="#3f7d54">tool result &#183; code output</text>
+  <text x="635" y="336" text-anchor="middle" font-size="12" fill="#3f7d54">API response &#183; test log</text>
+  <line x1="432" y1="310" x2="514" y2="310" stroke="#3f7d54" stroke-width="1.8" marker-end="url(#bg)"/>
+  <path d="M 635 270 C 635 200 470 200 470 200" fill="none" stroke="#3f7d54" stroke-width="1.8" marker-end="url(#bg)"/>
+
+  <text x="790" y="292" font-size="13.5" font-weight="600" fill="#2c5c3d">Ground truth</text>
+  <text x="790" y="314" font-size="12.5" fill="#555">Progress is judged from what</text>
+  <text x="790" y="332" font-size="12.5" fill="#555">came back, never from the</text>
+  <text x="790" y="350" font-size="12.5" fill="#555">model&#8217;s account of itself.</text>
+
+  <!-- stopping conditions -->
+  <rect x="520" y="60" width="230" height="98" rx="6" fill="#fdf0ef" stroke="#b4433a" stroke-width="1.6"/>
+  <text x="635" y="86" text-anchor="middle" font-size="14" font-weight="600" fill="#8f332c">Stopping conditions</text>
+  <text x="536" y="110" font-size="12.5" fill="#b4433a">&#183; final answer produced</text>
+  <text x="536" y="130" font-size="12.5" fill="#b4433a">&#183; tool reports success</text>
+  <text x="536" y="150" font-size="12.5" fill="#b4433a">&#183; max iterations reached</text>
+  <line x1="432" y1="100" x2="514" y2="100" stroke="#b4433a" stroke-width="1.8" marker-end="url(#br)"/>
+
+  <text x="790" y="86" font-size="13.5" font-weight="600" fill="#8f332c">Termination is not free</text>
+  <text x="790" y="108" font-size="12.5" fill="#555">The loop has no reason of its own</text>
+  <text x="790" y="126" font-size="12.5" fill="#555">to end. A run that cannot finish</text>
+  <text x="790" y="144" font-size="12.5" fill="#555">must stop and report, not spin.</text>
+
+  <text x="530" y="440" text-anchor="middle" font-size="12" fill="#888">Loop, ground truth, and stopping conditions: Anthropic, &#8220;Building Effective Agents&#8221; (2024)</text>
+</svg>

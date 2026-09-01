@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="a4b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c26a3a"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1100" height="470" fill="white"/>
+  <line x1="530" y1="40" x2="530" y2="440" stroke="#ddd" stroke-width="1.5"/>
+
+  <!-- LEFT: zero-shot -->
+  <text x="60" y="42" font-size="17" font-weight="600" fill="#222">Zero-shot call</text>
+  <text x="60" y="66" font-size="13" fill="#777">"write the essay from start to finish, without using backspace"</text>
+
+  <rect x="60" y="96" width="150" height="52" rx="6" fill="#eef2f7" stroke="#8fa8c4"/>
+  <text x="135" y="127" text-anchor="middle" font-size="14" fill="#222">Task</text>
+  <line x1="212" y1="122" x2="278" y2="122" stroke="#555" stroke-width="1.8" marker-end="url(#a4)"/>
+
+  <rect x="280" y="96" width="150" height="52" rx="6" fill="white" stroke="#444" stroke-width="1.8"/>
+  <text x="355" y="127" text-anchor="middle" font-size="14" fill="#222">LLM</text>
+  <line x1="355" y1="150" x2="355" y2="196" stroke="#555" stroke-width="1.8" marker-end="url(#a4)"/>
+
+  <rect x="280" y="198" width="150" height="52" rx="6" fill="#fdf3ec" stroke="#c9a184"/>
+  <text x="355" y="229" text-anchor="middle" font-size="14" fill="#222">Final answer</text>
+
+  <text x="60" y="308" font-size="13.5" fill="#555">One pass. Whatever goes wrong in the middle —</text>
+  <text x="60" y="330" font-size="13.5" fill="#555">a mis-step, an invented fact — reaches the output</text>
+  <text x="60" y="352" font-size="13.5" fill="#555">unchanged, because nothing reads it before the user does.</text>
+
+  <!-- RIGHT: agentic workflow -->
+  <text x="580" y="42" font-size="17" font-weight="600" fill="#222">Agentic workflow</text>
+  <text x="580" y="66" font-size="13" fill="#777">multiple steps, each one able to change what happens next</text>
+
+  <g font-size="13.5" fill="#222">
+    <rect x="580" y="88" width="330" height="38" rx="6" fill="#eef2f7" stroke="#8fa8c4"/>
+    <text x="598" y="112">1 &#183; Write an essay outline on topic X</text>
+    <line x1="745" y1="128" x2="745" y2="146" stroke="#555" stroke-width="1.6" marker-end="url(#a4)"/>
+
+    <rect x="580" y="148" width="330" height="38" rx="6" fill="white" stroke="#8fa8c4"/>
+    <text x="598" y="172">2 &#183; Do you need any web research?</text>
+    <line x1="745" y1="188" x2="745" y2="206" stroke="#555" stroke-width="1.6" marker-end="url(#a4)"/>
+
+    <rect x="580" y="208" width="330" height="38" rx="6" fill="white" stroke="#8fa8c4"/>
+    <text x="598" y="232">3 &#183; Write a first draft</text>
+    <line x1="745" y1="248" x2="745" y2="266" stroke="#555" stroke-width="1.6" marker-end="url(#a4)"/>
+
+    <rect x="580" y="268" width="330" height="38" rx="6" fill="white" stroke="#8fa8c4"/>
+    <text x="598" y="292">4 &#183; Consider what needs revision or more research</text>
+    <line x1="745" y1="308" x2="745" y2="326" stroke="#555" stroke-width="1.6" marker-end="url(#a4)"/>
+
+    <rect x="580" y="328" width="330" height="38" rx="6" fill="#fdf3ec" stroke="#c9a184"/>
+    <text x="598" y="352">5 &#183; Revise your draft</text>
+  </g>
+
+  <!-- revise loop -->
+  <path d="M 918 347 C 985 347 985 107 918 107" fill="none" stroke="#c26a3a" stroke-width="1.8" marker-end="url(#a4b)"/>
+  <text x="998" y="222" font-size="13" fill="#c26a3a">repeat</text>
+  <text x="998" y="240" font-size="13" fill="#c26a3a">as needed</text>
+
+  <text x="580" y="404" font-size="13.5" fill="#555">Steps 2 and 4 are where the model reads its own work and</text>
+  <text x="580" y="426" font-size="13.5" fill="#555">changes the plan. That is the backspace key.</text>
+
+  <text x="550" y="462" text-anchor="middle" font-size="12" fill="#888">After Andrew Ng, &#8220;Agentic AI&#8221; (DeepLearning.AI), Module 1</text>
+</svg>
