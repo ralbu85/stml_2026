@@ -5,6 +5,11 @@ so every claim can be checked without leaving the folder. None of it is
 course-authored; each file carries a provenance header with its URL and the date
 it was taken. Do not edit these — they are the record of what the originals say.
 
+The copies are local-only: this repository is public (Colab opens the lab
+notebooks from it), and republishing the full texts is not ours to do. Only this
+README is committed. To rebuild the copies, use the regeneration commands at the
+bottom of this file; the zip bundle (`../week01-reference.zip`) also holds them all.
+
 | File | Source | What Chapter 1 takes from it |
 |---|---|---|
 | `anthropic-building-effective-agents.md` | Anthropic, *Building Effective Agents* (Dec 2024) — [link](https://www.anthropic.com/engineering/building-effective-agents) | The *agentic systems* umbrella and the workflow/agent definitions, quoted (§1.2). The agent-loop properties — environmental ground truth, stopping conditions (§1.6, Figure 1.5). The "simplest solution possible" rule (§1.4). All five workflow patterns with their structures and examples (§1.4, Figure 1.4). Appendix 1's two domains, customer support and coding (§1.6). |

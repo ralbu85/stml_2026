@@ -52,9 +52,11 @@ lectures/week*/notes_files/
 lectures/week*/_review/slides.pdf
 lectures/week*/_review/slides-overview-*.png
 
-# Third-party source copies in lectures/week*/reference/ are tracked on purpose:
-# they are the record the chapter is checked against, and materials/repos/ is not.
-# The one exception is the 7 MB OpenAI PDF; its text extraction is tracked instead.
-lectures/week*/reference/*.pdf
+# Third-party source copies in lectures/week*/reference/ stay local-only: the
+# repo is public (Colab opens notebooks from it), and republishing full texts
+# (Anthropic/OpenAI articles, DeepLearning.AI learner slides) is not ours to do.
+# Only README.md — the course-authored source map with re-fetch commands — is tracked.
+lectures/week*/reference/*
+!lectures/week*/reference/README.md
 # Zipped bundle of the reference folder (rebuild: cd lectures/weekNN && zip -r weekNN-reference.zip reference/)
 lectures/week*/week*-reference.zip
