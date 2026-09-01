@@ -26,13 +26,11 @@ format:
           .reveal li + li { margin-top: .22em; }
           .reveal table { font-size: .88em; }
           .reveal section img { max-height: 62vh; width: auto; }
-          .reveal .divider { padding-top: 6%; }
-          .reveal .divider h2 { font-size: 1.75em; color: #1a3a5c;
-            border-bottom: 3px solid #1a3a5c; padding-bottom: .22em; margin-bottom: .55em; }
+          .reveal .divider { display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; height: 100%; }
+          .reveal .divider h2 { font-size: 2.1em; color: #1a3a5c; border: none; margin-bottom: .3em; }
           .reveal .divider .eyebrow { color: #6b7f96; font-weight: 600;
-            letter-spacing: .14em; font-size: .78em; text-transform: uppercase; }
-          .reveal .divider .left { color: #8a6a4a; }
-          .reveal .divider p { font-size: 1.02em; }
+            letter-spacing: .14em; font-size: .85em; text-transform: uppercase; margin-bottom: .5em; }
         </style>
 ---
 
@@ -67,12 +65,6 @@ Parts 1 and 2 settle what an agent is. Parts 3 to 5 are the construction vocabul
 ## The Agentic Paradigm {.divider}
 
 [Part 1 · Slides 1–7]{.eyebrow}
-
-[Where this starts.]{.left} Two products built on the same model do entirely different work. The difference is not in the weights, so it has to be in the program around them.
-
-This part establishes what that program does, and why a single call is not enough to do it — the shift from asking for a finished answer to executing a task in steps.
-
-**It answers:** what changes when work is done across passes rather than in one.
 
 ## Deep Research versus Claude Code
 
@@ -132,12 +124,6 @@ What it buys in design terms: the question stops being *"is this an agent?"* and
 ## The Definition and the Autonomy Spectrum {.divider}
 
 [Part 2 · Slides 8–12]{.eyebrow}
-
-[What Part 1 left open.]{.left} Steps help — but Part 1 never said *who decides what the next step is*. That decision is the entire design question, and the industry does not even agree on what to call a system that makes it.
-
-This part supplies the axis (control flow), a scale to place a system on it, the boundary below which nothing is an agent, and a way to read the right level off the task instead of off preference.
-
-**It answers:** how much authority to hand over, and how to tell.
 
 ## Control Flow
 
@@ -212,12 +198,6 @@ A task on the left of all three gains nothing from an agent. The further right i
 
 [Part 3 · Slides 13–17]{.eyebrow}
 
-[What Parts 1–2 left open.]{.left} They answer *how much* to hand over. They say nothing about *what to build*.
-
-A system anywhere on the scale — a router, a multi-step agent, a fleet — is assembled from the same four parts. This part names them and states what each is responsible for, and what fails when one is missing.
-
-**It answers:** what an agent is made of.
-
 ## The Four Pillars
 
 
@@ -283,12 +263,6 @@ Memory is what makes iteration *iteration* rather than repetition.
 ## Workflow Patterns {.divider}
 
 [Part 4 · Slides 18–23]{.eyebrow}
-
-[Why this comes before the agent patterns.]{.left} Part 2 ended with a rule — hand over only as much as the task requires — and Anthropic states it more bluntly still: find the simplest solution possible, which may mean not building an agentic system at all.
-
-That rule is unusable while the only alternative on offer is a straight line of calls. This part is the vocabulary of the low-autonomy side: five arrangements in which **the code, not the model, decides the order**.
-
-**It answers:** everything worth building *before* handing over control flow.
 
 ## The Simplest Solution Possible
 
@@ -362,14 +336,7 @@ Anthropic's governing rule, stated before any pattern:
 
 [Part 5 · Slides 24–28]{.eyebrow}
 
-[How this differs from Part 4.]{.left} Part 4 arranged calls, with the code holding the order. This part is the other axis: what a system is made able to **do** once the model does hold some of the flow — judge its own output, reach outside the weights, plan a route, divide the work.
-
-Composition and capability are independent, and production systems combine them freely.
-
-**It answers:** what capability to engineer, once autonomy has been granted. These four are also this course's syllabus — Ch. 3, 5, 6, 7.
-
 ## Agentic Design Patterns
-
 
 Anthropic's five patterns describe how calls are *composed*. Ng's four describe what a system is made to *do* — capabilities engineered on top of a model rather than waited for from the next one.
 
@@ -434,12 +401,6 @@ Its second trigger is **complex logic** — when a prompt accumulates so many if
 ## Evidence and the Conditions for Success {.divider}
 
 [Part 6 · Slides 29–30]{.eyebrow}
-
-[What is still missing.]{.left} Parts 3 to 5 are design vocabulary, and vocabulary proves nothing.
-
-Two questions remain. Where has any of this actually paid off with users — and what keeps an autonomous loop from running away, or from reporting a success it never achieved?
-
-**It answers:** the evidence, and the boundary that makes the loop safe to run.
 
 ## Domain Evidence
 
