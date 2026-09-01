@@ -7,7 +7,7 @@ title: "Week 02 — Prompting & Reasoning"
 | Lecture notes | published before class |
 | Slides | published before class |
 | Lab | published before class |
-| Papers | [Chain-of-Thought Prompting (Wei et al., 2022) — first student presentation](https://arxiv.org/abs/2201.11903) ([PDF](https://arxiv.org/pdf/2201.11903)) |
+| Papers | [Chain-of-Thought Prompting (Wei et al., 2022)](https://arxiv.org/abs/2201.11903) ([PDF](https://arxiv.org/pdf/2201.11903)) · [Self-Consistency (Wang et al., 2022)](https://arxiv.org/abs/2203.11171) ([PDF](https://arxiv.org/pdf/2203.11171)) — first student presentations |
 
 ## This week
 

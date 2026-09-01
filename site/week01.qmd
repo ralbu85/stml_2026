@@ -23,4 +23,4 @@ Click *Open in Colab* in the table above — the notebook opens directly in Cola
 
 ## Presentations
 
-No paper presentation in Week 1. Presenter slots are assigned during orientation, and presentations begin in Week 2 with Chain-of-Thought ([Wei et al., 2022](https://arxiv.org/abs/2201.11903) ([PDF](https://arxiv.org/pdf/2201.11903))). Before your slot, read the [presentation guide](presentations.qmd) and study the sample deck linked there.
+No paper presentation in Week 1. Presenter slots are assigned during orientation, and presentations begin in Week 2 with Chain-of-Thought ([Wei et al., 2022](https://arxiv.org/abs/2201.11903) ([PDF](https://arxiv.org/pdf/2201.11903))) and Self-Consistency ([Wang et al., 2022](https://arxiv.org/abs/2203.11171) ([PDF](https://arxiv.org/pdf/2203.11171))). Before your slot, read the [presentation guide](presentations.qmd) and study the sample deck linked there.

@@ -121,7 +121,7 @@ Each question is answerable with this chapter's concepts; section numbers point 
 4. The Apple Remote failure of 2.4 keeps its flawless step structure even when the prompt adds "verify each step before continuing." Why can no added instruction fix this failure class, and what is the smallest addition to the system — not to the prompt — that can (→ Ch. 3)?
 5. Your chat product's thinking toggle makes answers slower and costlier, and a product manager asks whether it should be on by default. Using 2.2 and 2.6, state what the toggle buys, for which question types it buys nothing, and what measurement would settle the default (→ 5.8).
 
-**Presentation.** CoT (Wei et al., 2022) — the improvement obtainable by prompting alone, and the emergence curve across model scales. First student presentation week; one paper this week.
+**Presentation.** First student presentation week; two papers. CoT (Wei et al., 2022) — the improvement obtainable by prompting alone, and the emergence curve across model scales. Self-Consistency (Wang et al., 2022) — sampling several reasoning paths and voting (§2.5): the measured accuracy gains, and what N samples cost.
 
 **Lab.** `W2_lab_prompting.ipynb` — adapted nearly as given from Anthropic's *Prompt Engineering Interactive Tutorial* (ch. 6–7) and *Prompt Evaluations* course (lesson 3): observe thinking-step-by-step flips on the source's own examples, then improve a code-graded eval from baseline through a format fix to your own chain-of-thought prompt (target ≥ 11/12), solve the few-shot email-classification exercise (4/4), and close with self-consistency (Wang et al., 2022) on the hardest eval item. Reference answers: `labs/checkpoints/week02/solution.py`.
 

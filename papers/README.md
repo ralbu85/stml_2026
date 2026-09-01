@@ -1,6 +1,6 @@
 # 발표 논문 PDF — 검증 매니페스트
 
-`docs/syllabus.md`(개념 의존성 순서 v5) 발표 논문 전체 — 필수 27 + 선택읽기 11 = **38편**.
+`docs/syllabus.md`(개념 의존성 순서 v5) 발표 논문 전체 — 필수 28 + 선택읽기 11 = **39편** (2026-09-01 수강 인원 증가로 W2에 Self-Consistency 추가).
 **검증:** 각 arXiv ID의 실제 초록 제목 대조 → **전량 일치, 다운로드 실패 0**. 재현: `python3 scripts/fetch_papers.py`.
 
 > PDF는 `.gitignore`(용량 큼, arXiv 재다운로드 가능). 이 목록과 스크립트만 버전관리.
@@ -8,6 +8,7 @@
 | 주 | 파일 | 논문 | arXiv |
 |---|---|---|---|
 | 2 | `W02_Chain-of-Thought_2201.11903.pdf` | Chain-of-Thought Prompting Elicits Reasoning in LLMs | [2201.11903](https://arxiv.org/abs/2201.11903) |
+| 2 | `W02_Self-Consistency_2203.11171.pdf` | Self-Consistency Improves Chain of Thought Reasoning in LMs | [2203.11171](https://arxiv.org/abs/2203.11171) |
 | 3 | `W03_STaR_2203.14465.pdf` | STaR: Bootstrapping Reasoning With Reasoning | [2203.14465](https://arxiv.org/abs/2203.14465) |
 | 3 | `W03_DeepSeek-R1_2501.12948.pdf` | DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL | [2501.12948](https://arxiv.org/abs/2501.12948) |
 | 4 | `W04_Toolformer_2302.04761.pdf` | Toolformer: Language Models Can Teach Themselves to Use Tools | [2302.04761](https://arxiv.org/abs/2302.04761) |

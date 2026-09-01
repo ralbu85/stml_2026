@@ -8,6 +8,7 @@ os.makedirs(OUT, exist_ok=True)
 # 순서: 개념 의존성 기준 v4 재조정 (docs/syllabus.md 참고)
 PAPERS = [
  (2,True ,"Chain-of-Thought","2201.11903","chain-of-thought prompting elicits"),
+ (2,True ,"Self-Consistency","2203.11171","self-consistency improves chain of thought"),
  (3,True ,"STaR","2203.14465","bootstrapping reasoning"),
  (3,True ,"DeepSeek-R1","2501.12948","incentivizing reasoning"),
  (4,True ,"Toolformer","2302.04761","toolformer"),
