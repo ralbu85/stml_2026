@@ -26,8 +26,12 @@ format:
           .reveal li + li { margin-top: .22em; }
           .reveal table { font-size: .88em; }
           .reveal section img { max-height: 62vh; width: auto; }
-          .reveal .divider { display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center; height: 100%; }
+          /* !important needed: reveal.js's own .reveal .slides > section.present
+             rule outranks a plain .divider class and forces display:block back. */
+          .reveal .slides > section.divider {
+            display: flex !important; flex-direction: column !important;
+            justify-content: center !important; align-items: center !important;
+            text-align: center !important; height: 100% !important; }
           .reveal .divider h2 { font-size: 2.1em; color: #1a3a5c; border: none; margin-bottom: .3em; }
           .reveal .divider .eyebrow { color: #6b7f96; font-weight: 600;
             letter-spacing: .14em; font-size: .85em; text-transform: uppercase; margin-bottom: .5em; }
