@@ -65,17 +65,26 @@ Week 02
 [Figure 2.1 — `figures/fig-2-1-cot-workspace.svg`]
 Caption: Under A, no token stores the intermediate value, so one prediction must carry both calculations. Under B, the written "3" is read back from the text and each step is one operation.
 
-## 11. The per-prediction limit
-- Empirical fact: the number of sequential operations one prediction can perform is bounded. Failure frequency rises with the number of steps and digits.
-- Failure form: prediction emits the most probable token whether or not the computation is complete. An incomplete computation yields an answer-shaped number built from the digits in the problem (27 from 23 and 6).
+## 11. Capacity of a single prediction
+- Question: how many operations can one prediction complete when no intermediate value may be written?
+- Measurement: the same two prompts on problems of increasing size (gpt-4o-mini).
+
+> 23 − 20 + 6                          answer only: correct
+> 47 × 38 − 519 + 284, six problems     answer only: 0 of 6      written solution first: 6 of 6
+
+- Result: the number of operations one prediction can complete is bounded, and the bound is reached once a multiplication is involved.
+- Failure form: prediction emits the most probable token whether or not the computation is complete. An unfinished computation therefore returns a number, not a refusal: expected 1551, returned 1516.
 - Proposed causes: (i) the depth of computation within one forward pass is bounded by the number of layers; (ii) answer-only solution text is rare in training data. The two are compatible.
-- What the remainder requires: the limit is measured, and writing intermediate values circumvents it.
 
 ## 12. Hallucination
 - Definition: hallucination = generation of content that is plausible but not factual.
-- Mechanism: the same as the computation limit. When the required fact or computation is unavailable, prediction still emits the most probable continuation, and that continuation has the form of an answer.
-- Two symptoms, one mechanism: a wrong number (27) and a confident false premise are both "most probable token, regardless of completion."
-- Scope: prompting repairs the computation limit (next section). It does not repair hallucination (returned to after chain-of-thought).
+- Mechanism: prediction does not stop when the required computation is unfinished, and it does not stop when the required fact is absent. In both cases the most probable continuation is emitted, and it has the form of an answer.
+
+> unfinished computation → 1516 in place of 1551
+> absent fact           → a plausible name in place of "I do not know"
+
+- Consequence: the output carries no signal of which case produced it. A wrong number and an invented fact are equally fluent and equally confident.
+- Scope: writing the solution raises the bound on the computation limit, as the next section shows. It gives the model no access to a fact it does not have, so hallucination is untouched by it.
 
 ---
 
@@ -117,6 +126,7 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 > Example:    "Note: … / DATE: 2026-06-09"  → "DATE: 2026-03-10"
 
 - Emergence: the CoT effect appears only above a model-scale threshold; in small models it is absent or harmful.
+- Bound: writing the solution moves the per-prediction bound outward, it does not remove it. Each written step is itself one prediction. With three-digit factors in the same six problems, the written solution scores 1 of 6.
 
 ---
 
