@@ -1,10 +1,10 @@
 # Week 02 — Slide content
 
 Format: white background, section-divider slides, `Label: statement` bullets, verbatim prompts in
-quote blocks. Source of truth is `notes.en.md` (Chapter 2). Theory slot 30 min → 29 slides.
+quote blocks. Source of truth is `notes.en.md` (Chapter 2). Theory slot 30 min → 30 slides.
 Speaker cues are in `<!-- -->` comments and are not slide text.
 
-Figures: `figures/fig-2-1-cot-workspace.svg` (slide 10), `figures/fig-2-2-self-consistency.svg` (slide 23).
+Figures: `figures/fig-2-1-cot-workspace.svg` (slide 10), `figures/fig-2-2-self-consistency.svg` (slide 24).
 
 ---
 
@@ -95,7 +95,24 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 
 - Property: the instruction elicits a solution but does not specify its granularity or the format of the final line. "Step by step" admits many layouts.
 
-## 15. Form 2 — Worked examples (few-shot CoT)
+## 15. In-context learning
+- Definition: in-context learning (ICL) = the model's output follows the pattern exhibited by examples placed in the prompt, with no change to the weights. The examples are read as text at inference time; nothing is retained after the response.
+- Contrast with fine-tuning: fine-tuning changes the weights and persists across calls. In-context learning changes only the prompt and lasts for one call.
+
+> Prompt without an example: Will Santa bring me presents on Christmas?
+> Output: Whether Santa brings you presents on Christmas often depends on your beliefs and traditions. If you celebrate Christmas and believe in Santa, many people enjoy the magic of the season …
+>
+> Prompt with one example:
+>   Q: Is the tooth fairy real?
+>   A: Of course, sweetie. Wrap up your tooth and put it under your pillow tonight. There might be something waiting for you in the morning.
+>   Q: Will Santa bring me presents on Christmas?
+> Output: A: Absolutely! If you've been good this year, Santa will definitely have some surprises for you under the tree.
+
+- What an example fixes: format, length, tone, label set, and the procedure of the answer. One example changed all of these; no instruction described any of them.
+- What an example does not fix: knowledge. The model imitates the example's form, including its errors, and learns no new fact from it.
+- Counting: zero-shot = no examples, one-shot = one, few-shot = several. Few-shot CoT (next slide) is in-context learning applied to the solution process.
+
+## 16. Form 2 — Worked examples (few-shot CoT)
 - Procedure: prepend question–solution pairs before the question.
 
 > Q: Roger has 5 tennis balls. He buys 2 more cans of 3 balls each. How many balls does he have?
@@ -106,10 +123,9 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 >
 > Output: 23 − 20 = 3. 3 + 6 = 9. ANSWER: 9
 
-- Definition: in-context learning = the property that examples in the prompt determine the output's format and procedure with no weight update.
 - Property: the example fixes what the instruction leaves open: the step granularity, the wording of each step, and the exact final line.
 
-## 16. Instruction versus example
+## 17. Instruction versus example
 - Difference: an instruction names the requirement; an example exhibits it. The example therefore pins format and procedure that the instruction underspecifies.
 
 > Instruction: "Answer with the date."      → "The final date is March 10th, 2026."
@@ -120,9 +136,9 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 
 ---
 
-## 17. [divider] The Limit of Chain-of-Thought
+## 18. [divider] The Limit of Chain-of-Thought
 
-## 18. Hallucination: coherent reasoning on a false premise
+## 19. Hallucination: coherent reasoning on a false premise
 - Definition: hallucination = generation of content that is plausible but not factual.
 - Mechanism: prediction does not stop when a required fact is absent, exactly as it does not stop when a computation is unfinished. The most probable continuation is emitted, and it has the form of an answer.
 - Question: "Aside from the Apple Remote, what other device can control the program the Apple Remote was originally designed to interact with?"
@@ -131,7 +147,7 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 
 - Error: the first premise is false. The program was Front Row; the correct answer is keyboard function keys. Every step after the premise is valid.
 
-## 19. Why prompting cannot repair it
+## 20. Why prompting cannot repair it
 - Cause: CoT draws only on knowledge stored in the parameters. No prompt gives the model access to an external fact.
 - Test: adding "Verify each step before continuing" produces a more elaborate chain on the same false premise.
 
@@ -143,41 +159,41 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 
 ---
 
-## 20. [divider] Self-Consistency
+## 21. [divider] Self-Consistency
 
-## 21. One response as one sample
+## 22. One response as one sample
 - Sampling: an LLM draws each token from a probability distribution. Temperature = the parameter controlling the randomness of that draw; at temperature 0 the most probable token is taken.
 - Consequence: at temperature > 0, repeated runs of the same prompt follow different solution paths and may reach different answers.
 - Interpretation: one response is one sample from the set of possible reasoning paths. A wrong sample does not imply that the next sample is wrong.
 
 > Same CoT prompt, temperature 1.0, five runs → final answers: 9, 27, 9, 8, 9
 
-## 22. Majority voting — Self-Consistency
+## 23. Majority voting — Self-Consistency
 - Definition: self-consistency = sample N solutions at temperature > 0, extract the final answer of each, and return the majority answer.
 - Justification: P(a | q) = Σ_r P(a | r, q) P(r | q). A single response evaluates one term (one path r). The vote over samples estimates the sum over paths.
 - Empirical pattern: correct answers are reached by different paths that converge on one value; wrong answers scatter across distinct values.
 
-## 23. Self-consistency (figure)
+## 24. Self-consistency (figure)
 [Figure 2.2 — `figures/fig-2-2-self-consistency.svg`]
 Caption: Paths sampled from the same question. Correct paths converge on one value, wrong paths scatter, and the vote returns the convergent value.
 
-## 24. Precondition of the vote
+## 25. Precondition of the vote
 - Requirement: the final answer must be discrete and extractable (a number, a choice, a short string) so that equal answers can be counted.
 - Failure case: free-form text. Two 200-word abstracts are never identical; the vote has nothing to count.
 - Replacement: selection among non-discrete outputs requires a scoring function, a verifier.
 
 ---
 
-## 25. [divider] Test-Time Compute
+## 26. [divider] Test-Time Compute
 
-## 26. Accounting in predictions
+## 27. Accounting in predictions
 - Count: CoT lengthens one response by one prediction per solution token. Self-consistency multiplies the number of responses by N.
 - Cost: the cost of one prediction is approximately constant, so cost is proportional to the number of predictions.
 - Definition: test-time compute = accuracy obtained by increasing the number of predictions at inference time, with the weights unchanged. The general principle is inference-time scaling.
 
 > One question, gpt-4o-mini: answer-only = 1 completion token; chain-of-thought = 75; five CoT samples = 375.
 
-## 27. Methods
+## 28. Methods
 | Method | Additional predictions |
 |---|---|
 | Chain-of-thought | one longer response: one prediction per solution token |
@@ -187,14 +203,14 @@ Caption: Paths sampled from the same question. Correct paths converge on one val
 
 - Common principle: inference computation is exchanged for accuracy. Best-of-N and tree search additionally require a verifier.
 
-## 28. Test-time compute in deployed systems
+## 29. Test-time compute in deployed systems
 - Reasoning modes (OpenAI o-series, Claude extended thinking, Gemini thinking): the written solution of this chapter generated inside the model and billed per token.
 - Parallel-reasoning tiers (o1 pro, Gemini Deep Think, Grok Heavy): several reasoning lines generated in parallel and one selected, that is, self-consistency or best-of-N.
 - Cost: N samples multiply cost and latency by N. The design variable is which queries receive N > 1.
 
 ---
 
-## 29. Summary
+## 30. Summary
 - Observation: the same model answers the same problem correctly or incorrectly depending on whether the prompt permits a written solution before the answer.
 - Cause: the model's only workspace is the text it generates; an intermediate value exists only once written. Answer-only prompting forces every operation into one prediction, whose capacity is bounded.
 - Chain-of-thought: an instruction or worked examples induce the written solution. Examples additionally fix the granularity and format that an instruction leaves open.
@@ -202,4 +218,4 @@ Caption: Paths sampled from the same question. Correct paths converge on one val
 - Self-consistency: one response is one sampled path. Sampling N paths and taking the majority of discrete answers estimates the answer probability summed over paths.
 - Test-time compute: chain-of-thought and self-consistency both buy accuracy with additional predictions at inference time, with the weights unchanged.
 
-<!-- Timing: slides 3–11 ≈ 10 min, 12–19 ≈ 10 min, 20–29 ≈ 10 min. Slide 18 must be kept even if time runs short: tools repair hallucination, prompting does not. -->
+<!-- Timing: slides 3–11 ≈ 10 min, 12–20 ≈ 10 min, 21–30 ≈ 10 min. Slide 19 must be kept even if time runs short: tools repair hallucination, prompting does not. -->
