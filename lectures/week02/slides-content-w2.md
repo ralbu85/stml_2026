@@ -202,4 +202,4 @@ Caption: Paths sampled from the same question. Correct paths converge on one val
 - Self-consistency: one response is one sampled path. Sampling N paths and taking the majority of discrete answers estimates the answer probability summed over paths.
 - Test-time compute: chain-of-thought and self-consistency both buy accuracy with additional predictions at inference time, with the weights unchanged.
 
-<!-- Timing: slides 3–11 ≈ 10 min, 12–19 ≈ 10 min, 20–29 ≈ 10 min. Slide 19 must be kept even if time runs short: tools repair hallucination, prompting does not. -->
+<!-- Timing: slides 3–11 ≈ 10 min, 12–19 ≈ 10 min, 20–29 ≈ 10 min. Slide 18 must be kept even if time runs short: tools repair hallucination, prompting does not. -->
