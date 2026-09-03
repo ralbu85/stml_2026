@@ -74,7 +74,7 @@ def _animal_reply(text, temperature):
 
 
 _WAREHOUSE_RE = re.compile(r"holds (\d+) crates with (\d+) items each. (\d+) items are shipped out and (\d+) items")
-_ANSWER_ONLY_OK = {"238", "154"}   # crates values the direct answer happens to get right
+_ANSWER_ONLY_OK = set()   # live 2026-09-03: answer-only got 0/6 on the 2x2 problems
 
 
 def _warehouse_reply(text):
