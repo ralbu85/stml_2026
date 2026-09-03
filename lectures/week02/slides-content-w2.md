@@ -1,10 +1,10 @@
 # Week 02 — Slide content
 
 Format: white background, section-divider slides, `Label: statement` bullets, verbatim prompts in
-quote blocks. Source of truth is `notes.en.md` (Chapter 2). Theory slot 30 min → 30 slides.
+quote blocks. Source of truth is `notes.en.md` (Chapter 2). Theory slot 30 min → 29 slides.
 Speaker cues are in `<!-- -->` comments and are not slide text.
 
-Figures: `figures/fig-2-1-cot-workspace.svg` (slide 10), `figures/fig-2-2-self-consistency.svg` (slide 24).
+Figures: `figures/fig-2-1-cot-workspace.svg` (slide 10), `figures/fig-2-2-self-consistency.svg` (slide 23).
 
 ---
 
@@ -55,47 +55,37 @@ Week 02
 - Consequence: an intermediate value exists for the model only if it has been written into the text.
 - Contrast: a person can hold "3" in working memory while continuing a sentence. The model has no working memory apart from the text it writes.
 
-## 9. The apple problem under this mechanism
-- Requirement: compute 23 − 20 = 3, retain 3, then compute 3 + 6.
-- Prompt B: once "23 − 20 = 3" is written, the value 3 is in the text. The prediction of "9" reads 3 and 6 and performs one operation.
-- Prompt A: no intermediate text is permitted. The single prediction that emits the answer must perform both operations.
-- Interpretation: the extra tokens of B are the storage of intermediate values. A is the condition in which that storage is forbidden.
+## 9. Three operations in one prediction
+> Prompt: A warehouse holds 47 crates with 38 items each. 519 items are shipped out and 284 items are returned. How many items are in the warehouse now? Reply with only the number.
+> Output: 1516          correct answer: 1551
+
+- Required computation: 47 × 38 = 1786; 1786 − 519 = 1267; 1267 + 284 = 1551. Two intermediate values, 1786 and 1267, must be retained between operations.
+- Under this prompt: no token may hold 1786 or 1267, so the single prediction that emits the answer must perform all three operations.
+- Contrast: the apple problem (23 − 20 + 6) has one intermediate value. The same prompt returns 9, correct.
 
 ## 10. Answer-only vs. worked solution (figure)
 [Figure 2.1 — `figures/fig-2-1-cot-workspace.svg`]
 Caption: Under A, no token stores the intermediate value, so one prediction must carry both calculations. Under B, the written "3" is read back from the text and each step is one operation.
 
 ## 11. Capacity of a single prediction
-- Question: how many operations can one prediction complete when no intermediate value may be written?
-- Measurement: the same two prompts on problems of increasing size (gpt-4o-mini).
+> 23 − 20 + 6, one operation                       answer only: 9, correct
+> 47 × 38 − 519 + 284, six problems of this form    answer only: 0 of 6 correct (1516, 1407, 4206, 1861, 5008, 5007)
 
-> 23 − 20 + 6                          answer only: correct
-> 47 × 38 − 519 + 284, six problems     answer only: 0 of 6      written solution first: 6 of 6
-
-- Result: the number of operations one prediction can complete is bounded, and the bound is reached once a multiplication is involved.
-- Failure form: prediction emits the most probable token whether or not the computation is complete. An unfinished computation therefore returns a number, not a refusal: expected 1551, returned 1516.
+- Result: the number of operations one prediction can complete is bounded. One operation succeeds; a multiplication followed by two further operations does not.
+- Failure form: prediction emits the most probable token whether or not the computation is complete. An unfinished computation returns a number, not a refusal.
 - Proposed causes: (i) the depth of computation within one forward pass is bounded by the number of layers; (ii) answer-only solution text is rare in training data. The two are compatible.
-
-## 12. Hallucination
-- Definition: hallucination = generation of content that is plausible but not factual.
-- Mechanism: prediction does not stop when the required computation is unfinished, and it does not stop when the required fact is absent. In both cases the most probable continuation is emitted, and it has the form of an answer.
-
-> unfinished computation → 1516 in place of 1551
-> absent fact           → a plausible name in place of "I do not know"
-
-- Consequence: the output carries no signal of which case produced it. A wrong number and an invented fact are equally fluent and equally confident.
-- Scope: writing the solution raises the bound on the computation limit, as the next section shows. It gives the model no access to a fact it does not have, so hallucination is untouched by it.
+- Hypothesis: if 1786 and 1267 were written into the text before the answer, each prediction would perform one operation. The next section tests it.
 
 ---
 
-## 13. [divider] Chain-of-Thought
+## 12. [divider] Chain-of-Thought
 
-## 14. Chain-of-thought prompting
+## 13. Chain-of-thought prompting
 - Definition: chain-of-thought (CoT) prompting = prompting that induces the model to generate its solution process before the final answer.
 - Mechanism: each token of the solution reads the values already written and advances one operation; the answer token reads the last intermediate value.
 - Two forms: an instruction (zero-shot CoT) or worked examples (few-shot CoT). Both are text in the prompt; nothing else changes.
 
-## 15. Form 1 — Instruction (zero-shot CoT)
+## 14. Form 1 — Instruction (zero-shot CoT)
 - Procedure: append one instruction after the question.
 
 > There are 23 apples. 20 are used and 6 more are bought. How many are there?
@@ -105,7 +95,7 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 
 - Property: the instruction elicits a solution but does not specify its granularity or the format of the final line. "Step by step" admits many layouts.
 
-## 16. Form 2 — Worked examples (few-shot CoT)
+## 15. Form 2 — Worked examples (few-shot CoT)
 - Procedure: prepend question–solution pairs before the question.
 
 > Q: Roger has 5 tennis balls. He buys 2 more cans of 3 balls each. How many balls does he have?
@@ -119,7 +109,7 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 - Definition: in-context learning = the property that examples in the prompt determine the output's format and procedure with no weight update.
 - Property: the example fixes what the instruction leaves open: the step granularity, the wording of each step, and the exact final line.
 
-## 17. Instruction versus example
+## 16. Instruction versus example
 - Difference: an instruction names the requirement; an example exhibits it. The example therefore pins format and procedure that the instruction underspecifies.
 
 > Instruction: "Answer with the date."      → "The final date is March 10th, 2026."
@@ -130,17 +120,18 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 
 ---
 
-## 18. [divider] The Limit of Chain-of-Thought
+## 17. [divider] The Limit of Chain-of-Thought
 
-## 19. Coherent reasoning on a false premise
+## 18. Hallucination: coherent reasoning on a false premise
+- Definition: hallucination = generation of content that is plausible but not factual.
+- Mechanism: prediction does not stop when a required fact is absent, exactly as it does not stop when a computation is unfinished. The most probable continuation is emitted, and it has the form of an answer.
 - Question: "Aside from the Apple Remote, what other device can control the program the Apple Remote was originally designed to interact with?"
 
 > CoT output: The Apple Remote was originally designed to interact with Apple TV. Apple TV can be controlled by iPhone, iPad, and iPod Touch. So the answer is iPhone, iPad, and iPod Touch.
 
-- Error: the first premise is false. The program was Front Row; the correct answer is keyboard function keys.
-- Diagnosis: the reasoning is not grounded in external information, so a hallucinated premise propagates through a valid chain.
+- Error: the first premise is false. The program was Front Row; the correct answer is keyboard function keys. Every step after the premise is valid.
 
-## 20. Why prompting cannot repair it
+## 19. Why prompting cannot repair it
 - Cause: CoT draws only on knowledge stored in the parameters. No prompt gives the model access to an external fact.
 - Test: adding "Verify each step before continuing" produces a more elaborate chain on the same false premise.
 
@@ -152,41 +143,41 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 
 ---
 
-## 21. [divider] Self-Consistency
+## 20. [divider] Self-Consistency
 
-## 22. One response as one sample
+## 21. One response as one sample
 - Sampling: an LLM draws each token from a probability distribution. Temperature = the parameter controlling the randomness of that draw; at temperature 0 the most probable token is taken.
 - Consequence: at temperature > 0, repeated runs of the same prompt follow different solution paths and may reach different answers.
 - Interpretation: one response is one sample from the set of possible reasoning paths. A wrong sample does not imply that the next sample is wrong.
 
 > Same CoT prompt, temperature 1.0, five runs → final answers: 9, 27, 9, 8, 9
 
-## 23. Majority voting — Self-Consistency
+## 22. Majority voting — Self-Consistency
 - Definition: self-consistency = sample N solutions at temperature > 0, extract the final answer of each, and return the majority answer.
 - Justification: P(a | q) = Σ_r P(a | r, q) P(r | q). A single response evaluates one term (one path r). The vote over samples estimates the sum over paths.
 - Empirical pattern: correct answers are reached by different paths that converge on one value; wrong answers scatter across distinct values.
 
-## 24. Self-consistency (figure)
+## 23. Self-consistency (figure)
 [Figure 2.2 — `figures/fig-2-2-self-consistency.svg`]
 Caption: Paths sampled from the same question. Correct paths converge on one value, wrong paths scatter, and the vote returns the convergent value.
 
-## 25. Precondition of the vote
+## 24. Precondition of the vote
 - Requirement: the final answer must be discrete and extractable (a number, a choice, a short string) so that equal answers can be counted.
 - Failure case: free-form text. Two 200-word abstracts are never identical; the vote has nothing to count.
 - Replacement: selection among non-discrete outputs requires a scoring function, a verifier.
 
 ---
 
-## 26. [divider] Test-Time Compute
+## 25. [divider] Test-Time Compute
 
-## 27. Accounting in predictions
+## 26. Accounting in predictions
 - Count: CoT lengthens one response by one prediction per solution token. Self-consistency multiplies the number of responses by N.
 - Cost: the cost of one prediction is approximately constant, so cost is proportional to the number of predictions.
 - Definition: test-time compute = accuracy obtained by increasing the number of predictions at inference time, with the weights unchanged. The general principle is inference-time scaling.
 
 > One question, gpt-4o-mini: answer-only = 1 completion token; chain-of-thought = 75; five CoT samples = 375.
 
-## 28. Methods
+## 27. Methods
 | Method | Additional predictions |
 |---|---|
 | Chain-of-thought | one longer response: one prediction per solution token |
@@ -196,14 +187,14 @@ Caption: Paths sampled from the same question. Correct paths converge on one val
 
 - Common principle: inference computation is exchanged for accuracy. Best-of-N and tree search additionally require a verifier.
 
-## 29. Test-time compute in deployed systems
+## 28. Test-time compute in deployed systems
 - Reasoning modes (OpenAI o-series, Claude extended thinking, Gemini thinking): the written solution of this chapter generated inside the model and billed per token.
 - Parallel-reasoning tiers (o1 pro, Gemini Deep Think, Grok Heavy): several reasoning lines generated in parallel and one selected, that is, self-consistency or best-of-N.
 - Cost: N samples multiply cost and latency by N. The design variable is which queries receive N > 1.
 
 ---
 
-## 30. Summary
+## 29. Summary
 - Observation: the same model answers the same problem correctly or incorrectly depending on whether the prompt permits a written solution before the answer.
 - Cause: the model's only workspace is the text it generates; an intermediate value exists only once written. Answer-only prompting forces every operation into one prediction, whose capacity is bounded.
 - Chain-of-thought: an instruction or worked examples induce the written solution. Examples additionally fix the granularity and format that an instruction leaves open.
@@ -211,4 +202,4 @@ Caption: Paths sampled from the same question. Correct paths converge on one val
 - Self-consistency: one response is one sampled path. Sampling N paths and taking the majority of discrete answers estimates the answer probability summed over paths.
 - Test-time compute: chain-of-thought and self-consistency both buy accuracy with additional predictions at inference time, with the weights unchanged.
 
-<!-- Timing: slides 3–12 ≈ 10 min, 13–20 ≈ 10 min, 21–30 ≈ 10 min. Slide 12 must be kept even if time runs short: tools repair hallucination, prompting does not. -->
+<!-- Timing: slides 3–11 ≈ 10 min, 12–19 ≈ 10 min, 20–29 ≈ 10 min. Slide 19 must be kept even if time runs short: tools repair hallucination, prompting does not. -->
