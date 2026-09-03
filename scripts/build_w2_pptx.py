@@ -111,11 +111,11 @@ def title(slide, txt):
 
 def body_size(items):
     chars = sum(len(t) for k, t in items if k in ("bullet", "sub", "text", "quote", "caption"))
-    if chars > 1000:
+    if chars > 760:
         return 13
-    if chars > 780:
+    if chars > 600:
         return 14
-    if chars > 620:
+    if chars > 480:
         return 15
     return 16
 
