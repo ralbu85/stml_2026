@@ -106,16 +106,16 @@ def responder(model=None, messages=None, **kw):
             return "23 - 20 = 3 apples after lunch. 3 + 6 = 9.\nANSWER: 9"
         return "9"
 
-    # §2.2 / §3 warehouse problems: answer-only and silent and answer-first miss
+    # §2.2–2.4 warehouse problems: answer-only and silent and answer-first miss
     # the multiplication on most items; the worked solution is exact.
     if "warehouse holds" in text:
         return _warehouse_reply(text)
 
-    # §4 / §6 / §8.3 animal-legs eval
+    # §3 / §5 / §7.3 animal-legs eval
     if "<animal_statement>" in text:
         return _animal_reply(text, temperature)
 
-    # §5.1 parent bot
+    # §4.1 parent bot
     if "Santa bring me presents" in text:
         if "tooth fairy" in text:
             return ("A: Yes, sweetie, as long as you are kind this year. Leave out "
@@ -123,14 +123,14 @@ def responder(model=None, messages=None, **kw):
         return ("Santa Claus is a legendary figure; whether presents appear depends "
                 "on your family's traditions.")
 
-    # §5.2 email classification
+    # §4.2 email classification
     for key, letter in EMAIL_LETTER:
         if key in text:
             if "(A) Pre-sale question" in text:   # solution-style prompt with categories
                 return f"The correct category is: {letter}"
             return "It sounds blue to me."
 
-    # §7 hallucination
+    # §6 hallucination
     if "heaviest hippo" in text:
         if "certainty" in text or "I don't know" in text:
             return "I don't know with certainty; no reliable record identifies the heaviest hippo of all time."
@@ -140,7 +140,7 @@ def responder(model=None, messages=None, **kw):
                     "named Hubert at the Munich Zoo, weighing about 4,800 kg.")
         return "The heaviest hippo of all time was a male named Hubert, weighing about 4,800 kg."
 
-    # §8.1 word problems
+    # §7.1 word problems
     if "library has 4 shelves" in text:
         if "ANSWER" in text:
             return "4 * 38 = 152 books. 152 - 47 = 105. 105 + 26 = 131.\nANSWER: 131"
@@ -150,13 +150,13 @@ def responder(model=None, messages=None, **kw):
             return "12 * 24 = 288 muffins. 6 * 24 = 144 sold whole. 288 - 144 = 144. 144 - 37 = 107.\nANSWER: 107"
         return "107 muffins remain."
 
-    # §8.2 date extraction
+    # §7.2 date extraction
     if "March 10th, 2026" in text:
         return "DATE: 2026-03-10" if "DATE: 2026-06-09" in text else "The final date is March 10th, 2026."
     if "April 22nd, 2026" in text:
         return "DATE: 2026-04-22" if "DATE: 2026-06-09" in text else "The final date is April 22nd, 2026."
 
-    # §8.4 Roman numerals
+    # §7.4 Roman numerals
     for expression, (a, b, result) in ROMAN.items():
         if expression in text:
             exemplars = len(re.findall(r"^ANSWER:\s*\d+\s*$", text, re.M))
