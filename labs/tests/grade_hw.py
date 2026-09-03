@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""Grade homework submissions from their SAVED outputs — no re-execution, no API key.
+"""Grade lab and homework submissions from their SAVED outputs — no re-execution, no API key.
 
 Students run the notebook top to bottom in Colab and upload the .ipynb (outputs
 included) to the LMS. Download all submissions into one folder, then:
 
-    python3 tests/grade_hw.py submissions/week03/ --out grades_w03.csv
+    python3 tests/grade_hw.py submissions/week02/ --out grades_w02.csv
 
-Each submission is matched to its shipped homework by the H1 title in its first
-cell (LMS-renamed files are fine). The completion cell's saved PASS/FAIL rows and
-HOMEWORK COMPLETE line become the grade row; cheap integrity flags mark notebooks
+Each submission is matched to its shipped notebook (collected lab or homework) by
+the H1 title in its first cell (LMS-renamed files are fine). The completion cell's
+saved PASS/FAIL rows and LAB COMPLETE / HOMEWORK COMPLETE line become the grade
+row, together with the "submitted by:" identity line that collected labs print; cheap integrity flags mark notebooks
 that need a manual look. Grading stays what the course promises: structural smoke
 checks, never content quality.
 
@@ -30,7 +31,9 @@ from pathlib import Path
 
 FILLIN_RE = re.compile(r"### FILL IN \(START\) ###(.*?)### FILL IN \(END\) ###", re.S)
 ROW_RE = re.compile(r"^(PASS|FAIL)\b\s*(.*)$", re.M)
-SCORE_RE = re.compile(r"^([A-Za-z][\w /()-]{0,28}?):?\s+(\d+\s*/\s*\d+)\s*(?:\(.*\))?\s*$", re.M)
+IDENTITY_RE = re.compile(r"^submitted by:\s*(.+?)\s*$", re.M)
+COMPLETE_WORDS = ("HOMEWORK COMPLETE", "LAB COMPLETE")
+SCORE_RE = re.compile(r"^([A-Za-z][\w ./()-]{0,28}?):?\s+(\d+\s*/\s*\d+)\s*(?:\(.*\))?\s*$", re.M)
 
 
 def cell_source(cell):
@@ -67,21 +70,22 @@ def completion_cell(nb):
         if cell.get("cell_type") != "code":
             continue
         src = cell_source(cell)
-        if ("completion = {" in src or "checks = {" in src) and "HOMEWORK COMPLETE" in src:
+        if ("completion = {" in src or "checks = {" in src) and any(w in src for w in COMPLETE_WORDS):
             found = cell   # keep the last match
     return found
 
 
 def load_refs(lectures_dir):
     refs = {}
-    for path in sorted(Path(lectures_dir).glob("week0*/W*_hw_*.ipynb")):
+    paths = sorted(Path(lectures_dir).glob("week*/W*_hw_*.ipynb")) + sorted(Path(lectures_dir).glob("week*/W*_lab_*.ipynb"))
+    for path in paths:
         nb = json.load(open(path))
         refs[h1_of(nb)] = {"name": path.stem, "fillins": fillin_blocks(nb)}
     return refs
 
 
 def grade_one(path, refs):
-    row = {"file": path.name, "homework": "?", "complete": "?", "rows": "",
+    row = {"file": path.name, "homework": "?", "student": "", "complete": "?", "rows": "",
            "failed": "", "scores": "", "flags": []}
     try:
         nb = json.load(open(path))
@@ -109,7 +113,9 @@ def grade_one(path, refs):
         row["rows"] = f"{n_pass}/{len(rows)}"
         row["failed"] = "; ".join(label.strip() for status, label in rows if status == "FAIL")[:120]
         row["complete"] = "NO" if "NOT COMPLETE YET" in text else (
-            "YES" if "HOMEWORK COMPLETE" in text else "?")
+            "YES" if any(w in text for w in COMPLETE_WORDS) else "?")
+        identity = IDENTITY_RE.search(text)
+        row["student"] = identity.group(1)[:60] if identity else ""
 
     # score lines ("improved score: 7/8", "core: 4/5") from every cell's saved output
     scores = []
@@ -137,14 +143,14 @@ def grade_one(path, refs):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("paths", nargs="+", help="submission .ipynb files or folders of them")
-    ap.add_argument("--refs", default=None, help="lectures/ dir with the shipped homework notebooks")
+    ap.add_argument("--refs", default=None, help="lectures/ dir with the shipped lab/homework notebooks")
     ap.add_argument("--out", default=None, help="write the result as CSV to this path")
     args = ap.parse_args()
 
     repo = Path(__file__).resolve().parent.parent.parent
     refs = load_refs(Path(args.refs) if args.refs else repo / "lectures")
     if not refs:
-        sys.exit("no reference homework notebooks found — pass --refs <repo>/lectures")
+        sys.exit("no reference notebooks found — pass --refs <repo>/lectures")
 
     files = []
     for p in map(Path, args.paths):
@@ -155,7 +161,7 @@ def main():
     rows = [grade_one(f, refs) for f in files]
 
     widths = {k: max(len(k), *(len(str(r[k] if k != "flags" else ",".join(r[k]))) for r in rows))
-              for k in ("file", "homework", "complete", "rows", "flags")}
+              for k in ("file", "homework", "student", "complete", "rows", "flags")}
     header = "  ".join(k.upper().ljust(widths[k]) for k in widths)
     print(header + "\n" + "-" * len(header))
     for r in rows:
@@ -167,9 +173,9 @@ def main():
     if args.out:
         with open(args.out, "w", newline="") as f:
             w = csv.writer(f)
-            w.writerow(["file", "homework", "complete", "rows", "failed", "scores", "flags"])
+            w.writerow(["file", "homework", "student", "complete", "rows", "failed", "scores", "flags"])
             for r in rows:
-                w.writerow([r["file"], r["homework"], r["complete"], r["rows"],
+                w.writerow([r["file"], r["homework"], r["student"], r["complete"], r["rows"],
                             r["failed"], r["scores"], ",".join(r["flags"])])
         print(f"CSV written: {args.out}")
 
