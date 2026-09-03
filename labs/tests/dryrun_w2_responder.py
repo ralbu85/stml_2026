@@ -1,7 +1,8 @@
 """Canned responder for the W2 lab dry-run (stdlib only).
 
-Emulates the source-lesson narrative: animal-legs eval scores rise across the
-three prompt versions (verbose/wrong -> numeric/tricky-wrong -> tagged/correct);
+Emulates the lesson narrative: the apple problem passes both ways, the warehouse
+problems pass only with a worked solution written before the answer, and the
+animal-legs eval scores rise across the three prompt versions (verbose/wrong -> numeric/tricky-wrong -> tagged/correct);
 sampled (temperature > 0) tagged calls on the fox scatter so the vote has work
 to do; every assignment starter fails and every reference solution passes.
 """
@@ -72,6 +73,26 @@ def _animal_reply(text, temperature):
     return value
 
 
+_WAREHOUSE_RE = re.compile(r"holds (\d+) crates with (\d+) items each. (\d+) items are shipped out and (\d+) items")
+_ANSWER_ONLY_OK = {"238", "154"}   # crates values the direct answer happens to get right
+
+
+def _warehouse_reply(text):
+    crates, items, shipped, returned = (int(x) for x in _WAREHOUSE_RE.search(text).groups())
+    product = crates * items
+    answer = product - shipped + returned
+    plausible = product - product % 1000 + (shipped % 1000)   # answer-shaped, wrong
+    direct = str(answer) if str(crates) in _ANSWER_ONLY_OK else str(plausible)
+    if "first line as ANSWER" in text:
+        return (f"ANSWER: {direct}\n{crates} x {items} = {product}. "
+                f"{product} - {shipped} = {product - shipped}. "
+                f"{product - shipped} + {returned} = {answer}.")
+    if "ANSWER" in text:
+        return (f"{crates} x {items} = {product}.\n{product} - {shipped} = {product - shipped}.\n"
+                f"{product - shipped} + {returned} = {answer}.\nANSWER: {answer}")
+    return direct
+
+
 def responder(model=None, messages=None, **kw):
     text = " ".join(m.get("content", "") for m in (messages or []))
     temperature = kw.get("temperature", 0.0)
@@ -79,41 +100,16 @@ def responder(model=None, messages=None, **kw):
     if "Reply with exactly: ready" in text:
         return "ready"
 
-    # §2.1 role prompting
-    if "skateboarding" in text:
-        if "You are a cat" in text:
-            return "Skateboarding is a loud rolling thing that ruins a perfectly good nap."
-        return "Skateboarding is a creative and athletic sport that builds balance and confidence."
-    if "Jack is looking at Anne" in text:
-        if "logic bot" in text:
-            return "Yes. If Anne is married, she (married) looks at George (unmarried); if not, Jack (married) looks at Anne (unmarried)."
-        return "We cannot determine this without knowing whether Anne is married."
+    # §2.1 apple problem (Wei et al. 2022, Fig. 1): a current model gets both right
+    if "cafeteria has 23 apples" in text:
+        if "ANSWER" in text:
+            return "23 - 20 = 3 apples after lunch. 3 + 6 = 9.\nANSWER: 9"
+        return "9"
 
-    # §2.2 delimiters
-    if "second item on the list" in text:
-        if "<sentences>" in text:
-            return "This sentence is about spiders"
-        return "I like how cows sound"
-
-    # §3.1–3.2 movie review
-    if "living under a rock" in text:
-        if "<positive-argument>" in text or "<negative-argument>" in text:
-            return ("<positive-argument>The reviewer calls the movie fresh and "
-                    "original.</positive-argument>\n<negative-argument>The reviewer "
-                    "has been living under a rock since 1900, so everything seems "
-                    "fresh; the praise is unreliable.</negative-argument>\n"
-                    "The review sentiment is negative.")
-        if "silence" in text:
-            return "Positive"
-        return "Positive. The reviewer praises the movie's freshness and originality."
-
-    # §3.3 actor born 1956
-    if "born in the year 1956" in text:
-        if "<brainstorm>" in text:
-            return ("<brainstorm>Tom Hanks (born 1956), Mel Gibson (born 1956), "
-                    "Tom Cruise (born 1962)</brainstorm>\n"
-                    "Forrest Gump, starring Tom Hanks, who was born in 1956.")
-        return "Top Gun, starring Tom Cruise, who was born in 1962."
+    # §2.2 / §3 warehouse problems: answer-only and silent and answer-first miss
+    # the multiplication on most items; the worked solution is exact.
+    if "warehouse holds" in text:
+        return _warehouse_reply(text)
 
     # §4 / §6 / §8.3 animal-legs eval
     if "<animal_statement>" in text:
