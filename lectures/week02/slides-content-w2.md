@@ -96,11 +96,10 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 - Property: the instruction elicits a solution but does not specify its granularity or the format of the final line. "Step by step" admits many layouts.
 
 ## 15. In-context learning
-- Definition: in-context learning (ICL) = the model's output follows the pattern exhibited by examples placed in the prompt, with no change to the weights. The examples are read as text at inference time; nothing is retained after the response.
-- Contrast with fine-tuning: fine-tuning changes the weights and persists across calls. In-context learning changes only the prompt and lasts for one call.
+- Definition: in-context learning (ICL) = the model's output follows the pattern of examples placed in the prompt, with no change to the weights. Fine-tuning changes the weights and persists; ICL changes only the prompt and lasts one call.
 
 > Prompt without an example: Will Santa bring me presents on Christmas?
-> Output: Whether Santa brings you presents on Christmas often depends on your beliefs and traditions. If you celebrate Christmas and believe in Santa, many people enjoy the magic of the season …
+> Output: Whether Santa brings you presents on Christmas often depends on your beliefs and traditions. …
 >
 > Prompt with one example:
 >   Q: Is the tooth fairy real?
@@ -108,9 +107,9 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 >   Q: Will Santa bring me presents on Christmas?
 > Output: A: Absolutely! If you've been good this year, Santa will definitely have some surprises for you under the tree.
 
-- What an example fixes: format, length, tone, label set, and the procedure of the answer. One example changed all of these; no instruction described any of them.
-- What an example does not fix: knowledge. The model imitates the example's form, including its errors, and learns no new fact from it.
-- Counting: zero-shot = no examples, one-shot = one, few-shot = several. Few-shot CoT (next slide) is in-context learning applied to the solution process.
+- Fixed by an example: format, length, tone, and procedure. One example changed all four; no instruction described any of them.
+- Not fixed: knowledge. The model imitates the example's form, errors included, and learns no fact from it.
+- Zero-shot, one-shot, few-shot = the number of examples. Few-shot CoT (next slide) is ICL applied to the solution process.
 
 ## 16. Form 2 — Worked examples (few-shot CoT)
 - Procedure: prepend question–solution pairs before the question.
