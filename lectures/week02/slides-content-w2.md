@@ -98,18 +98,15 @@ Caption: Under A, no token stores the intermediate value, so one prediction must
 ## 15. In-context learning
 - Definition: in-context learning (ICL) = the model's output follows the pattern of examples placed in the prompt, with no change to the weights. Fine-tuning changes the weights and persists; ICL changes only the prompt and lasts one call.
 
-> Prompt without an example: Will Santa bring me presents on Christmas?
+> Prompt: Will Santa bring me presents on Christmas?
 > Output: Whether Santa brings you presents on Christmas often depends on your beliefs and traditions. …
 >
-> Prompt with one example:
->   Q: Is the tooth fairy real?
->   A: Of course, sweetie. Wrap up your tooth and put it under your pillow tonight. There might be something waiting for you in the morning.
->   Q: Will Santa bring me presents on Christmas?
-> Output: A: Absolutely! If you've been good this year, Santa will definitely have some surprises for you under the tree.
+> Prompt: Q: Is the tooth fairy real?  A: Of course, sweetie. Put your tooth under your pillow tonight.  Q: Will Santa bring me presents on Christmas?
+> Output: A: Absolutely! Just make sure to be good and leave out some cookies and milk for him.
 
-- Fixed by an example: format, length, tone, and procedure. One example changed all four; no instruction described any of them.
+- Fixed by one example: format, length, tone, procedure. No instruction described any of them.
 - Not fixed: knowledge. The model imitates the example's form, errors included, and learns no fact from it.
-- Zero-shot, one-shot, few-shot = the number of examples. Few-shot CoT (next slide) is ICL applied to the solution process.
+- Zero-, one-, few-shot = the number of examples. Few-shot CoT (next slide) is ICL applied to the solution process.
 
 ## 16. Form 2 — Worked examples (few-shot CoT)
 - Procedure: prepend question–solution pairs before the question.
