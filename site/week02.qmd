@@ -7,7 +7,7 @@ title: "Week 02 — Prompting & Reasoning"
 | Lecture notes | [read](lectures/week02/notes.html) |
 | Slides | [download (pptx)](lectures/week02/slides-draft-w2.pptx) |
 | Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_lab_prompting.ipynb) · [`W2_lab_prompting.ipynb`](lectures/week02/W2_lab_prompting.ipynb) download |
-| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_hw_prompting.ipynb) · [`W2_hw_prompting.ipynb`](lectures/week02/W2_hw_prompting.ipynb) download — collected via the LMS, due before Week 03 |
+| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_hw_prompting.ipynb) · [`W2_hw_prompting.ipynb`](lectures/week02/W2_hw_prompting.ipynb) download — collected via the LMS; due date on the LMS |
 | Papers | [Chain-of-Thought Prompting (Wei et al., 2022)](https://arxiv.org/abs/2201.11903) ([PDF](https://arxiv.org/pdf/2201.11903)) · [Self-Consistency (Wang et al., 2022)](https://arxiv.org/abs/2203.11171) ([PDF](https://arxiv.org/pdf/2203.11171)) — first student presentations |
 
 ## This week
@@ -24,7 +24,7 @@ Click *Open in Colab* in the table above. Save your own copy first (**File → S
 
 ## Homework
 
-`W2_hw_prompting.ipynb` — four assignments in the lab's structure with new tasks: chain-of-thought by instruction, an exemplar that pins an output format, your own chain-of-thought prompt with a five-sample vote, and few-shot chain-of-thought exemplars on a Roman-numeral evalset. Each assignment has one fill-in block and a fixed check cell; the completion cell must print `HOMEWORK COMPLETE`. Run the notebook top to bottom, download it (**File → Download → Download .ipynb**), and upload the file to the LMS before the Week 03 class. Grading reads the saved outputs.
+`W2_hw_prompting.ipynb` — four assignments in the lab's structure with new tasks: chain-of-thought by instruction, an exemplar that pins an output format, your own chain-of-thought prompt with a five-sample vote, and few-shot chain-of-thought exemplars on a Roman-numeral evalset. Each assignment has one fill-in block and a fixed check cell; the completion cell must print `HOMEWORK COMPLETE`. Run the notebook top to bottom, download it (**File → Download → Download .ipynb**), and upload the file to the LMS by the due date shown there. Grading reads the saved outputs.
 
 ## Presentations
 

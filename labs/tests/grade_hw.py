@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
-"""Grade lab and homework submissions from their SAVED outputs — no re-execution, no API key.
+"""Grade homework submissions: by default from their SAVED outputs; with --rerun, by
+re-executing every submission with the grader's own API key first.
 
-Students run the notebook top to bottom in Colab and upload the .ipynb (outputs
-included) to the LMS. Download all submissions into one folder, then:
+Students run the notebook top to bottom in Colab and upload the .ipynb to the LMS.
+Download all submissions into one folder, then:
 
-    python3 tests/grade_hw.py submissions/week02/ --out grades_w02.csv
+    python3 tests/grade_hw.py submissions/week02/ --out grades_w02.csv                  # saved outputs
+    OPENAI_API_KEY=sk-... .venv/bin/python tests/grade_hw.py submissions/week02/ \
+        --rerun --rerun-dir rerun_w02/ --out grades_w02.csv                             # re-executed
+
+--rerun strips every output, replaces the student's key line with the grader's
+environment key, skips the pip cell, runs the notebook top to bottom in a local
+kernel (labs/.venv, which has aisuite installed), saves the executed copy under
+--rerun-dir, and grades that copy. Saved outputs in the submission are ignored, so
+an edited output cannot pass. --model forces one model for every submission.
 
 Each submission is matched to its shipped notebook (collected lab or homework) by
 the H1 title in its first cell (LMS-renamed files are fine). The completion cell's
@@ -20,14 +29,19 @@ Flags:
     FILLIN_MARKERS_GONE  fill-in markers missing (cannot compare to starter)
     COMPLETION_NOT_LAST  cells were run after the completion check
     PARSE_ERROR          file is not a readable notebook
+    RERUN_FAILED:<err>   the notebook could not be re-executed (--rerun)
 """
 
 import argparse
 import csv
 import json
+import os
 import re
 import sys
 from pathlib import Path
+
+KEY_LINE_RE = re.compile(r'^(\s*)os\.environ\["(OPENAI|ANTHROPIC)_API_KEY"\]\s*=\s*.*$', re.M)
+MODEL_LINE_RE = re.compile(r'^MODEL\s*=\s*"[^"]*"', re.M)
 
 FILLIN_RE = re.compile(r"### FILL IN \(START\) ###(.*?)### FILL IN \(END\) ###", re.S)
 ROW_RE = re.compile(r"^(PASS|FAIL)\b\s*(.*)$", re.M)
@@ -75,6 +89,31 @@ def completion_cell(nb):
     return found
 
 
+def rerun_notebook(path, rerun_dir, model=None, timeout=900):
+    """Submission path -> executed copy (dict), run with the grader's environment key."""
+    import nbformat
+    from nbclient import NotebookClient
+
+    nb = nbformat.read(path, as_version=4)
+    for cell in nb.cells:
+        if cell.cell_type != "code":
+            continue
+        cell.outputs = []
+        cell.execution_count = None
+        src = cell.source
+        if src.lstrip().startswith(("%pip", "!pip")):
+            src = "pass  # pip skipped: the grader's environment has the packages"
+        src = KEY_LINE_RE.sub(r"\1pass  # key comes from the grader's environment", src)
+        if model:
+            src = MODEL_LINE_RE.sub(f'MODEL = "{model}"', src)
+        cell.source = src
+    NotebookClient(nb, timeout=timeout, kernel_name="python3", allow_errors=True).execute()
+    rerun_dir.mkdir(parents=True, exist_ok=True)
+    out = rerun_dir / path.name
+    nbformat.write(nb, out)
+    return json.loads(nbformat.writes(nb))
+
+
 def load_refs(lectures_dir):
     refs = {}
     paths = sorted(Path(lectures_dir).glob("week*/W*_hw_*.ipynb")) + sorted(Path(lectures_dir).glob("week*/W*_lab_*.ipynb"))
@@ -84,7 +123,7 @@ def load_refs(lectures_dir):
     return refs
 
 
-def grade_one(path, refs):
+def grade_one(path, refs, rerun_dir=None, model=None):
     row = {"file": path.name, "homework": "?", "student": "", "complete": "?", "rows": "",
            "failed": "", "scores": "", "flags": []}
     try:
@@ -93,6 +132,12 @@ def grade_one(path, refs):
     except Exception:
         row["flags"] = ["PARSE_ERROR"]
         return row
+    if rerun_dir is not None:
+        try:
+            nb = rerun_notebook(path, rerun_dir, model=model)
+        except Exception as exc:
+            row["flags"] = [f"RERUN_FAILED:{type(exc).__name__}"]
+            return row
 
     ref = refs.get(h1_of(nb))
     if ref is None:   # fallback: match shipped notebook name inside the LMS filename
@@ -145,7 +190,16 @@ def main():
     ap.add_argument("paths", nargs="+", help="submission .ipynb files or folders of them")
     ap.add_argument("--refs", default=None, help="lectures/ dir with the shipped lab/homework notebooks")
     ap.add_argument("--out", default=None, help="write the result as CSV to this path")
+    ap.add_argument("--rerun", action="store_true",
+                    help="re-execute each submission with the key in OPENAI_API_KEY / ANTHROPIC_API_KEY before grading")
+    ap.add_argument("--rerun-dir", default="rerun", help="where the executed copies are written (with --rerun)")
+    ap.add_argument("--model", default=None, help='with --rerun: force this MODEL string, e.g. "openai:gpt-4o-mini"')
     args = ap.parse_args()
+    rerun_dir = None
+    if args.rerun:
+        if not (os.environ.get("OPENAI_API_KEY") or os.environ.get("ANTHROPIC_API_KEY")):
+            sys.exit("--rerun needs OPENAI_API_KEY or ANTHROPIC_API_KEY in the environment")
+        rerun_dir = Path(args.rerun_dir)
 
     repo = Path(__file__).resolve().parent.parent.parent
     refs = load_refs(Path(args.refs) if args.refs else repo / "lectures")
@@ -158,7 +212,7 @@ def main():
     if not files:
         sys.exit("no .ipynb submissions found")
 
-    rows = [grade_one(f, refs) for f in files]
+    rows = [grade_one(f, refs, rerun_dir=rerun_dir, model=args.model) for f in files]
 
     widths = {k: max(len(k), *(len(str(r[k] if k != "flags" else ",".join(r[k]))) for r in rows))
               for k in ("file", "homework", "student", "complete", "rows", "flags")}

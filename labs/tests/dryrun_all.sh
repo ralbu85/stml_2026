@@ -6,7 +6,6 @@ RUN=".venv/bin/python tests/dryrun_harness.py"
 
 $RUN ../lectures/week01/W1_lab_setup.ipynb            tests/dryrun_w1_responder.py
 $RUN ../lectures/week02/W2_lab_prompting.ipynb        tests/dryrun_w2_responder.py
-$RUN ../lectures/week02/W2_hw_build_evalset.ipynb     tests/dryrun_w2_hw_responder.py
 $RUN ../lectures/week02/W2_hw_prompting.ipynb        tests/dryrun_w2_responder.py
 $RUN ../lectures/week03/W3_lab_tools.ipynb            tests/dryrun_w3_responder.py
 $RUN ../lectures/week03/W3_hw_new_tool.ipynb          tests/dryrun_w3_hw_responder.py
