@@ -22,7 +22,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PUBLISH_WEEKS="01"
+PUBLISH_WEEKS="01 02"
 published() { case " $PUBLISH_WEEKS " in *" $1 "*) return 0;; *) return 1;; esac; }
 
 # Render each week's materials in place, next to their sources.
@@ -57,6 +57,7 @@ for d in ../lectures/week*/; do
   mkdir -p "_site/lectures/$week"
   cp "$d"/notes.html "$d"/slides.html "_site/lectures/$week/" 2>/dev/null || true
   cp "$d"/W*_lab_*.ipynb "$d"/W*_hw_*.ipynb "_site/lectures/$week/" 2>/dev/null || true
+  cp "$d"/slides-draft-*.pptx "_site/lectures/$week/" 2>/dev/null || true
 done
 
 # Data files the notebooks fetch at runtime (e.g. coffee_sales.csv).

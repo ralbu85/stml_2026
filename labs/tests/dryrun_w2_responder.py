@@ -111,7 +111,7 @@ def responder(model=None, messages=None, **kw):
     if "warehouse holds" in text:
         return _warehouse_reply(text)
 
-    # §4 / §6 / §8.3 animal-legs eval
+    # §4 / §6 / hw assignment 3: animal-legs eval
     if "<animal_statement>" in text:
         return _animal_reply(text, temperature)
 
@@ -140,7 +140,7 @@ def responder(model=None, messages=None, **kw):
                     "named Hubert at the Munich Zoo, weighing about 4,800 kg.")
         return "The heaviest hippo of all time was a male named Hubert, weighing about 4,800 kg."
 
-    # §8.1 word problems
+    # hw assignment 1: word problems
     if "library has 4 shelves" in text:
         if "ANSWER" in text:
             return "4 * 38 = 152 books. 152 - 47 = 105. 105 + 26 = 131.\nANSWER: 131"
@@ -150,13 +150,13 @@ def responder(model=None, messages=None, **kw):
             return "12 * 24 = 288 muffins. 6 * 24 = 144 sold whole. 288 - 144 = 144. 144 - 37 = 107.\nANSWER: 107"
         return "107 muffins remain."
 
-    # §8.2 date extraction
+    # hw assignment 2: date extraction
     if "March 10th, 2026" in text:
         return "DATE: 2026-03-10" if "DATE: 2026-06-09" in text else "The final date is March 10th, 2026."
     if "April 22nd, 2026" in text:
         return "DATE: 2026-04-22" if "DATE: 2026-06-09" in text else "The final date is April 22nd, 2026."
 
-    # §8.4 Roman numerals
+    # hw assignment 4: Roman numerals
     for expression, (a, b, result) in ROMAN.items():
         if expression in text:
             exemplars = len(re.findall(r"^ANSWER:\s*\d+\s*$", text, re.M))

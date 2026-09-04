@@ -15,7 +15,8 @@ env/
 *.log
 outputs/
 checkpoints/
-!labs/checkpoints/
+# labs/checkpoints/ (reference solutions) are local-only since 2026-09-04: the repo is public
+# and students must not see the answers. Keep them out of every push.
 *.ckpt
 wandb/
 
