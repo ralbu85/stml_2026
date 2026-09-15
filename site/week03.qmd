@@ -4,11 +4,18 @@ title: "Week 03 — Tool Use"
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
+| Lecture notes | [Read online](lectures/week03/notes.html) · [Markdown (.md)](lectures/week03/notes.en.md){download="notes.en.md"} · [PDF](lectures/week03/STML-week-03-notes.pdf) |
 | Slides | published before class |
-| Lab | published before class |
+| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_lab_tools.ipynb) · [`W3_lab_tools.ipynb`](lectures/week03/W3_lab_tools.ipynb){download="W3_lab_tools.ipynb"} download |
+| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week03/W3_hw_new_tool.ipynb) · [`W3_hw_new_tool.ipynb`](lectures/week03/W3_hw_new_tool.ipynb){download="W3_hw_new_tool.ipynb"} download — collected via the LMS; due date on the LMS |
 | Papers | [Toolformer (Schick et al., 2023)](https://arxiv.org/abs/2302.04761) ([PDF](https://arxiv.org/pdf/2302.04761)) · [ToolLLM (Qin et al., 2023)](https://arxiv.org/abs/2307.16789) ([PDF](https://arxiv.org/pdf/2307.16789)) · optional: [ReTool (2025)](https://arxiv.org/abs/2504.11536) ([PDF](https://arxiv.org/pdf/2504.11536)) |
 
 ## This week
 
-The division of labor that gives a text-only model hands: judgment to the model as text, execution to code, under the convention that output is read as an execution request. Function calling as the standardized round trip; the tool schema as the entire interface; failures reinjected as readable results; the tool list as the capability boundary — and the honest closing observation that a loop has been running all along, inside the client.
+The model generates a tool request; the application validates and executes it, then returns evidence for the next response. The briefing covers schemas, tool selection, dependent calls, execution checks, and tool-use training. Week 4 develops ReAct and the interaction between reasoning and observations.
+
+The lab follows six stages in 75 minutes: why tools are needed; one request/execution/result cycle by hand; the same cycle with aisuite; weather capabilities; search-to-forecast composition; and a conclusion separating model generation from Python execution. Weather progresses from one city to two cities, then to tomorrow's forecast. In the visit example, inspect whether the model searches for the destination's municipality and uses the returned location in a later forecast request, or requests the forecast directly. Code, comments, and prompts are in English. The provided notebook runs as-is; the optional system-instruction comparison sits beside the missing-forecast example in §4.4 and adds about 5 minutes. There is no automatic lab score.
+
+## Homework
+
+`W3_hw_new_tool.ipynb` — search, then compute. The model gets two tools at once: the lab's `web_search` and a small function you write. Three assignments: a currency conversion (the rate comes from a search), the number of days between two searched dates, and a tool and question of your own that need both a search and your computation. For each, you complete the function, add it to the tool list, run the request, and read the trace. The notebook's last cell checks only the format of your work (function, docstring with `Args:`, search-then-tool order in the trace); the values are graded after submission. Run the notebook top to bottom, download it (**File → Download → Download .ipynb**), and upload the file to the LMS by the due date shown there.

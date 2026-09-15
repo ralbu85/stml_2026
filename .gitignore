@@ -59,5 +59,7 @@ lectures/week*/_review/slides-overview-*.png
 # Only README.md — the course-authored source map with re-fetch commands — is tracked.
 lectures/week*/reference/*
 !lectures/week*/reference/README.md
+# Course-authored companion linked by the published Week 3 lecture notes.
+!lectures/week03/reference/tool-use-implementation.en.md
 # Zipped bundle of the reference folder (rebuild: cd lectures/weekNN && zip -r weekNN-reference.zip reference/)
 lectures/week*/week*-reference.zip

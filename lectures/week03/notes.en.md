@@ -1,172 +1,714 @@
-# Chapter 3. Tool Use
-
-Chapter 2 raised the quality of reasoning with prompts and repeated computation. Two defects remain that those methods do not touch. First, the model has no path to verify external facts: what it knows is the knowledge stored in its parameters at training time, and prediction does not stop for lack of a known fact — asked about the Apple Remote's original program, the model fabricated a plausible premise and reasoned coherently to a wrong answer (→ 2.4). Second, arithmetic accuracy is not guaranteed: CoT and self-consistency raise the probability of a correct calculation (→ 2.3, 2.5), but add more steps and digits and wrong answers reappear.
-
-Both defects are already solved outside the model — search engines check facts, calculators compute without error — so the remaining problem is the connection. An LLM call is a function that takes a string and returns a string, with no other input or output path (→ Ch. 1). The smallest instance of the problem opens this week's lab:
-
-```
-[user]   What time is it?
-[model]  I don't have access to the current time.
-```
-
-No prompt fixes this answer. The current time is not in the weights, and nothing inside the call can look at a clock.
-
-## 3.1 Division of Labor
-
-A **tool** is an executable function or API that exists outside the model: a function that reads the clock, a function that evaluates an arithmetic expression, a search API.
-
-The model cannot execute a tool directly, because its only channel of action is text output — generating the sentence "call get_current_time" calls nothing. But dividing up the work shows that execution was never the part the model needed to own. Calling a function and returning its result is what ordinary programs already do exactly. What a program cannot do on its own is the judgment — does this question need the clock, and if a calculator, with which expression? — which requires reading the question's meaning, the model's strength. And the outcome of that judgment can be written as text.
-
-Here the division is established: the model outputs its judgment as text, our code reads that text and executes the function, and the result is fed back into the model's input. The whole division rests on one convention — **the model's output is read not as a final answer but as an execution request.** The text-in/text-out channel is unchanged, yet the system of model plus code gains the ability to tell time, calculate, and search. For the division to work, the model must know which tools exist and must emit requests in a machine-readable format; the only channel for both is the prompt.
-
-## 3.2 The Round Trip
-
-A **round trip** is one cycle in which the model issues an execution request, receives the result, and completes its answer — "round trip" being the word vendor documentation itself uses for results traveling out and back through the API; the lab's client counts these cycles as turns (`max_turns`). The procedure has five named steps, used verbatim in the rest of the chapter.
-
-1. **Schema provision** (our code) — Write each tool's name, description, and input format into the system prompt (the standing instruction of Ch. 1), together with the output format for calls.
-2. **Call generation** (model) — Judge whether a tool is needed. If so, emit call text in the designated format; if not, emit the final answer, ending the round trip.
-3. **Parsing** (our code) — Read the tool name and input out of the call text. On a broken format or unknown tool, build an error string and pass it to reinjection instead of executing.
-4. **Execution** (our code) — Call the function; on an exception, turn the exception into the result string.
-5. **Reinjection** (our code) — Append the result string to the conversation and call the model again. The model reads it and answers, or corrects a failed call, repeating from Parsing.
-
-![the round trip as a swimlane](figures/fig-3-1-round-trip-swimlane.svg)
-
-*Figure 3.1 — The five round-trip steps as a swimlane: only the call judgment sits in the model lane; every other step is our code.*
-
-The opening failure, run through this procedure:
-
-```
-[system]  Available tools:                                     ← schema provision
-          - get_current_time: returns the machine's current
-            time. Use when the user asks about the time.
-          If a tool is needed, output exactly one line of JSON:
-          {"tool": "<name>", "input": "<input>"}
-
-[user]    What time is it?
-
-[model]   {"tool": "get_current_time", "input": ""}            ← call generation
-[code]    reads the name, calls get_current_time() → "14:03:22" ← parsing · execution
-[user]    Tool result: 14:03:22                                 ← reinjection
-[model]   The current time is 14:03:22.                         ← final answer
-```
-
-The JSON the model emitted is text, not execution; it leads to execution because parsing and execution implement the convention of 3.1. On the model's side everything is still next-token prediction — the new capability comes from the code that treats output as a request. The same round trip with a calculator tool closes Chapter 2's arithmetic problem for good: the model's share ends at judging that computation is needed and setting up `1400*0.29`; the arithmetic itself runs in a program, leaving no room for error.
-
-## 3.3 Standardization — Function Calling
-
-The protocol above is a handcrafted convention, promised only by prompt instruction. Instructions do not compel, so the promise breaks probabilistically: the model wraps the JSON in prose, drops braces, invents fields — and such output cannot be parsed. **Function calling** is the vendor-standard mechanism that carries schema provision and call generation in structured API fields instead: the tool list travels in a `tools` parameter, and calls come back in a dedicated `tool_calls` field.
-
-```
-request (schema provision):  tools = [{ "name": "calculator",
-                                        "description": "Evaluates an arithmetic expression.
-                                                        Use only for numeric computation.",
-                                        "parameters": { "expression": "expression to evaluate" } }]
-
-response (call generation):  tool_calls = [{ "name": "calculator",
-                                             "arguments": { "expression": "1400*0.29" } }]
-
-reinjection:                 { "role": "tool", "content": "406" }
-```
-
-The step structure is identical to the handcrafted protocol; the reliability is higher, because models are trained to emit this format and arguments arrive as structured fields. Three operating controls come with the standard: **tool_choice** constrains call generation by setting instead of pleading (auto / required / a named tool / none); **parallel tool calls** put several independent calls in one `tool_calls` response, saving a round trip per extra call; **structured outputs** apply the same schema guarantee to the final answer, removing the parse-failure branch for answers as function calling removed it for calls.
-
-Function calling is the substrate of current assistant products, not an optional feature: the web-search and file tools inside ChatGPT and Claude, and every action a coding agent takes — read a file, run the tests, apply an edit — travel the API as exactly these fields. When such a product "does something," a `tool_calls` message like the one above did it.
-
-## 3.4 Schema Writing
-
-A **tool schema** is the specification delivered at the schema-provision step — name, description, parameters. The model never sees the function's implementation; everything it knows about a tool is the schema's text. In the lab's client the schema is generated from the Python function's **docstring** (the documentation string written directly under the function definition), so registering a tool is passing the function object, and schema writing is docstring writing.
-
-The schema is the sole basis for the call judgment, so a poor schema is a concrete malfunction:
-
-```
-poor description:      search_papers: searches documents.
-
-improved description:  search_papers: retrieves supporting passages for questions about
-                       the content of the course's papers. Do not use for general
-                       knowledge or calculation. Input: one sentence describing what
-                       to find.
-```
-
-Under the poor description the model calls search on general-knowledge questions, or answers from memory when it should search, and puts the whole user question where a query belongs — defects of the description, not of the model, and fixed in the description. The improvement supplies the basis for judgment: what is searched, when not to use it, what form the input takes. The lab measures exactly this with a routing score over a fixed task set — empty docstrings misroute, rewritten ones recover. A serviceable checklist: the name states action and object (`search_papers`, not `helper2`); the description says what, when, and when not; every parameter has a type, description, and example.
-
-## 3.5 Reinjecting Failure
-
-Parsing and execution are the steps that fail: unregistered names, malformed arguments, runtime exceptions. Raising these as program exceptions aborts the request on a single typo — and since call generation is probabilistic text generation, format deviations recur at a steady rate. The design principle instead: **turn every failure into a result string and reinject it.** The model reads what is written into the conversation, so an error it can read is an error it can correct.
-
-```
-[model]  {"tool": "calculater", "input": "1400*0.29"}      ← typo in tool name
-[code]   does not execute; builds an error string            ← parsing failure
-[user]   Tool result: (unregistered tool 'calculater'. Available: calculator, search_papers)
-[model]  {"tool": "calculator", "input": "1400*0.29"}      ← corrected call
-```
-
-The error string carries what recovery needs — here the "Available:" list. Once failure is part of the conversation, the recovery decision (reissue, switch tools, answer without one) is also the model's share. On the execution side the same discipline applies operationally: a **timeout** bounds how long a tool may run, and retrying failed executions requires **idempotency** — re-execution must not duplicate side effects (a card charged twice), or the retry policy becomes its own failure mode.
-
-## 3.6 The Capability Boundary — an Email Assistant
-
-The lab's second half runs an assistant over a simulated inbox with four registered tools: list unread, search, mark as read, send. A multi-step request — "check for unread mail from the boss, mark it read, send a follow-up" — resolves into a sequence of calls the model orders itself. Then the same assistant is asked to delete an email:
-
-```
-tools = [list_unread_emails, search_emails, mark_email_as_read, send_email]
-
-[user]   Delete the Happy Hour email.
-[model]  (searches, then) I don't have a way to delete emails.
-
-tools = [... , delete_email]
-[user]   Delete the Happy Hour email.                      ← identical prompt
-[model]  (search_emails → delete_email)  Deleted.
-```
-
-No instruction can make the assistant perform an action it has no tool for; registering `delete_email` changed the outcome while the prompt stayed identical. The principle: **the tool list is the complete action surface** — capability comes from the registered tools, not from the prompt. This cuts both ways. It is a limit (a missing tool is a missing capability) and the primary safety control: what is not registered cannot happen, so granting a tool is granting capability, and the tool list deserves the same deliberation as any permission.
-
-Notice, too, what carried the multi-step request. The model chose each call, read each result, and decided when the sequence was done — and the round trips repeated until then. That repetition did not come from this chapter's procedure; the lab's client ran it, silently, under its `max_turns` bound. A loop has been executing all along. Who owns that loop, what the model should write on each turn of it, and how it decides to stop are the subject of Chapter 4.
-
-## 3.7 The Alternative Paradigm — Code Execution
-
-Function calling assumes the useful actions can be enumerated as a toolbox. A calculator built that way registers `add`, `subtract`, `multiply`, `divide` — and still fails "what is the square root of 2?"; every new operation demands a new tool, and composing operations forces chains of calls for what one line of code expresses.
-
-The alternative gives the model one capability instead of many tools: write code, and our code executes it and reinjects the printed output — the same round trip with parsing and execution generalized.
-
-```
-[system]  Write code to solve the user's query. Return it
-          delimited with <execute_python> tags.
-[user]    What's the square root of 2?
-[model]   <execute_python>
-          import math
-          print(math.sqrt(2))
-          </execute_python>
-[code]    executes the block → "1.4142135623730951"
-[model]   The square root of 2 is approximately 1.4142.
-```
-
-The choice between paradigms: function calling suits a fixed action surface with side effects worth controlling — where the capability boundary of 3.6 is the point; code execution suits open-ended computation and data manipulation, where everything the language expresses composes in one block (the Week 5 homework runs exactly this convention on chart generation). The price is safety: generated code can do anything the runtime allows — the source course records an agent tidying a project directory with `rm *.py`, and the apology afterward restored nothing. The rule: execute generated code in a **sandbox**, an isolated runtime with restricted filesystem and network access (a container such as Docker, or a hosted service such as E2B), never in a process that holds real data. Both shapes ship today: ChatGPT's Advanced Data Analysis and Claude's code execution run model-written Python in hosted sandboxes of exactly this kind, while coding agents (Claude Code, Cursor) run the convention against a real repository, with a permission prompt standing where the sandbox wall would be. (Adapted from Ng, *Agentic AI* Module 3.)
-
-## 3.8 Learning the Judgment — Toolformer · ToolLLM
-
-Code-side improvement ends at schema writing and failure handling; the judgment inside call generation — whether, which tool, which arguments — is a model capability, and when it falls short (subtle call decisions, thousands of tools), training it into the weights becomes necessary. No corpus of human tool-use demonstrations exists, so both of this week's papers bootstrap: the model generates candidate data, and an automatic criterion keeps the good ones — the same strategy that later builds reasoning data by keeping only self-generated solutions with correct answers (STaR, → Ch. 11).
-
-**Toolformer** (Schick et al., 2023) learns where and how to insert calls into ordinary text; its filter is the model's own prediction loss — a call is kept if inserting its result makes the following tokens easier to predict. **ToolLLM** (Qin et al., 2023) learns to compose many tools per request over sixteen thousand real APIs; its filter is search — call paths are explored until one completes the request, and the model is fine-tuned on the successful paths. Mechanisms, data pipelines, and numbers belong to the presentation; the lens for both papers is one question — is the call judgment given by prompt or put into the weights?
-
-## 3.9 Summary
-
-The principle of tool use is a division of labor: judgment to the model as text, execution to code, under the convention that output is read as an execution request. Its implementation is the round trip (schema provision → call generation → parsing → execution → reinjection); function calling is its standardization. Operation concentrates on three points: the schema supplies the basis for the call judgment, failures are reinjected as result strings so recovery is delegated to the model, and the tool list is the action surface — capability and safety are both set by what is registered. Code execution rounds out the practice, replacing an enumerated toolbox with one generated program at the price of a sandbox; the seam between applications and tool providers has its own standard, MCP, treated with multi-agent systems (→ Ch. 6). Judgment beyond the reach of prompts is trained into the weights, with self-generated data filtered automatically (Toolformer, ToolLLM).
-
-One fact from this chapter carries forward. The email assistant completed multi-step work because round trips repeated under the client's bound, with the model deciding each next call and the stopping point — by Chapter 1's definition, control flow was already in the model's output. The loop that did this was borrowed and invisible. Chapter 4 builds it by hand: its anatomy, the convention for what the model writes on each turn, and what to read when it fails.
-
-## 3.10 Discussion
-
-Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
-
-1. Three failures are observed in one afternoon: the model calls `search_papers` for "what is 2 + 2"; the model passes the user's whole sentence as a search query; a tool raises an exception that crashes the application. For each, name the round-trip step where the failure lives (3.2) and where the fix belongs — schema, prompt, or code (3.4–3.5).
-2. A tool is registered as `helper2(x)` with the description "does the thing", and routing is poor. Rewrite the name, the description, and the parameter line to the checklist of 3.4, and state which misrouting each rewritten line prevents.
-3. A product owner wants the email assistant to "never delete emails." Compare enforcing this by instruction against not registering `delete_email` (3.6): which one is a guarantee, and what does the difference come to once untrusted text can enter the context (→ Ch. 14)?
-4. Choose the paradigm — function calling or code execution (3.7) — for (a) a banking assistant that executes transfers and (b) an analyst assistant over uploaded CSV files. Name the single property of each task that decides, and the safety cost accepted in (b).
-5. An internal agent with five hundred registered tools misroutes even after every docstring passes the checklist. What remains on the prompt side, and what would a Toolformer- or ToolLLM-style weights-side fix require here (3.8) — where would the training data come from?
-
+---
+title: "Week 03 — Tool Use"
+subtitle: "Lecture notes · 45-minute concept briefing"
+lang: en
 ---
 
-**Presentation.** Toolformer (Schick et al., 2023) — learning calls with self prediction-loss as the filter. ToolLLM (Qin et al., 2023) — learning composition over large-scale real APIs with search. Listen to both through the lens of a single question: is the call judgment given by prompt or put into the weights? Optional reading: ReTool (2025) — reinforcement learning for strategic tool use.
+These notes follow the approved 42-slide briefing. Chapter and section numbers match the slides; the slide references identify the corresponding pages. Definitions, prompts, interpretations, and explanatory notes are presented together.
 
-**Lab.** `W3_lab_tools.ipynb` — turning Python functions into tools with `aisuite` (docstring-derived schemas), inspecting the request–execute–reinject cycle, a bad-vs-improved docstring experiment, a measured tool-routing taskset, and the email assistant. Adapted from Andrew Ng's *Agentic AI* Module 3; the sourced-report exercise of the source module returns as part of the Week 7 project. Reference answers: `labs/checkpoints/week03/solution.py`.
+Teaching examples, forecasts, inventory records, and generated responses are illustrative unless explicitly identified otherwise. They are not new measurements of model behavior.
 
-**Homework.** `W3_hw_new_tool.ipynb` — extend the toolbox with a schedule-lookup tool of your own: the function, a docstring written to the checklist of 3.4, and two routing tasks that prove the model finds it (target ≥ 7/8 on the extended set). Due before W4.
+Contents
+
+1. Tools and the tool-use cycle
+2. From tool descriptions to tool calls
+3. Using tool results in an answer
+4. Tool sequences and action outcomes
+5. Training models to use tools
+6. Evaluating tool use
+
+# Introduction
+
+## Week 2 recall: reasoning from the supplied input
+
+Slide 2.
+
+Prompting changes how a model uses the information in its input.
+
+Few-shot prompting supplies examples. Chain-of-thought prompting elicits intermediate steps. Self-consistency selects the most frequent answer across sampled solutions.
+
+These methods do not retrieve a new weather forecast. A forecast must be supplied or obtained through an external operation.
+
+The methods can use evidence already supplied in context; the claim concerns acquisition of new observations.
+
+Sources: [Wei et al. (2022) · CoT](https://arxiv.org/abs/2201.11903); [Wang et al. (2022/2023) · Self-consistency](https://arxiv.org/abs/2203.11171).
+
+## Missing facts in a reasoning prompt
+
+Slide 3.
+
+A model needs a weather forecast to give a supported recommendation about tomorrow’s weather.
+
+EXAMPLE · A PROMPT WITHOUT A FORECAST:
+
+```text
+User: Will I need an umbrella in Seoul tomorrow?
+Prompt: Explain your reasoning before giving advice.
+Missing information: tomorrow’s forecast for Seoul.
+```
+
+A reasoning prompt can organize an explanation. A forecast lookup provides the missing fact on which the advice depends.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai).
+
+## Lecture structure: from a question to a verified outcome
+
+Slide 4.
+
+01  Tools: external operations and the tool-use cycle. (5 min)
+
+02  Calls: tool descriptions, request generation, and execution. (10.5 min)
+
+03  Answers: returning tool results and using them as evidence. (7.5 min)
+
+04  Sequences: using one result in a later action. (5 min)
+
+05  Training: learning tool use in Toolformer and ToolLLM. (11 min)
+
+06  Evaluation: checking requests, evidence, and outcomes. (2.5 min)
+
+Introduction: 3.5 min · Total: 45 min
+
+The chapters follow the information passed among the user, model, application, and tools. Chapters 1–4 explain tool use during inference. Chapter 5 explains how training shapes request generation, and Chapter 6 evaluates requests, evidence, and outcomes. Implementation details are provided separately for the later lab.
+
+# 1. Tools and the tool-use cycle
+
+Slide 5.
+
+## 1.1 Motivation: tasks beyond text generation
+
+Slide 6.
+
+Generating a sentence cannot retrieve a forecast or reserve an item.
+
+An umbrella recommendation needs weather data. A reservation needs an operation in an inventory system.
+
+Purpose: define a tool and explain how the model’s request leads to an external operation.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761).
+
+## 1.2 Tools as external operations
+
+Slide 7.
+
+A tool is an operation outside the language model that software can execute to obtain information or perform an action.
+
+EXAMPLES · TOOL INPUTS AND RESULTS:
+
+```text
+Weather lookup: city and day → forecast.
+Calculator: arithmetic expression → computed value.
+Reservation: item and quantity → reservation outcome.
+```
+
+The application is the software that connects the model to these operations. It executes the requested tool and returns the result.
+
+This definition includes local and remote operations. A tool need not be a web service, and an API is one way of exposing a capability. The categories describe intended effects rather than mutually exclusive implementation types.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 1.3 The tool-use cycle: model and application
+
+Slide 8.
+
+A tool call requests an operation with specific inputs. The application executes it and returns the result, called an observation.
+
+The returned result becomes part of the next model input. The model then generates an answer or another tool call.
+
+Figure description: Application supplies task and tool definitions → model generates a request → application executes the tool → application adds the result to the next input → model generates an answer or another request.
+
+1. Specify: the application supplies the task and descriptions of available tools.
+2. Request: the model generates an operation and the input values it needs.
+3. Execute: the application checks whether the request can be performed and invokes the external capability. A rejected request is not executed.
+4. Observe: the application returns the result or failure information.
+5. Continue: the model uses the expanded context to answer or request another operation. A request alone supplies neither a new observation nor a completed external action.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 1.4 Example: a forecast lookup and an answer
+
+Slide 9.
+
+The model can base its advice on a forecast after the application retrieves and returns it.
+
+EXAMPLE · ILLUSTRATIVE REQUEST, RESULT, AND ANSWER:
+
+```text
+User: Will I need an umbrella in Seoul tomorrow?
+Model request: retrieve Seoul’s forecast for tomorrow.
+Application: execute the weather lookup and return its result.
+Tool result: “Seoul, tomorrow: 80% probability of rain.”
+Model answer: Rain is likely; carrying an umbrella is advisable.
+```
+
+The request specifies the lookup. The tool result supplies the evidence for the answer.
+
+Concept check: Does a generated lookup request establish that a forecast was retrieved?
+
+Answer: No. Execution and a returned observation are required; request generation alone provides no forecast.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+# 2. From tool descriptions to tool calls
+
+Slide 10.
+
+## 2.1 Motivation: making tools known to the model
+
+Slide 11.
+
+A weather question alone does not tell the model that a Forecast tool is available.
+
+The application must supply the tool’s description and required inputs before the model can select it for this task.
+
+Purpose: explain how tool information and the user’s question lead to a generated call.
+
+Sources: [Anthropic · Tool definitions and model context](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools).
+
+## 2.2 Providing tool information to the model
+
+Slide 12.
+
+The application includes available tool definitions in the model input.
+
+A tool definition states its name, what it does, the inputs it needs, and what it returns.
+
+A system prompt supplies application instructions. Tool definitions can be written there or provided through a separate tool interface. Both routes make the information available to the model.
+
+The claim concerns the described setup with tools supplied for the current interaction. A description informs the model of an available capability; an executable implementation must also exist outside the model. It is not a universal claim that every model must be given a fresh natural-language description of a tool on every occasion: some tool conventions are learned during training. Anthropic documents that separately supplied tool definitions are used to construct a tool-use system prompt. This supports the distinction between information the model receives and whether the developer manually writes that information in the system message. Do not generalize one provider’s exact serialization to every model.
+
+Sources: [Anthropic · Tool definitions and model context](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools).
+
+## 2.3 Example: a prompt that enables a forecast request
+
+Slide 13.
+
+The system prompt describes the tools and how to request them.
+
+EXAMPLE · COMPLETE TEACHING PROMPT:
+
+```text
+SYSTEM PROMPT
+Forecast: returns weather for a given city and day.
+Calculator: evaluates an arithmetic expression.
+For weather advice, request Forecast before answering.
+Write “Tool request:” followed by the tool name and inputs.
+Ask for the city if it is missing.
+USER MESSAGE
+Will I need an umbrella in Seoul tomorrow?
+```
+
+The application must recognize “Tool request:” and run the named tool.
+
+This is a prompt-based teaching protocol that requests a readable text convention. The application must be configured to recognize that convention and connect the named tools to implementations. The example does not claim that mentioning a function in a system prompt activates a provider’s native tool interface. Native tool definitions can be supplied separately and incorporated into model context by the service. The purpose here is to expose the information supplied to the model without requiring knowledge of API fields. All following generated outputs are illustrative, not measured model responses.
+
+Sources: [Anthropic · Tool definitions and model context](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools).
+
+## 2.4 Example: choosing a tool and its inputs
+
+Slide 14.
+
+The tool description identifies the operation; the user’s question supplies the city and day.
+
+EXAMPLE · FROM SUPPLIED INFORMATION TO A REQUEST:
+
+```text
+Available tool: Forecast returns weather for a city and day.
+Instruction: Request Forecast before giving weather advice.
+User: Will I need an umbrella in Seoul tomorrow?
+Illustrative model output:
+Tool request: Forecast; city: Seoul; day: tomorrow
+```
+
+Forecast matches the information needed for the task. Seoul and tomorrow fill its required inputs. The lookup has not yet run.
+
+This mapping explains the relevant input and output at the observable level. It is not a claim that a hidden symbolic matcher or a particular chain of thought was measured inside the model. The previous full prompt supplies the request convention and the condition for requesting a forecast. The next page explains how learned token generation can produce the illustrated output.
+
+Sources: [Anthropic · Tool definitions and model context](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools); [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761).
+
+## 2.5 Tool-call selection through next-token generation
+
+Slide 15.
+
+An autoregressive model predicts each token from its input and earlier output tokens. A model trained for tool use can generate a call through this same process.
+
+MECHANISM · REQUEST GENERATION (SCHEMATIC):
+
+```text
+Input: tool descriptions, use instructions, and the umbrella question.
+Generated beginning: “Tool request:”
+Generated continuation: “Forecast; city: Seoul; day: tomorrow”
+Each next token depends on the input and the generated text.
+```
+
+Selecting a call is part of generating the response. Training teaches this behavior; the current prompt guides it. An unnecessary or incorrect call remains possible.
+
+The displayed prefix and continuation are readable fragments, not literal token boundaries or a captured internal trace. Autoregressive generation uses P(next token | supplied input, generated prefix). In this teaching protocol, the model generates “Tool request:” and the request content; the application recognizes that convention and connects it to execution. Training shapes these conditional probabilities, while inference uses the learned parameters.
+
+This account assumes neither a universal keyword trigger nor a fixed self-assessed uncertainty threshold. It does not require a separate explicit tool-choice classifier. Toolformer demonstrates learned call initiation, tool identity, inputs, and subsequent use of results with its own call representation. The teaching convention here is neither Toolformer’s literal syntax nor a provider-native wire format.
+
+Sources: [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761); [Brown et al. (2020) · Few-shot learning](https://arxiv.org/abs/2005.14165).
+
+## 2.6 Required inputs and missing user information
+
+Slide 16.
+
+Arguments are the input values in a tool call. The model should obtain them from the task or other supplied information.
+
+EXAMPLE · COMPLETE AND INCOMPLETE REQUESTS:
+
+```text
+Forecast requires: a city and a day.
+User: Retrieve tomorrow’s forecast for Seoul.
+Available arguments: city = Seoul; day = tomorrow.
+User: Retrieve tomorrow’s forecast here.
+Appropriate response: “Which city should I check?”
+```
+
+Grounding arguments means tying them to available information. A tool description specifies required inputs; it cannot supply a missing user location.
+
+The example assumes no location information is present elsewhere in the context. The preceding system prompt explicitly asks for the city when it is missing. The appropriateness of the response is therefore grounded in both task requirements and the supplied instruction. Actual models can fail to follow that instruction.
+
+Sources: [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761); [Anthropic · Tool definitions and model context](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools).
+
+## 2.7 Execution of the call by the application
+
+Slide 17.
+
+The application reads the generated call, checks its inputs, and runs the corresponding tool.
+
+EXAMPLE · A REQUEST BECOMING AN EXTERNAL OPERATION:
+
+```text
+Model output: Tool request: Forecast; city: Seoul; day: tomorrow
+Application action: execute Forecast with Seoul and tomorrow.
+Tool result: “Seoul, tomorrow: 80% probability of rain.”
+```
+
+Function calling provides a structured format for the same request. The application still performs execution and must return the result to the model.
+
+The operation’s implementation must already exist and be connected to the tool name. A tool description alone neither creates that implementation nor executes it. The teaching text convention and provider-native function calling are ways of representing the same conceptual request, with different mechanics. The exact provider fields remain in the implementation companion. This page completes the input → request → execution connection; the next chapter develops result delivery, evidence use, and limitations.
+
+Sources: [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents); [Anthropic · Tool definitions and model context](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools).
+
+## 2.8 Choosing a call, an answer, or a clarification
+
+Slide 18.
+
+Appropriate tool use depends on the information the task needs, the available tools, and the required inputs.
+
+EXAMPLES · EXPECTED RESPONSES TO DIFFERENT TASKS:
+
+```text
+“Explain precipitation probability.” → answer the concept question.
+“Retrieve tomorrow’s forecast for Seoul.” → request Forecast.
+“Retrieve tomorrow’s forecast here.” → ask for the city.
+```
+
+A tool-use model can learn these distinctions. Descriptions and instructions guide its selection; they do not guarantee a correct choice.
+
+Concept check: What must happen between supplying a tool description and obtaining a forecast?
+
+Answer: The model must generate a suitable request. The application must recognize it, execute the corresponding tool, and return the result.
+
+Sources: [Anthropic · Tool definitions and model context](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools); [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761).
+
+# 3. Using tool results in an answer
+
+Slide 19.
+
+## 3.1 Motivation: returning the result to the model
+
+Slide 20.
+
+A completed lookup is useful only when its result reaches the model.
+
+If the application retrieves an 80% rain probability but omits it from the next input, the model still lacks that forecast.
+
+Purpose: explain how a returned result supports an answer and which claims the result can justify.
+
+Sources: [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 3.2 Adding a tool result to the next model input
+
+Slide 21.
+
+The application adds the request and tool result to the original input.
+
+EXAMPLE · INPUT FOR THE NEXT MODEL RESPONSE:
+
+```text
+RETAINED INPUT (RELEVANT EXCERPT)
+Instruction: Request Forecast before giving weather advice.
+Tool: Forecast returns weather for a given city and day.
+User: Will I need an umbrella in Seoul tomorrow?
+ADDED AFTER EXECUTION
+Earlier request: Forecast; city: Seoul; day: tomorrow.
+Tool result: “Seoul, tomorrow: 80% probability of rain.”
+```
+
+The model now generates from an input that includes the forecast. The input changes; the model parameters do not.
+
+The earlier model input contained the system instructions, descriptions, and user question shown in Chapter 2. The application now includes the preceding request and its returned observation as additional context, while retaining the relevant instructions and history. The example displays the content relevant to the conceptual comparison rather than complete provider serialization. The next page shows an answer generated from this evidence. This is the same autoregressive generation mechanism with an expanded input, not a parameter update.
+
+The retained input shown on the slide is an excerpt. The application also retains the rest of the system prompt, including the Calculator definition, request format, and missing-city rule. These are omitted from the display to focus on the newly appended request and result.
+
+Sources: [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 3.3 Example: advice supported by the forecast
+
+Slide 22.
+
+An evidence-grounded answer uses relevant tool results to support its claims.
+
+EXAMPLE · ILLUSTRATIVE FORECAST AND ANSWERS:
+
+```text
+Instruction: Base the recommendation on the retrieved forecast.
+User: Will I need an umbrella in Seoul tomorrow?
+Tool result: “Seoul, tomorrow: 80% probability of rain.”
+Supported answer: Rain is likely; carrying an umbrella is advisable.
+Unsupported answer: It will definitely rain tomorrow.
+```
+
+The result supports a precautionary recommendation. It does not support certainty about tomorrow’s weather.
+
+The observation and answer are course-authored. No weather lookup or live model evaluation was performed. The example makes the inference explicit: predicted rain risk supports carrying an umbrella under ordinary preferences. Grounding in a forecast does not convert a probabilistic forecast into an observed future outcome.
+
+Sources: [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 3.4 Checking the relevance and reliability of a result
+
+Slide 23.
+
+A returned result supports an answer only if it matches the task and comes from an appropriate source.
+
+EXAMPLES · RESULTS THAT DO NOT SUPPORT THE ANSWER:
+
+```text
+Location: a Busan forecast does not answer a question about Seoul.
+Date: today’s forecast does not answer a question about tomorrow.
+Source: an old web post does not establish the latest forecast.
+```
+
+Successful execution means the tool returned data. The model must still check what those data establish for the user’s question.
+
+These are epistemic checks, not JSON validation. A perfectly well-formed request and successful service response can still fail to support the intended conclusion. The location, date, and uncertainty examples are course-authored. Tool outputs should not be treated as automatically authoritative.
+
+Sources: [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents); [Anthropic · Writing effective tools](https://www.anthropic.com/engineering/writing-tools-for-agents).
+
+## 3.5 A failed lookup and an unknown forecast
+
+Slide 24.
+
+A service error explains why the lookup failed; it provides no information about the weather.
+
+EXAMPLE · AN ERROR RESULT AND ITS MEANING:
+
+```text
+User: Will I need an umbrella in Seoul tomorrow?
+Tool result: “Forecast service unavailable.”
+Supported answer: I could not retrieve the forecast.
+Unsupported answer: No rain is expected.
+```
+
+The model should report the missing evidence or seek another source. It cannot treat retrieval failure as a forecast.
+
+Concept check: Why is “the lookup failed” different from “no rain is forecast”?
+
+Answer: The first reports an unsuccessful information-gathering operation. The second is a weather claim that requires forecast evidence.
+
+Sources: [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+# 4. Tool sequences and action outcomes
+
+Slide 25.
+
+## 4.1 Motivation: tasks that require a later action
+
+Slide 26.
+
+A request to reserve an available item requires both a stock lookup and a reservation.
+
+The stock result determines whether a reservation should be attempted and which item it should name.
+
+Purpose: explain how one tool result determines a later call and how to verify the action’s outcome.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 4.2 A later call that depends on an earlier result
+
+Slide 27.
+
+Tool calls are dependent when an earlier result determines a later call’s inputs or whether that call should occur.
+
+EXAMPLE · A LOOKUP RESULT USED IN A RESERVATION:
+
+```text
+User: Find a black coat in size M; reserve one if available.
+First call: Stock lookup; color: black; size: M.
+Tool result: item C17; two available.
+Later call: Reservation; item: C17; quantity: one.
+```
+
+The lookup supplies C17 and establishes availability. Without that result, the model cannot justify this reservation request.
+
+The inventory lookup and reservation are hypothetical. This example establishes observation-dependent action composition without introducing ReAct’s explicit reasoning protocol, which remains the subject of Week 4.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 4.3 Reading inventory and changing inventory
+
+Slide 28.
+
+External state is information maintained outside the model, such as inventory. A lookup reads that state; a reservation changes it.
+
+EXAMPLE · READ AND WRITE OPERATIONS ON INVENTORY:
+
+```text
+Stock lookup: inventory is two before and after the lookup.
+Returned information: item C17 has two available coats.
+Reservation of one coat: inventory changes from two to one.
+Returned outcome: reservation R204 is confirmed.
+```
+
+Reading available stock does not reserve it. Only a successful reservation changes the inventory in this example.
+
+The inventory example contrasts lookup with reservation. Lookup supplies information about availability; reservation requests a change in availability. Observing a state does not reserve it. The example abstracts from provider APIs and database mechanisms.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 4.4 Example: a reservation from request to confirmation
+
+Slide 29.
+
+The final reservation claim must be based on the reservation result.
+
+EXAMPLE · ILLUSTRATIVE CALLS, RESULTS, AND ANSWER:
+
+```text
+User: Check a black coat in M; reserve one if available.
+Tools: Stock lookup reads availability; Reservation reserves an item.
+Lookup request: black, M.
+Lookup result: item C17; two available.
+Reservation request: item C17; quantity one.
+Reservation result: confirmed, R204; one remains available.
+Model answer: One coat is reserved; confirmation R204.
+```
+
+The stock result supports the decision to request a reservation. The reservation result supports the claim that it succeeded.
+
+The tools are independent capabilities connected by the model’s requests. The stock lookup identifies the item and supplies availability evidence. The reservation request uses that observed item identifier; reservation success and the remaining inventory are externally reported outcomes. The user request, observations, state change, and final answer are hypothetical. A later action can fail even after a successful lookup, as the following page explains.
+
+Sources: [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents).
+
+## 4.5 Available stock and a failed reservation
+
+Slide 30.
+
+Stock can change after a lookup, so the lookup result cannot guarantee a later reservation.
+
+EXAMPLE · A STATE CHANGE BETWEEN LOOKUP AND ACTION:
+
+```text
+Stock lookup: one coat is available.
+Before reservation: another customer reserves that coat.
+Reservation result: rejected; no stock remains.
+Supported answer: The coat could not be reserved.
+```
+
+The action’s result determines whether it succeeded. Earlier availability supports an attempt, not a claim of completion.
+
+The state-change example is course-authored. A lost response can also leave completion uncertain: absence of confirmation does not establish absence of an effect. Execution-time coordination, retry policies, and idempotency mechanisms are deferred to the optional implementation reference.
+
+Concept check: Does observing available stock establish that a reservation succeeded?
+
+Answer: No. Availability is an earlier observation; reservation is a separate action whose outcome must be established.
+
+Sources: [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents); [AWS Builders’ Library · Idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/).
+
+# 5. Training models to use tools
+
+Slide 31.
+
+## 5.1 Motivation: learning to generate useful calls
+
+Slide 32.
+
+A tool description identifies an available operation. The model still needs the ability to generate a useful call and use its result.
+
+Training examples can teach when to request a calculator and how to continue after its answer.
+
+Purpose: distinguish prompting from parameter training and examine the training data used by Toolformer and ToolLLM.
+
+Earlier sections explain behavior during inference. This section changes the explanatory level to the acquisition of capability through parameter updates. Toolformer and ToolLLM provide specific research examples of training-data construction; neither paper is a claim about the undisclosed training process of every deployed model. The comparison concerns supplying current input versus learning from examples through a training objective.
+
+Sources: [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761); [Qin et al. (2023) · ToolLLM](https://arxiv.org/abs/2307.16789).
+
+## 5.2 Prompting a model and training a model
+
+Slide 33.
+
+Prompting changes the model’s input. Training changes its parameters so useful requests and answers become more likely.
+
+EXAMPLES · INPUT CHANGES AND PARAMETER UPDATES:
+
+```text
+Prompting: supply “Calculator evaluates an arithmetic expression.”
+In-context learning: also supply examples of when and how to call it.
+Fine-tuning: update parameters using tool-use training examples.
+```
+
+In-context learning uses the current context with fixed parameters. Adding or rewriting a tool description does not fine-tune the model.
+
+In-context learning uses task descriptions or examples at inference without gradient updates. Fine-tuning changes model parameters. A prompt may elicit an existing generalization ability, but it does not itself perform parameter learning. Toolformer and ToolLLM are research examples of learning tool use, not claims about every deployed model’s undisclosed training recipe.
+
+Sources: [Brown et al. (2020) · Few-shot learning](https://arxiv.org/abs/2005.14165); [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761).
+
+## 5.3 Toolformer: building training text with tool calls
+
+Slide 34.
+
+Toolformer trains a model on text containing useful tool calls and their results.
+
+A result is useful if it improves prediction of the following original text. Fine-tuning then teaches the model to generate calls in such contexts.
+
+Figure description: Use demonstrations to propose call insertions → execute the candidate tools → retain calls whose results reduce prediction loss → fine-tune on the augmented text.
+
+Prediction loss is the weighted negative log-probability of subsequent original-text tokens under the model. The filter compares the result-bearing insertion with the better of two baselines: no insertion and an insertion without the result. A small set of demonstrations supports proposal generation; the approach should not be described as requiring no initial examples. The subsequent text is the training target, not a premise already supplied to the model at the position being scored. The example 437 is a known reference answer in the corpus; the filter asks whether a returned tool result improves prediction of that continuation.
+
+Sources: [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761).
+
+## 5.4 Example: selecting a useful calculator call
+
+Slide 35.
+
+Toolformer keeps a call when its result helps the model predict the original training text. Prediction loss is lower when that text is more probable.
+
+EXAMPLE · TOOLFORMER FILTER (SCHEMATIC):
+
+```text
+Original text: “Nineteen times twenty-three is 437.”
+Continuation to predict in every condition: 437.
+A. Text prefix only → loss L_A.
+B. Text prefix and a request to calculate 19 × 23 → loss L_B.
+C. Text prefix, the request, and returned result 437 → loss L_C.
+Keep the call if min(L_A, L_B) − L_C ≥ τ.
+```
+
+τ is the required loss reduction. The returned result must help more than either no call or a call without its result.
+
+This is a teaching reconstruction of the filtering setup, not a measured model run or the paper’s literal serialization. At the position being evaluated, the original continuation 437 is a target whose likelihood is scored. It is not already available in the no-call prefix. Condition C makes that value available through a tool result. The paper uses weighted losses on subsequent original-text tokens, so the target is not limited to a single numeric token.
+
+A, B, and C all score the same reference continuation. L denotes weighted negative log-probability over the following original-text tokens; the numeric answer is a short illustration. The displayed ordering is schematic: in the original filtering experiment the tool representation is prepended before the text prefix. Training later inserts retained calls into the original text. This distinction does not change the comparison of the three conditions.
+
+Sources: [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761).
+
+## 5.5 ToolLLM: training on complete task solutions
+
+Slide 36.
+
+ToolLLM trains ToolLLaMA on ToolBench solution trajectories: recorded sequences of reasoning, calls, results, and answers for a task.
+
+EXAMPLE · ILLUSTRATIVE TRAINING TRAJECTORY (EXCERPT):
+
+```text
+Task: Compare the same coat in stores A and B.
+Call A’s price tool → result: 120 dollars.
+Call B’s price tool → result: 100 dollars.
+Target answer: B is cheaper by 20 dollars.
+```
+
+During training, earlier results are inputs for predicting later calls and the answer. A complete solution teaches tool use across several steps.
+
+This is a course-authored excerpt illustrating task-level trajectory supervision, not a literal ToolBench run. ToolBench includes task instructions and solution paths collected using an external model and tools. The simplified trajectory shows model-produced requests and an answer as training targets; tool observations provide context. A complete source trajectory can also contain reasoning. Fine-tuning updates model parameters so appropriate requests and answers become more likely under their preceding context. At inference, the learned model must generate a path for the current task rather than retrieve this teaching example verbatim. This connects the training chapter to the conditional-generation mechanism in Chapter 2.
+
+The visible trajectory omits reasoning to keep the supervision relation clear. ToolBench solution paths may include reasoning as well as requests and results; model-produced reasoning, calls, and final answers are supervised targets, while tool results provide context.
+
+Sources: [Qin et al. (2023) · ToolLLM](https://arxiv.org/abs/2307.16789); [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761).
+
+## 5.6 ToolLLM: finding successful training examples
+
+Slide 37.
+
+ToolLLM uses depth-first search-based decision trees (DFSDT) to find successful solution paths, including alternatives to failed attempts.
+
+EXAMPLE · FINDING A USABLE TRAJECTORY:
+
+```text
+Task: Compare a coat’s price in stores A and B.
+First path: obtain A’s price; B rejects an unknown product ID.
+Alternative path: search B for the coat, then request its price.
+Retained solution: obtain both prices and answer the comparison.
+```
+
+Search produces successful examples for training. Training on those examples does not itself run the search procedure.
+
+Course-authored illustration, not a measured ToolBench run. DFSDT is a search procedure used in solution-path construction: an unsuccessful branch can be abandoned and another path explored. Training on selected trajectories is distinct from running that search procedure at inference. The trained model is not assumed to execute DFSDT automatically.
+
+Concept check: How do Toolformer and ToolLLM differ in the training examples they construct?
+
+Answer: Toolformer filters API call–result insertions using subsequent-token loss. ToolLLM generates task-level solution trajectories through path exploration.
+
+Sources: [Qin et al. (2023) · ToolLLM](https://arxiv.org/abs/2307.16789); [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761).
+
+# 6. Evaluating tool use
+
+Slide 38.
+
+## 6.1 Motivation: checking more than the final answer
+
+Slide 39.
+
+A fluent answer can claim success even when a tool call failed.
+
+“Your coat is reserved” is correct only if the reservation result confirms it. The sentence alone does not establish completion.
+
+Purpose: evaluate the selected calls, the evidence used, and the outcome of the requested action.
+
+Sources: [Anthropic · Writing effective tools](https://www.anthropic.com/engineering/writing-tools-for-agents).
+
+## 6.2 Evaluation of calls, evidence, and outcomes
+
+Slide 40.
+
+Call selection: the requested operation and its inputs must fit the task. For a Seoul forecast, the call must name Seoul and the requested day.
+
+Evidence use: the answer must follow from the returned result. An 80% rain probability supports advice, not certainty.
+
+Action outcome: a completion claim must agree with the action’s result. Available stock alone does not prove a reservation.
+
+Week 3 explains tool use as a capability involving learned generation and external feedback. Week 4 develops ReAct as an explicit method for coordinating reasoning and action over a sequence of decisions.
+These criteria operationalize the same tool-use cycle: task and descriptions, generated request, external execution, returned result, and the next response. Tool-use training affects generation, but evaluation still requires checking actual requests and outcomes. The Chapter 4 coat example and the lab’s clock-to-file exercise differ in domain, not in their result dependency.
+
+## 6.3 Lab: observing the tool-use cycle
+
+Slide 41.
+
+Clock lookup and saving: inspect the supplied tool description, the generated call, and the result returned to the model.
+
+Dependent calls: save that returned time in a file and compare the actual file content with the clock result.
+
+Tool descriptions and policies: revise the inputs to improve selection and behavior. The model parameters remain fixed.
+
+The implementation companion provides provider fields, input schemas, result identifiers, and control settings. The lab shows description delivery through a system message and through separately supplied tools. The core clock-to-file task verifies that a later request uses a returned observation. Description and policy editing change inference-time input; this lab does not update model parameters.
+
+Concept check: What evidence shows that a returned timestamp was actually saved?
+
+Answer: A later write request must use the clock result, and the saved file content must match that result. The model’s final claim alone is insufficient.
+
+## 6.4 Readings on tool use and its training
+
+Slide 42.
+
+Schick et al., Toolformer: learning useful tool calls from augmented text. Qin et al., ToolLLM: training on task solution trajectories.
+
+Ng, Agentic AI, Module 3; Anthropic, Building Effective Agents and Writing Effective Tools: tool design and external execution.
+
+Brown et al.: in-context learning. Yao et al., ReAct (Week 4): coordinating reasoning and actions. Source links are in the notes.
+
+Sources: [Brown et al. (2020) · Few-shot learning](https://arxiv.org/abs/2005.14165); [Schick et al. (2023) · Toolformer](https://arxiv.org/abs/2302.04761); [Qin et al. (2023) · ToolLLM](https://arxiv.org/abs/2307.16789); [Ng · Agentic AI, Module 3](https://www.deeplearning.ai/courses/agentic-ai); [Anthropic · Building effective agents](https://www.anthropic.com/engineering/building-effective-agents); [Anthropic · Writing effective tools](https://www.anthropic.com/engineering/writing-tools-for-agents); [Yao et al. (2022/2023) · ReAct](https://arxiv.org/abs/2210.03629).
+
+## Optional implementation reference
+
+The [implementation companion](reference/tool-use-implementation.en.md) covers schemas, call identifiers, and execution details for the later lab. The concept briefing is complete without these interface details.

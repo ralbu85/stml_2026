@@ -4,17 +4,17 @@ title: "Week 02 — Prompting & Reasoning"
 
 | Material | Where |
 |---|---|
-| Lecture notes | [read](lectures/week02/notes.html) |
+| Lecture notes | [Read online](lectures/week02/notes.html) · [Markdown (.md)](lectures/week02/notes.en.md){download="notes.en.md"} · [PDF](lectures/week02/STML-week-02-notes.pdf) |
 | Slides | [download (pptx)](lectures/week02/slides-draft-w2.pptx) |
-| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_lab_prompting.ipynb) · [`W2_lab_prompting.ipynb`](lectures/week02/W2_lab_prompting.ipynb) download |
-| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_hw_prompting.ipynb) · [`W2_hw_prompting.ipynb`](lectures/week02/W2_hw_prompting.ipynb) download — collected via the LMS; due date on the LMS |
+| Lab | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_lab_prompting.ipynb) · [`W2_lab_prompting.ipynb`](lectures/week02/W2_lab_prompting.ipynb){download="W2_lab_prompting.ipynb"} download |
+| Homework | [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_hw_prompting.ipynb) · [`W2_hw_prompting.ipynb`](lectures/week02/W2_hw_prompting.ipynb){download="W2_hw_prompting.ipynb"} download — collected via the LMS; due date on the LMS |
 | Papers | [Chain-of-Thought Prompting (Wei et al., 2022)](https://arxiv.org/abs/2201.11903) ([PDF](https://arxiv.org/pdf/2201.11903)) · [Self-Consistency (Wang et al., 2022)](https://arxiv.org/abs/2203.11171) ([PDF](https://arxiv.org/pdf/2203.11171)) — first student presentations |
 
 ## This week
 
 Why the same model gets different accuracy depending on how it is asked: chain-of-thought externalizes intermediate steps onto the page, few-shot exemplars induce it in context, and sampling many solutions buys accuracy for compute (self-consistency, test-time compute).
 
-The notes open as an ordinary web page (print from the browser to get a PDF); the slides download as a PowerPoint file.
+The lecture notes are available online and as Markdown or PDF. The slides download as a PowerPoint file.
 
 ## Lab
 

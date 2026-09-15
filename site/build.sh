@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # build.sh — render the STML course materials and website.
 #
-# Everything is HTML. No LaTeX, no fonts to install, no image conversion.
+# Render HTML and publish the source Markdown, prepared PDFs, and notebooks.
+# PDF files are prepared alongside each week's notes before release.
 #
 # Each week's folder holds its sources AND its rendered files side by side,
 # so lectures/weekNN/ is browsable on its own — double-click to view:
@@ -22,7 +23,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PUBLISH_WEEKS="01 02"
+PUBLISH_WEEKS="01 02 03"
 published() { case " $PUBLISH_WEEKS " in *" $1 "*) return 0;; *) return 1;; esac; }
 
 # Render each week's materials in place, next to their sources.
@@ -56,8 +57,19 @@ for d in ../lectures/week*/; do
   published "${week#week}" || continue
   mkdir -p "_site/lectures/$week"
   cp "$d"/notes.html "$d"/slides.html "_site/lectures/$week/" 2>/dev/null || true
+  cp "$d"/notes.en.md "_site/lectures/$week/"
+  cp "$d"/STML-week-"${week#week}"-notes.pdf "_site/lectures/$week/"
+  # Figures referenced by the downloadable Markdown; HTML embeds these already.
+  [ -d "$d/figures" ] && cp -r "$d/figures" "_site/lectures/$week/"
+  # Course-authored companion linked from Week 3 notes. Do not copy source archives.
+  if [ "$week" = "week03" ]; then
+    mkdir -p "_site/lectures/$week/reference"
+    cp "$d/reference/tool-use-implementation.en.md" "_site/lectures/$week/reference/"
+  fi
   cp "$d"/W*_lab_*.ipynb "$d"/W*_hw_*.ipynb "_site/lectures/$week/" 2>/dev/null || true
   cp "$d"/slides-draft-*.pptx "_site/lectures/$week/" 2>/dev/null || true
+  # Student presentation slides, when the week has any (lectures/weekNN/presentations/*.pdf).
+  [ -d "$d/presentations" ] && cp -r "$d/presentations" "_site/lectures/$week/"
 done
 
 # Data files the notebooks fetch at runtime (e.g. coffee_sales.csv).
