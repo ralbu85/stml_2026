@@ -226,11 +226,11 @@ The tenth call also receives the nine earlier invoices and answers, because the 
 3. Measure accuracy on ten invoices with code, giving every case a new object, and compare two system messages on the same cases.
 4. Grade summaries with a judge object and check it against human labels.
 
-[Practice notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_practice_core_patterns.ipynb) · [Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [Homework notebook](W5_hw_chart_reflection.ipynb): reflection on a rendered chart, submitted on the LMS.
+[Practice notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_practice_core_patterns.ipynb) · [Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [Homework notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb): reflection on a rendered chart, submitted on the LMS.
 
 ## Materials and sources {.unnumbered #sources}
 
-- Practice: [Core code patterns](W5_practice_core_patterns.ipynb) · [Lab notebook](W5_lab_reflection_evals.ipynb) · [Homework notebook](W5_hw_chart_reflection.ipynb).
+- Practice: [Core code patterns in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_practice_core_patterns.ipynb) · [Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [Homework notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb).
 - Andrew Ng, [Agentic AI](https://www.deeplearning.ai/courses/agentic-ai): Module 2 informs Part 1's reflection pattern and adapted workflow diagram. The brief chart example paraphrases a critique and revision from its Chart Generation lab. Module 4 informs Part 2's evaluation framework. The invoices and library announcement are fictional teaching examples.
 - Madaan et al., [Self-Refine](https://arxiv.org/abs/2303.17651): generation, feedback, and revision using one LLM.
 - Zheng et al., [Judging LLM-as-a-Judge](https://arxiv.org/abs/2306.05685): capabilities and biases of model judges.
