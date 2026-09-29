@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="420" viewBox="0 0 1300 420" role="img"><title>The agent loop returns text-search results to the LLM and ends with a final answer</title><defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#63788C"/></marker></defs><rect width="1300" height="420" fill="white"/>
+<rect x="20" y="95" width="315" height="185" rx="12" fill="#F1F4F7" stroke="#C4D0DA" stroke-width="1.5"/>
+<rect x="425" y="95" width="360" height="185" rx="12" fill="#EAF2FC" stroke="#C4D0DA" stroke-width="1.5"/>
+<rect x="910" y="95" width="370" height="185" rx="12" fill="#EAF6F0" stroke="#C4D0DA" stroke-width="1.5"/>
+<text x="177" y="143" font-family="Arial,sans-serif" font-size="34" font-weight="700" text-anchor="middle" fill="#18334A">1. Input to LLM</text>
+<text x="177" y="198" font-family="Arial,sans-serif" font-size="31" font-weight="400" text-anchor="middle" fill="#18334A">Question + earlier</text>
+<text x="177" y="241" font-family="Arial,sans-serif" font-size="31" font-weight="400" text-anchor="middle" fill="#18334A">responses + results</text>
+<text x="605" y="143" font-family="Arial,sans-serif" font-size="34" font-weight="700" text-anchor="middle" fill="#18334A">2. LLM response</text>
+<text x="605" y="198" font-family="Arial,sans-serif" font-size="34" font-weight="400" text-anchor="middle" fill="#18334A">A search request</text>
+<text x="605" y="241" font-family="Arial,sans-serif" font-size="34" font-weight="400" text-anchor="middle" fill="#18334A">or a final answer</text>
+<text x="1095" y="143" font-family="Arial,sans-serif" font-size="33" font-weight="700" text-anchor="middle" fill="#18334A">3. Python executes</text>
+<text x="1095" y="198" font-family="Arial,sans-serif" font-size="31" font-weight="400" text-anchor="middle" fill="#18334A">Run requested search.</text>
+<text x="1095" y="241" font-family="Arial,sans-serif" font-size="32" font-weight="400" text-anchor="middle" fill="#18334A">Get returned text.</text>
+<path d="M337,185 H417" fill="none" stroke="#63788C" stroke-width="3" marker-end="url(#a)"/>
+<path d="M787,185 H902" fill="none" stroke="#63788C" stroke-width="3" marker-end="url(#a)"/>
+<text x="845" y="164" font-family="Arial,sans-serif" font-size="25" font-weight="400" text-anchor="middle" fill="#18334A">request</text>
+<path d="M1095,93 V49 H177 V88" fill="none" stroke="#63788C" stroke-width="3" marker-end="url(#a)"/>
+<text x="650" y="30" font-family="Arial,sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#18334A">Save response + returned text; send the updated history.</text>
+<rect x="407" y="338" width="396" height="72" rx="12" fill="#F1F4F7" stroke="#C4D0DA" stroke-width="1.5"/>
+<path d="M605,282 V331" fill="none" stroke="#63788C" stroke-width="3" marker-end="url(#a)"/>
+<text x="672" y="316" font-family="Arial,sans-serif" font-size="25" font-weight="400" text-anchor="middle" fill="#18334A">answer</text>
+<text x="605" y="384" font-family="Arial,sans-serif" font-size="34" font-weight="700" text-anchor="middle" fill="#18334A">Return answer; stop.</text>
+</svg>

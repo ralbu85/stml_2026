@@ -54,6 +54,8 @@ A repeated process. In each round, the model selects the next action from the ta
 
 The result of a tool is an **observation**. The saved observation is the important part of the loop. Without it, the next model call does not know what the tool returned.
 
+One response can contain several requests. The program runs each request and saves each result. If a tool fails, the program saves the error message as the observation. The model can then correct its request.
+
 The model selects each action, but it does not run the tools. The program runs the tools and keeps the conversation.
 
 ### 1.3 Stop conditions {#stop}
@@ -62,6 +64,8 @@ A loop needs a stop condition. It stops in one of two ways:
 
 1. **The model gives a final answer.** In the lab, the model selects the operation `finish` with its answer.
 2. **The number of model calls gets to a limit.** Then the program reports that there is no answer.
+
+The limit also controls the cost. The conversation grows in each round, so each call sends more tokens than the call before it.
 
 ::: {.checkpoint}
 ### Check 1 · Save the observation

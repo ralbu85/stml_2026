@@ -86,6 +86,8 @@ An agent knows only what is in its messages. For this reason, a handoff must car
 
 Some systems also keep a **shared state**: a common record that several agents can read. Then a message can point to the record and not copy all of it.
 
+An error also passes on in a handoff. If a finding is wrong, the next agent builds on it. A review or a check with code can stop the error before the next agent uses it.
+
 ### 2.3 Coordination {#coordination}
 
 **Coordination** decides which agent works next and what it receives. **Integration** combines the results into one result.

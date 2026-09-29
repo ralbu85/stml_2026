@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="465" viewBox="0 0 1120 465" role="img" aria-labelledby="title desc">
+<title id="title">Document preparation and question answering</title><desc id="desc">Prepare chunks with sources and a search index. At answer time the retriever reads the index. The generator receives both the question and returned passages.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10Z" fill="#334155"/></marker></defs>
+<rect width="1120" height="465" fill="white"/>
+<text x="560" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#435267">Prepare documents when they are added or changed</text>
+<rect x="20" y="65" width="240" height="90" rx="8" fill="#f3f4f6" stroke="#667085" stroke-width="2"/>
+<text x="140.0" y="118.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#172a43">Documents</text>
+<rect x="370" y="65" width="300" height="90" rx="8" fill="#edf3fb" stroke="#526e97" stroke-width="2"/>
+<text x="520.0" y="101.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#172a43">Chunks</text>
+<text x="520.0" y="135.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#172a43">+ source metadata</text>
+<rect x="830" y="65" width="270" height="90" rx="8" fill="#eef7f0" stroke="#568267" stroke-width="2"/>
+<text x="965.0" y="118.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#172a43">Search index</text>
+<path d="M260 110 H370" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M670 110 H830" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="750" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#435267">Index</text>
+<path d="M965 155 V235 H445 V290" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="700" y="219" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#435267">Read indexed passages</text>
+<text x="210" y="249" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#435267">Process each question</text>
+<rect x="20" y="290" width="200" height="90" rx="8" fill="#f3f4f6" stroke="#667085" stroke-width="2"/>
+<text x="120.0" y="343.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#172a43">Question</text>
+<rect x="340" y="290" width="210" height="90" rx="8" fill="#eef7f0" stroke="#568267" stroke-width="2"/>
+<text x="445.0" y="343.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#172a43">Retriever</text>
+<rect x="720" y="290" width="210" height="90" rx="8" fill="#edf3fb" stroke="#526e97" stroke-width="2"/>
+<text x="825.0" y="326.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#172a43">Generator</text>
+<text x="825.0" y="360.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#172a43">(LLM)</text>
+<rect x="980" y="290" width="120" height="90" rx="8" fill="#f3f4f6" stroke="#667085" stroke-width="2"/>
+<text x="1040.0" y="343.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" fill="#172a43">Answer</text>
+<path d="M220 335 H340" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="280" y="316" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#435267">Query</text>
+<path d="M550 335 H720" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="635" y="305" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#435267">Passages</text>
+<text x="635" y="368" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#435267">+ sources</text>
+<path d="M930 335 H980" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M120 380 V435 H825 V380" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="465" y="423" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#435267">Original question also reaches the generator</text>
+</svg>

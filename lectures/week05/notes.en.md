@@ -73,6 +73,12 @@ The program gives this output to the model together with the draft. Then the cri
 
 The critique and the revision can repeat. Each round examines the latest version. The loop stops when the critique finds no problem, or when the number of rounds gets to a limit. Each round adds model calls, so the limit is usually small.
 
+::: {.diagram-scroll tabindex="0" role="region" aria-label="Reflection with external feedback"}
+
+![Reflection with external feedback.](figures/ng/external-feedback-loop.svg){#fig-external-feedback fig-alt="Task, Generate, a program runs the draft; its output (rows, error, chart) and the draft go to Critique; Revise; Result. The revised version runs again until no problem remains or the round limit."}
+
+:::
+
 ::: {.checkpoint}
 ### Check 1 · External feedback
 
@@ -100,23 +106,35 @@ A measurement of the outputs of a system against written criteria on a fixed set
 
 ### 2.2 The parts of an evaluation {#evaluation-parts}
 
+Chapter 2 compared two prompts with an evaluation set and accuracy. This section names all parts of an evaluation.
+
 An evaluation starts with a **criterion**: a written rule that a correct output obeys. For example: "The output is the payment due date of the invoice, in the form `YYYY/MM/DD`."
 
 Next, the evaluation needs cases. An **evaluation set** is a fixed set of inputs for the system. For each input, a person writes the correct output. This output is the **reference answer**. The system does not receive it.
 
 A **grader** applies the criterion to each output and gives a grade. A **metric** summarizes the grades. The simplest metric is **accuracy**: the number of correct outputs divided by the number of cases.
 
-**Evaluation set → system → outputs → grader → metric**
+::: {.diagram-scroll tabindex="0" role="region" aria-label="The parts of an evaluation"}
+
+![The parts of an evaluation.](figures/ng/evaluation-parts.svg){#fig-evaluation-parts fig-alt="Evaluation set with inputs and reference answers; the inputs go to the System, its Outputs go to the Grader (code or LLM judge), and the Grader gives the Metric (accuracy). The reference answers go only to the Grader."}
+
+:::
 
 ### 2.3 Two types of grader {#graders}
 
 Some criteria are exact. A date is equal to the reference date, or it is not. Code can grade these criteria, for example with `pred == ref`.
 
-Other criteria need an interpretation of meaning. For example: "The summary keeps the three main facts." Two summaries can use different words for the same fact. For these criteria, a model grades the output. This model is an **LLM judge**. It receives the task, the output, and a **rubric**: the criteria and the rules for the score. An LLM judge is also a model, so it can make errors. Before you use it, compare its grades with the grades of a person on some cases.
+Other criteria need an interpretation of meaning. For example: "The summary keeps the three main facts." Two summaries can use different words for the same fact. For these criteria, a model grades the output. This model is an **LLM judge**. It receives the task, the output, and a **rubric**: the criteria and the rules for the score. An LLM judge is also a model, so it can make errors. Known errors include a preference for the first answer in a comparison, for longer answers, and for answers in its own style (Zheng et al., 2023). Before you use it, compare its grades with the grades of a person on some cases.
 
 ### 2.4 Compare two versions {#compare}
 
 An evaluation lets you compare two versions of a system. Run both versions on the same evaluation set with the same grader. Change only one part, for example the system message, or add reflection. Then the difference in the metric comes from that change.
+
+::: {.diagram-scroll tabindex="0" role="region" aria-label="Comparing two versions"}
+
+![Comparing two versions.](figures/ng/compare-versions.svg){#fig-compare-versions fig-alt="The same evaluation set goes to Version A and Version B (one change, for example reflection); the same grader gives Metric A and Metric B, which are compared."}
+
+:::
 
 Also read the failed cases. They show what to change next.
 

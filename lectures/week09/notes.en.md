@@ -33,6 +33,8 @@ In Chapter 7, an agent made a plan and used tools to get the information for eac
 
 A model gets general knowledge from its training data. This knowledge is in the weights of the model, and it is **parametric knowledge**. It does not contain the rules of a specific course or a rule that changed last week. Documents outside the model contain this information. It is **non-parametric knowledge**. You can update it, and you do not train the model again.
 
+Without this text, the model can still write a fluent answer, but the answer can be a guess: a hallucination (Chapter 1).
+
 A short document can go directly into the prompt. Many long documents do not fit in the prompt. The system must first find the parts that the question needs. This step is retrieval.
 
 ### 1.2 Retrieval-augmented generation {#definition}
@@ -85,6 +87,8 @@ The system changes the question into a vector $q$. It uses the same embedding mo
 $$
 \operatorname{sim}(q,d)=\frac{q\cdot d}{\lVert q\rVert\,\lVert d\rVert}
 $$
+
+The dot product $q\cdot d$ multiplies the matching entries of the two vectors and adds the products. The division by the lengths removes the effect of length, so only the direction counts. The score is 1 when the two vectors point in the same direction, and it is near 0 when the texts are unrelated.
 
 A high score shows a related meaning. It does not prove that the chunk contains the fact that the question needs.
 

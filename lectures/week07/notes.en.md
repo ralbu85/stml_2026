@@ -68,7 +68,7 @@ Each task has an output that the next task uses. The last output answers the req
 A plan must also be carried out. There are two approaches. They differ in when the model reads the tool results.
 
 - **Interleaved execution.** The model chooses the next action after it reads the last observation. ReAct in Chapter 4 works in this way.
-- **Plan-and-execute.** The model first writes the whole plan. Then an **executor** runs the tasks in order. It gives each result to the tasks that need it.
+- **Plan-and-execute.** The model first writes the whole plan, usually as a list of tasks in a fixed format such as JSON, so that code can read it. Then an **executor** runs the tasks in order. It gives each result to the tasks that need it.
 
 ::: {.diagram-scroll tabindex="0" role="region" aria-label="How observations enter action decisions"}
 ![Upper row: the model uses the first result to choose the next action. Lower row: the plan sets both actions before the run, and the first result becomes an input to the second action.](figures/planning-search/execution-approaches.svg){fig-alt="In the upper row, the model uses the result of action 1 to choose action 2. In the lower row, the plan specifies both actions and their dependency before execution; the result of action 1 supplies an input to action 2. Both rows end by answering."}

@@ -44,7 +44,7 @@ A prompt can contain four parts:
 1. **An instruction:** what to do, for example "Reply with only the number."
 2. **Information:** the facts that the task needs.
 3. **Examples:** questions with their answers.
-4. **An output format:** the form of the reply, for example a last line `ANSWER: <number>`.
+4. **An output format:** the form of the reply, for example a last line `ANSWER: <number>`. When code must read several fields, ask for **JSON**. Some APIs have a JSON mode that guarantees a valid JSON reply.
 
 The number of examples gives a name to the prompt. A **zero-shot** prompt has no examples. A **few-shot** prompt has a small number of examples. The model adapts its reply to the examples in the prompt. This is **in-context learning**. It differs from **fine-tuning**, which changes the parameters with training data.
 
@@ -126,6 +126,8 @@ The computation that a model uses to make a reply after training. It is also cal
 | CoT prompting | Generate intermediate steps | Continue from the steps to the final answer |
 | Self-consistency | Generate several solutions | Select the most frequent final answer |
 | Best-of-N | Generate N candidates | A **verifier** examines each candidate and selects the best one |
+
+Some models, called **reasoning models**, are trained to generate long intermediate reasoning before the answer. They spend test-time compute without a CoT instruction, and the provider counts these reasoning tokens in the cost.
 
 More computation uses more tokens, so it costs more. Use it when it makes the answers better.
 

@@ -35,11 +35,22 @@ A **large language model (LLM)** is a model that receives a sequence of tokens a
 
 The input to one call is the **prompt**. It can contain instructions, the request of the user, documents, and earlier messages. The information that one call receives is its **context**.
 
-A model call has three properties:
+A chat model receives the prompt as a list of **messages**. Each message has a **role** that shows who wrote it:
+
+- A **system** message gives the standing instructions for the whole conversation.
+- A **user** message gives a request.
+- An **assistant** message is an earlier reply of the model.
+
+Chapter 3 adds a fourth role, **tool**, for the result of a tool.
+
+The program sends the messages to the model provider through an **API**: a service that other programs call over the network. The provider counts the tokens of the input and of the output. The cost and the time of a call grow with these numbers. The **context window** is the maximum number of tokens that one call can process (Chapter 9).
+
+A model call has four properties:
 
 1. **It writes text only.** The model can write an explanation, a plan, or a request for an operation. It cannot do the operation.
 2. **It keeps no memory between calls.** A second call does not know the first call. To continue a conversation, the program sends the earlier messages again.
 3. **Its output can vary.** An option called **temperature** controls how much the output changes from one call to the next.
+4. **It can be wrong with confidence.** The model can write a fluent statement that is false. This is a **hallucination**. For this reason, an agent checks important facts with tools, with documents, and with evaluation (Chapters 3, 5, and 8).
 
 For this reason, a model call alone cannot complete a task that needs actions. The next section adds the parts that do the actions.
 
@@ -111,7 +122,7 @@ Five workflow patterns are common:
 | Orchestrator–workers | One model divides the task and gives the parts to other calls. |
 | Evaluator–optimizer | One call examines a result, and another call revises it. |
 
-This course studies four capabilities of agentic systems: tool use, reflection, planning, and multi-agent collaboration.
+Andrew Ng names four design patterns of agentic systems: tool use, reflection, planning, and multi-agent collaboration. Chapters 3 to 7 study these patterns. Chapters 8 and 9 add retrieval from documents and the management of the context.
 
 ## 1.5 How much autonomy {#autonomy-and-completion}
 
@@ -137,7 +148,7 @@ A workflow. Code selects each step. The model only writes the message at a fixed
 
 ## Summary {#recap}
 
-- One model call receives a prompt and returns text. It keeps no memory between calls.
+- One model call receives a list of messages with roles and returns text. It keeps no memory between calls, and its output can be wrong.
 - An agent is a system in which the model selects actions and the program runs them and returns the results.
 - An agent has four components: a model, instructions, tools, and memory.
 - In a workflow, code selects the next step. In an agent, the model selects it.

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="310" viewBox="0 0 1000 310" role="img" aria-labelledby="title desc">
+<title id="title">Travel task dependencies</title><desc id="desc">The request feeds independent transport and lodging research. Both results are needed for the itinerary.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10Z" fill="#334155"/></marker></defs>
+<rect width="1000" height="310" fill="white"/>
+<path d="M180 150 L280 68" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)"/>
+<path d="M180 162 L280 250" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)"/>
+<path d="M555 65 L705 135" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)"/>
+<path d="M555 247 L705 174" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)"/>
+<rect x="15" y="116" width="165" height="80" rx="9" fill="#f4f4f4" stroke="#6c737c" stroke-width="2"/>
+<text x="97.5" y="149.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Travel</text>
+<text x="97.5" y="181.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">request</text>
+<rect x="290" y="25" width="265" height="80" rx="9" fill="#f0f5fb" stroke="#526e97" stroke-width="2"/>
+<text x="422.5" y="58.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Transport</text>
+<text x="422.5" y="90.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">researcher</text>
+<rect x="290" y="210" width="265" height="80" rx="9" fill="#f0f5fb" stroke="#526e97" stroke-width="2"/>
+<text x="422.5" y="243.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Lodging</text>
+<text x="422.5" y="275.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">researcher</text>
+<rect x="715" y="116" width="270" height="80" rx="9" fill="#f0f5fb" stroke="#526e97" stroke-width="2"/>
+<text x="850.0" y="149.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Itinerary</text>
+<text x="850.0" y="181.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">writer</text>
+<text x="630" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" fill="#435267">Journeys</text>
+<text x="630" y="257" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" fill="#435267">Hotels</text>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="390" viewBox="0 0 1000 390" role="img" aria-labelledby="title desc">
+<title id="title">Travel-planning agent system</title><desc id="desc">The user communicates with a coordinator. The coordinator forwards tasks, research, drafts, and reviews among four specialist roles.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10Z" fill="#334155"/></marker></defs>
+<rect width="1000" height="390" fill="white"/>
+<path d="M500 82 V120" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<path d="M440 212 L122 284" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<path d="M480 212 L374 284" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<path d="M520 212 L626 284" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<path d="M560 212 L878 284" fill="none" stroke="#334155" stroke-width="2.6" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+<rect x="380" y="10" width="240" height="62" rx="9" fill="#f4f4f4" stroke="#6c737c" stroke-width="2"/>
+<text x="500.0" y="50.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">User</text>
+<rect x="350" y="130" width="300" height="72" rx="9" fill="#e9edf7" stroke="#28497b" stroke-width="2"/>
+<text x="500.0" y="175.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Coordinator</text>
+<text x="690" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="23" fill="#435267">Request / final plan</text>
+<rect x="15" y="294" width="214" height="80" rx="9" fill="#f0f5fb" stroke="#526e97" stroke-width="2"/>
+<text x="122.0" y="327.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Transport</text>
+<text x="122.0" y="359.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">researcher</text>
+<rect x="267" y="294" width="214" height="80" rx="9" fill="#f0f5fb" stroke="#526e97" stroke-width="2"/>
+<text x="374.0" y="327.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Lodging</text>
+<text x="374.0" y="359.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">researcher</text>
+<rect x="519" y="294" width="214" height="80" rx="9" fill="#f0f5fb" stroke="#526e97" stroke-width="2"/>
+<text x="626.0" y="327.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Itinerary</text>
+<text x="626.0" y="359.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">writer</text>
+<rect x="771" y="294" width="214" height="80" rx="9" fill="#fff5df" stroke="#9b7528" stroke-width="2"/>
+<text x="878.0" y="343.0" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#172a43">Reviewer</text>
+</svg>

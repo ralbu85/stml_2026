@@ -64,7 +64,9 @@ A tool call has four steps:
 
 ![The application sends the task and the tool definition. The model writes a request. The application runs the function and returns the result. The model then answers or writes another request.](figures/fig-3-1-round-trip-swimlane.svg){#fig-round-trip fig-alt="Application and model lanes: 1. task and tool schema go to the model; 2. the model requests get_current_time; 3–4. the application parses, validates, and executes it; 5. the result goes back to the model, which answers or writes another request."}
 
-The result of a tool is also called an **observation**. The model writes the request, but it does not run the function. The program runs it. The model sees the result only when the program puts it into the next input. One round trip uses two model calls and one function run.
+The result of a tool is also called an **observation**. The model writes the request, but it does not run the function. The program runs it. The request is text that the model wrote, so the program checks the tool name and the arguments before it runs the function.
+
+A request is not required. If the model can answer without a tool, it writes the answer directly and makes no request. The model sees the result only when the program puts it into the next input. One round trip uses two model calls and one function run.
 
 ::: {.checkpoint}
 ### Check 1 · Who runs the tool?
@@ -81,9 +83,9 @@ Run the function to read the clock. Then send the result to the model in the nex
 
 ## 3.4 Function calling {#function-calling}
 
-In the first form of the round trip, the tool definition is text in the system prompt, and the request is also text. The program must read this text to find the function and its arguments.
+The round trip can work with plain text: the system message lists the tool definitions, and the model writes the request as text. The program must then read this text to find the function and its arguments.
 
-**Function calling** is an API feature for this work. The program sends the tool definitions in a separate field. The model returns the tool name and the arguments in separate fields. The program still runs the function and returns the result.
+**Function calling** is an API feature for this work. The program sends the tool definitions in a separate field, as JSON objects called **schemas**. The model returns the tool name and the arguments in separate fields, with an id for each request. The program still runs the function. It returns the result in a message with the role `tool` and the id of the request, so the model can match each result to its request.
 
 The lab uses the `aisuite` library. `tools=[get_current_time]` sends the definition that the library makes from the function. `max_turns` sets the number of model calls that the library can do. The library then does all four steps of the round trip.
 
@@ -131,7 +133,7 @@ The lab first does the round trip by hand. Then it does the same steps with func
 | Tool function | `def get_current_time(timezone_name: str = ""):` with a docstring |
 | Tool definition in the system prompt | `TOOL_LIST_SYSTEM = """Available tools: - get_current_time(timezone_name: str): ..."""` |
 | Request | `call_text = response.choices[0].message.content` |
-| Execute | `result = eval(call_text)` |
+| Execute | `result = eval(call_text)`: `eval` runs any code in the text, so the lab uses it only to show this step. Chapter 14 covers safe execution. |
 | Return | `messages.append({"role": "user", "content": f"Tool result: {result}"})` |
 | Answer | `client.chat.completions.create(model=MODEL, messages=messages)` |
 | Function calling | `client.chat.completions.create(model=MODEL, messages=messages, tools=[get_current_time], max_turns=2)` |
