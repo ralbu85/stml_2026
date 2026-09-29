@@ -1,137 +1,229 @@
-# Chapter 7. Planning & Search
-
-Chapter 6 arranged agents into pipelines and orchestrations, and every arrangement presupposed a sequence of steps — fixed by the developer, or produced at run time by an orchestrator's judgment. This chapter examines that production itself. Some questions can only be answered by establishing several facts separately and combining them: a question that asks for the evaluation tasks of whichever of two papers was published later is of this kind. The loop of Chapter 4 reads the record accumulated so far and commits to exactly one next action per turn, so when the first action goes astray, it advances to the end along the wrong path. It compares no alternative paths, and it never undoes a committed action. The remedy that writes out the whole path in text before execution is planning; the remedy that generates several paths, compares them midway, and backtracks is search.
-
-## 7.1 The Problem — Greedy Progression
-
-The way the loop of Chapter 4 chooses actions is called **greedy**: at every turn it commits to the single most plausible action, keeps no alternatives, and never backtracks. The following is the typical way this progression collapses on a multi-step question. The question is "What are the evaluation tasks of whichever paper, ReAct or Reflexion, was published later?", and the tool is `search_papers`, a keyword search over the course's paper corpus, registered like any tool of Chapter 3 (how such retrieval works inside is Chapter 8's subject).
-
-> Thought 1: The two papers must be compared.
-> Action 1: search_papers["comparison of ReAct and Reflexion publication dates"]
-> Observation 1: (no passage compares the two papers; a chunk summarizing ReAct is returned)
->
-> Thought 2: Content about ReAct came back. Find ReAct's evaluation tasks.
-> Action 2: search_papers["ReAct evaluation tasks"]
-> …
-
-The very first search went wrong. A question that requires two facts to be established separately (each paper's publication date) and then compared was lumped into a single search, and no such comparison passage exists in the documents. Led by the off-target observation, the model loses the structure of the original question (which paper is later is still unknown) and keeps advancing along the wrong path. The failure divides in two: the whole path was never drawn in advance (absence of a path), and there is no device that detects a wrong turn and returns from it (absence of recovery).
-
-![greedy progression down a wrong path](figures/fig-7-1-greedy-path.svg)
-
-*Figure 7.1 — Greedy progression: one committed action per turn, no alternatives kept, no way back — a wrong first step propagates to the end.*
-
-## 7.2 Task Decomposition and Planning
-
-**Task decomposition** = dividing a composite task into ordered subtasks; the resulting sequence of steps is a **plan**. The planner is also the model: before execution begins, a decomposition prompt is processed first.
-
-```
-[Prompt] Decompose the question into subtasks each answerable with one search.
-         Question: What are the evaluation tasks of whichever paper, ReAct or
-         Reflexion, was published later?
-
-[Model]  1. Find the publication date of ReAct.
-         2. Find the publication date of Reflexion.
-         3. Compare the two dates and determine the later paper.
-         4. Find the evaluation tasks of that paper.
-```
-
-The reason for making the model write the plan out first is the same principle as in Chapter 2. The model has no workspace outside of text (→ 2.2), so a plan that is not written down does not exist for later predictions. When the plan sits in the context, every turn's action choice refers to the whole path, and the failure of 7.1 — being pulled off the question's structure by the first observation — becomes less frequent.
-
-There are two ways to couple planning with execution.
-
-| | interleaved (ReAct, Ch. 4) | plan-then-execute |
-|---|---|---|
-| when planning happens | every turn, after the latest observation | once, at the start |
-| strength | flexible path revision in response to observations | prevents path loss; progress is checkable |
-| weakness | easily loses the path (7.1) | an observation that breaks a premise invalidates the plan |
-
-The complement to plan-then-execute's weakness is replanning, and it must be operated with an explicit trigger and scope. The **plan–execute–replan loop** consists of the following steps.
-
-1. **Plan** (model) — decompose the question into a full sequence of subtasks before execution.
-2. **Execute** (loop) — run the subtasks in order, recording each result.
-3. **Replan** (model, conditional) — trigger only when an observation breaks a premise of the plan (a sought item does not exist, an assumed fact is contradicted); keep the results of completed steps as fixed premises and rewrite only the remaining steps, then return to Execute.
-
-This iteration is the basic skeleton of production planners, and it is what Chapter 6's orchestrator–workers pattern executes when the plan's steps are dispatched to separate agents instead of one loop.
-
-Plan-then-execute is visible in products as a control surface. Deep Research products present the research plan for approval before spending the browsing budget, and coding agents ship plan modes (Claude Code, Cursor) that write the whole path out for review before the first edit — a human reader standing exactly where this section put the replan trigger.
-
-## 7.3 Separating Planning from Execution — ReWOO
-
-Interleaved progression has a cost problem separate from accuracy. The Call step of the loop (→ 4.1) re-sends the entire conversation so far to the model at every turn. Search observations are long, so over n turns the first observation is re-sent n times, the second n−1 times. Each action also costs one LLM call. On multi-step tasks, tokens and call counts grow with the number of steps.
-
-With a fixed prompt of $p$ tokens, an average observation of $\bar{o}$ tokens, and $n$ turns, the total input tokens of a progression that re-sends everything each turn is
-
-$$\sum_{t=1}^{n} \big( p + (t-1)\,\bar{o} \big) = np + \frac{n(n-1)}{2}\,\bar{o},$$
-
-which grows quadratically in the number of turns. The LLM is also called $n$ times.
-
-**ReWOO (Reasoning WithOut Observation)** = a configuration that reduces this cost by separating reasoning from observation (Xu et al., 2023). The procedure divides into three modules.
-
-1. **Planner** (LLM) — reads only the question and writes the entire plan at once, referring to results that do not yet exist through variables (#E1, #E2).
-2. **Worker** (code) — executes each step of the plan with tools and fills the variables with actual results. No LLM call.
-3. **Solver** (LLM) — reads the question, the plan, and all filled-in results at once and writes the final answer.
-
-![the ReWOO pipeline](figures/fig-7-2-rewoo.svg)
-
-*Figure 7.2 — ReWOO: the planner writes the whole plan against variables, code fills them, and the solver reads everything once — LLM calls only at the two ends.*
-
-The planner's output takes the following form.
-
-```
-Plan: Find the publication date of ReAct.        #E1 = search_papers["ReAct publication date"]
-Plan: Find the publication date of Reflexion.    #E2 = search_papers["Reflexion publication date"]
-Plan: Find the evaluation tasks of ReAct.        #E3 = search_papers["ReAct evaluation tasks"]
-Plan: Find the evaluation tasks of Reflexion.    #E4 = search_papers["Reflexion evaluation tasks"]
-```
-
-The third step of the original question (find the evaluation tasks of the later paper) is a branch that depends on an observation: which paper to search changes with which one is later, and the planner cannot resolve that branch without observations. The plan therefore fetches the evaluation tasks of both papers and defers the decision of which to use to the solver, which reads all the results.
-
-LLM calls number two (planner, solver) regardless of the step count, and observations are read once by the solver instead of being re-sent, so the total input is on the order of $2p + n\bar{o}$ — linear. The quadratic term above disappears, so the cost drops. The paper reports that on the same tasks, token consumption falls sharply relative to ReAct while accuracy is maintained; the numbers are covered in the presentation. The price is flexibility: observations made during execution cannot be reflected into the plan, so tasks whose observations break the plan's premises require returning to the replanning of 7.2. The configuration suits tasks whose step structure is predictable.
-
-## 7.4 Search — Tree of Thoughts
-
-A plan is still a single path. If the first plan is wrong, the absence of recovery from 7.1 repeats at the level of plans. Chapter 2 already showed a method that uses multiple paths: self-consistency (→ 2.5) generates N independent paths to completion and takes a majority vote. But each path is judged only at its end, so a path that went wrong early still spends its full cost, and there is no comparison of intermediate states across paths. What is needed is the ability to judge promise in the middle of a path, branch toward the promising side, and return when blocked.
-
-**Tree of Thoughts (ToT)** = a configuration that treats partial-solution states as nodes, generates several candidate next steps per state, evaluates each state's promise, and finds a solution by tree search (Yao et al., 2023). The components are as follows.
-
-1. **Candidate generation** (model) — from the current state, sample several candidate next thoughts (intermediate steps).
-2. **State evaluation** (model) — judge how likely each candidate state is to lead to a solution. Two formats exist: scoring each state independently (the paper's sure / maybe / impossible grades), and placing candidates side by side and voting for the most promising. Either way, choosing the best among several candidates requires a scoring verifier, and the model's self-evaluation plays that verifier role (Best-of-N, → 2.6).
-3. **Search** (code) — expand the tree according to the evaluations. Breadth-first search (BFS) keeps only the top b most promising states at each depth; depth-first search (DFS) pursues one path and, on an "impossible" verdict, abandons that branch and returns to the fork (backtracking).
-
-![the Tree of Thoughts search tree](figures/fig-7-3-tot.svg)
-
-*Figure 7.3 — Tree of Thoughts: candidate states graded, unpromising branches pruned or abandoned (backtracking), against the single path of greedy/CoT.*
-
-The paper's example, Game of 24 (make 24 from four given numbers with the four arithmetic operations), shows the structure clearly. From the state "4, 9, 10, 13", candidates such as "13 − 9 = 4 (remaining: 4, 4, 10)" are generated, and each intermediate state is evaluated for whether 24 is still reachable, pruning branches as the search advances. A task that single-pass generation or CoT almost never solves is improved by a wide margin under search; the numbers are covered in the presentation.
-
-ToT belongs to the family of methods that buy accuracy with more predictions at inference time (test-time compute, → 2.6), as its tree-search member — and it is the most expensive one, because model calls are spent not only on candidate generation but also on evaluation. For BFS with depth $d$, $b$ states kept per depth, and $k$ candidates per state, generation calls are on the order of $d \cdot b \cdot k$, with evaluation calls added on top. This is an order of magnitude beyond self-consistency's five samples of the same question.
-
-## 7.5 Adoption Criteria
-
-Planning and search are both extensions of test-time compute (→ 2.6) — accuracy bought with more predictions — and the adoption criteria follow from the same trade. Attaching a planner to a question answered by a single search wastes cost and latency. Multi-step tasks with a clear step structure profit from decomposition and planning; among them, tasks with predictable steps profit from ReWOO's separation. Search holds for tasks whose intermediate states can be evaluated (puzzles, generation under explicit constraints); where evaluation is impossible or inaccurate, it only spends cost. For every configuration, the basis of the decision is a number measured on an evaluation set (→ 5.11).
-
-## 7.6 Summary
-
-The failure of greedy progression divides into the absence of a whole path and the absence of recovery. The remedy for the former is task decomposition: making the model write the plan first lets every action choice refer to the whole path. Separating planning from execution entirely (ReWOO) removes observation re-sending and per-turn calls, so the cost drops. The remedy for the latter is search: ToT, which evaluates intermediate states, prunes, and backtracks, turns self-consistency's independent sampling into structured search. All three are exchanges of computation for accuracy, so the task and the measurement decide adoption.
-
-Even with a plan and search, a committed answer can still be wrong. The remedy — critique grounded in external signals — was Chapter 5, and this week's lab wires the whole first half together: a planner from this chapter drives tool-using loops from Chapter 4, arranged as the specialist pipeline of Chapter 6, closed by the reflection of Chapter 5 and scored by its evaluation half.
-
-## 7.7 Discussion
-
-Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
-
-1. In the failing trace of 7.1, the very first search already went wrong. Separate the two absences that define greedy failure, and state which one planning repairs and which one search repairs.
-2. Why must a plan be written into the context rather than "kept in mind" (7.2, → 2.2)? And when an observation contradicts a plan premise, state the replan trigger and its scope — what stays fixed, what is rewritten.
-3. For (a) "find the evaluation tasks of whichever of two papers is later" and (b) "keep searching until a dataset with property X appears," decide which suits ReWOO and which needs interleaved execution (7.3), and support the choice with the cost shape.
-4. Tree of Thoughts lifts Game of 24 dramatically but does little for "write a better abstract." Name the requirement on intermediate states that decides this (7.4), and connect it to the verifier of 2.6.
-5. The W7 lab's assembled system fails three ways: the report cites no sources; the research loop repeats one search; the plan never includes a drafting step. For each, name the catching device and its home chapter.
-
+---
+title: "Chapter 7. Planning and Search"
+subtitle: "Make a plan for a goal · Search among possible paths"
 ---
 
-**Presentation.** Two papers this week: ReWOO (Xu et al., 2023) — the planner–worker–solver separation and its token/call savings; Tree of Thoughts (Yao et al., 2023) — branching thoughts, state evaluation, BFS/DFS, Game of 24. For both, listen with the question: where does the extra computation come from, and what breaks without it?
+<!-- course-navigation:start -->
+<nav class="chapter-nav" aria-label="Course navigation">
+<a href="../../index.html">Home</a>
+<a href="../reading.html">All chapters</a>
+<a href="../../week07.html">Week 7 materials</a>
+</nav>
+<!-- course-navigation:end -->
+<div class="reading-tools" role="group" aria-label="Reading options">
+<button id="classroom-toggle" type="button" aria-pressed="false">Larger text</button>
+<button id="answers-toggle" type="button" aria-pressed="false">Show all answers</button>
+</div>
 
-**Lab.** `W7_lab_research_agent.ipynb` — the first half assembled into one system, from Andrew Ng's *Agentic AI* final project: a decomposition planner (this chapter) routes steps to specialist sub-agents (Ch. 6) — a tool-using research loop (Ch. 4, Ch. 3), a writer, and an editor closing the reflection cycle (Ch. 5) — and the final report is scored against a checklist and an LLM judge (Ch. 5). Reference answers: `labs/checkpoints/week07/solution.py`.
+::: {.callout-note appearance="minimal"}
+## Learning objectives
 
-**Homework.** `W7_hw_own_topic.ipynb` — the workflow run on a topic from your own research interests, with two self-designed checks added to the report checklist and the scored report submitted. Due before the W8 midterm.
+- Explain goals, plans, task decomposition, and dependencies.
+- Compare interleaved execution with plan-and-execute, and explain replanning.
+- Explain the three parts of ReWOO.
+- Explain states, backtracking, and search order, and how Tree of Thoughts uses them.
+:::
 
-**Next.** Week 8 is the written midterm exam, full session, covering weeks 1–7: the composition and principles of agent systems. Lectures and labs resume in Week 9 with retrieval augmentation.
+In Chapter 4, the agent loop chose one action at a time. In Chapter 6, a team divided a task among agents. Some tasks need several connected actions before the answer is ready. This chapter explains how an agent makes a plan for such a task, and how it searches when several paths are possible.
+
+## Part 1. Planning {#planning}
+
+### 1.1 Why plan {#introduction}
+
+Consider this request: "Find a way for me to reach the conference before it starts." The agent must find the venue and the start time. Then it must find journeys to the venue. Then it must compare the arrival times with the start time. If the agent chooses only one action at a time, it can forget a necessary step. A plan shows all the work before the work starts.
+
+::: {.callout-tip icon=false}
+## Plan
+
+A set of tasks that reach a goal, with the order among the tasks. The **goal** is the result that we want. **Planning** is the work that makes the plan.
+:::
+
+### 1.2 Task decomposition and dependencies {#plan-construction}
+
+**Task decomposition** divides a goal into smaller tasks. Each task gives a result that another task or the final answer uses.
+
+A **dependency** exists when a task needs the output of another task. A task with a dependency must wait for that output. Tasks without dependencies can run in any order, or at the same time.
+
+To make a plan, do these steps:
+
+1. Write the final result that the goal needs.
+2. Find the information that this result needs.
+3. Write one task for each piece of information.
+4. Put each task after the tasks whose outputs it needs.
+
+### 1.3 Example: a plan for the conference {#basic-plan}
+
+| Task | Output for the next task |
+|--|----|
+| Find the conference information. | The venue, the date, and the start time |
+| Find journeys to the venue on that date. | The departure times and arrival times |
+| Compare the arrival times with the start time. | A journey that arrives before the start |
+
+Each task has an output that the next task uses. The last output answers the request.
+
+## Part 2. Planning and execution {#execution}
+
+### 2.1 Two approaches {#execution-approaches}
+
+A plan must also be carried out. There are two approaches. They differ in when the model reads the tool results.
+
+- **Interleaved execution.** The model chooses the next action after it reads the last observation. ReAct in Chapter 4 works in this way.
+- **Plan-and-execute.** The model first writes the whole plan. Then an **executor** runs the tasks in order. It gives each result to the tasks that need it.
+
+::: {.diagram-scroll tabindex="0" role="region" aria-label="How observations enter action decisions"}
+![Upper row: the model uses the first result to choose the next action. Lower row: the plan sets both actions before the run, and the first result becomes an input to the second action.](figures/planning-search/execution-approaches.svg){fig-alt="In the upper row, the model uses the result of action 1 to choose action 2. In the lower row, the plan specifies both actions and their dependency before execution; the result of action 1 supplies an input to action 2. Both rows end by answering."}
+:::
+
+| | Interleaved execution | Plan-and-execute |
+|--|----|----|
+| When the model chooses actions | After each observation | Once, before the run |
+| Model calls | One call for each action | Fewer calls |
+| Use it when | A result decides which task comes next | The tasks are known, and only their input values are not known |
+
+### 2.2 Replanning {#replanning}
+
+A result can show that the plan cannot reach the goal. For example, a lookup does not give the information that a later task needs. Then the system changes the tasks that remain. This change is **replanning**. The system keeps the results that are still correct.
+
+Plan-and-execute is therefore also a loop: **plan → execute → examine the results → continue or replan**.
+
+::: {.checkpoint}
+### Check 1 · Choose an approach
+
+A search result decides which task comes next. Which approach fits, interleaved execution or plan-and-execute?
+
+<details class="answer">
+<summary>Read the answer</summary>
+
+Interleaved execution. The model must read the result before it can choose the next task.
+
+</details>
+:::
+
+## Part 3. ReWOO {#rewoo}
+
+**ReWOO** (*Reasoning WithOut Observation*) applies plan-and-execute to tool calls (Xu et al., 2023). The model plans all tool calls before it receives any tool result. For this reason, it does not read each observation to choose the next call. This gives fewer model calls and shorter inputs.
+
+ReWOO has three parts:
+
+1. **Planner.** It writes all tool calls. A later call can use the result of an earlier call through a label, for example `#E1`.
+2. **Worker.** It runs the tool calls in order. It puts each result in the place of its label.
+3. **Solver.** It receives the plan and all results, and it writes the answer.
+
+**Planner → Worker → Solver**
+
+For the conference request, the planner writes "find the conference information" as `#E1` and "find journeys to the venue in `#E1`" as `#E2`. The worker runs the two calls. The solver compares the arrival times with the start time.
+
+## Part 4. Search {#search}
+
+### 4.1 States and paths {#search-definition}
+
+A plan can run and still fail. At each step, several choices are possible. An early choice can lead to a point from which the goal cannot be reached. **Search** explores several choices to find a path that reaches the goal.
+
+Search uses three terms:
+
+- A **state** is the current situation: the information and the partial work so far.
+- An **action** changes one state into a new state.
+- A **goal test** examines if a state satisfies the task.
+
+The states and the actions between them make a **search tree**.
+
+### 4.2 Backtracking {#make24}
+
+Task: use 4, 5, 6, and 10 once each to make 24, with +, −, ×, ÷. A state is the set of numbers that remain. An action combines two numbers into one number.
+
+::: {.diagram-scroll tabindex="0" role="region" aria-label="Alternative paths through partial solutions"}
+![One path fails. Another path reaches the goal.](figures/planning-search/search-tree.svg){fig-alt="Starting with 4,5,6,10, one path subtracts 4 from 6 and multiplies 10 by 5, leaving 2,50, which cannot make 24. Another subtracts 4 from 10, multiplies the result by 5, and subtracts the original 6 to reach 24."}
+:::
+
+The left path leaves 2 and 50. No operation makes 24 from these two numbers.
+
+::: {.callout-tip icon=false}
+## Backtracking
+
+A return to an earlier state, to try a different choice.
+:::
+
+After backtracking, the right path reaches the goal: (10 − 4) × 5 − 6 = 24. To backtrack, the system must keep the other choices, not only the current path.
+
+### 4.3 Search order and pruning {#search-order}
+
+A search procedure decides which state to expand next. To **expand** a state is to make its next states.
+
+- **Breadth-first search (BFS)** expands all states at one depth before it goes deeper.
+- **Depth-first search (DFS)** follows one branch to its end before it returns to other branches.
+
+**Pruning** removes a branch that looks invalid or unlikely to succeed. This saves work. The search stops when it finds a solution, when no choice remains, or when it gets to a limit of time or calls.
+
+::: {.checkpoint}
+### Check 2 · Backtracking
+
+In the example, a path leaves 2 and 50. What does backtracking do next?
+
+<details class="answer">
+<summary>Read the answer</summary>
+
+It returns to an earlier state, for example 4, 5, 6, 10, and tries a different pair of numbers.
+
+</details>
+:::
+
+## Part 5. Tree of Thoughts {#tot}
+
+A model usually writes one reasoning path. It keeps its first choices, also when they lead to a dead end. **Tree of Thoughts (ToT)** applies search to reasoning (Yao et al., 2023).
+
+::: {.callout-tip icon=false}
+## Tree of Thoughts
+
+A method in which a model makes several possible next steps of reasoning and evaluates them. The search continues only from the steps that can still reach the goal. A **thought** is one intermediate step, for example one calculation.
+:::
+
+ToT repeats three steps:
+
+1. **Generate.** The model writes several possible next thoughts for each state.
+2. **Evaluate.** The model judges which partial solutions can still reach the goal.
+3. **Select.** The search procedure (BFS or DFS) keeps the best states and continues from them.
+
+**Generate → evaluate → select**
+
+In the make-24 task, the model proposes several next calculations. Then it judges which sets of numbers can still make 24. The model guides the search, and the search procedure keeps the alternatives for backtracking.
+
+ReWOO and ToT help at different points:
+
+| Method | What it organizes |
+|--|-----|
+| ReWOO | Tool calls that the plan knows before the run |
+| ToT | Reasoning paths when an early choice can fail |
+
+## Summary {#recap}
+
+- A plan is a set of tasks with dependencies. Each task gives an output that a later task uses.
+- Interleaved execution reads each observation before the next action. Plan-and-execute plans first and then runs the tasks.
+- Replanning changes the tasks that remain when a result shows that the plan cannot reach the goal.
+- ReWOO plans all tool calls first: planner, worker, and solver.
+- Search explores states and backtracks. Tree of Thoughts uses a model to generate and evaluate the states.
+
+## Lab {#lab-guide}
+
+The lab builds a research team that uses plan-and-execute. A planner writes the task list. An executor gives each task to a role: researcher, writer, or editor. Each role receives the outputs of the earlier tasks.
+
+1. Run each role by hand. Pass the research notes to the writer, and the draft to the editor.
+2. Let a planner write the task list for a research question.
+3. Let the executor choose a role for each task and pass the earlier outputs automatically.
+4. Write your own plan for a question in your field, and run it.
+5. Trace one claim in the final report back to its source.
+
+[Lab notebook](W7_lab_research_agent.ipynb) · [Homework notebook](W7_hw_own_topic.ipynb).
+
+## Materials and sources {.unnumbered #sources}
+
+- Yao et al., [ReAct](https://arxiv.org/abs/2210.03629) (2022): reasoning interleaved with actions.
+- Xu et al., [ReWOO](https://arxiv.org/abs/2305.18323) (2023): planning separated from tool observations.
+- Yao et al., [Tree of Thoughts](https://arxiv.org/abs/2305.10601) (2023): search over reasoning steps ([implementation](https://github.com/princeton-nlp/tree-of-thought-llm)).
+- Andrew Ng, [Agentic AI](https://www.deeplearning.ai/courses/agentic-ai/): the lab adapts the research-agent project of Module 5.
+
+<!-- course-pagination:start -->
+<nav class="chapter-pagination" aria-label="Previous and next chapters">
+<a href="../week06/notes.html" rel="prev">← Previous: 6 · Multi-Agent Systems</a>
+<a href="../week09/notes.html" rel="next">Next →: 8 · Retrieval-Augmented Generation</a>
+</nav>
+<!-- course-pagination:end -->

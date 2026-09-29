@@ -1,128 +1,196 @@
-# Chapter 2. Prompting & Reasoning
+---
+title: "Chapter 2. Prompting and Reasoning"
+subtitle: "Instructions, worked examples, and a vote over solutions"
+lang: en
+---
 
-Chapter 1 defined the agent by where control flow resides: a system whose next action is decided by the model's output. Every deficit on Chapter 1's list is repaired in a later chapter by adding something around the model — tools, a loop, feedback, retrieval. This chapter repairs the one deficit that cannot be delegated outward: the quality of the decisions themselves. Before anything is built around the model, what can be gotten out of a bare call must be settled.
+<!-- course-navigation:start -->
+<nav class="chapter-nav" aria-label="Course navigation">
+<a href="../../index.html">Home</a>
+<a href="../reading.html">All chapters</a>
+<a href="../../week02.html">Week 2 materials</a>
+</nav>
+<!-- course-navigation:end -->
 
-## 2.1 The Problem — Same Model, Different Accuracy
+<div class="reading-tools" role="group" aria-label="Reading options">
+<button id="classroom-toggle" type="button" aria-pressed="false">Larger text</button>
+<button id="answers-toggle" type="button" aria-pressed="false">Show all answers</button>
+</div>
 
-**Reasoning** is the process of deriving a conclusion from given premises through intermediate steps. Solving an arithmetic word problem, combining several facts to narrow down an answer, and ordering the steps of a plan are all reasoning. What distinguishes it from single-fact recall ("What is the capital of Korea?") is the existence of intermediate steps: there are steps that must be passed through on the way to the conclusion, and if any one step is wrong, the conclusion is wrong.
+::: {.callout-note appearance="minimal"}
+## Learning objectives
 
-An agent decides "what to do next" at every step through the model's output (→ Ch. 1), and that decision is itself reasoning. The accuracy of an agent is therefore bounded by the accuracy of the model's reasoning at each step. No agent architecture can be accurate on top of a model that reasons inaccurately.
+- Explain what a prompt changes, and what it does not change.
+- Explain why written intermediate steps can help a model.
+- Write a chain-of-thought prompt with an instruction and with worked examples.
+- Explain the steps of self-consistency.
+- Compare two prompts on an evaluation set.
+:::
 
-The quality of reasoning, however, is not determined by the model alone. On the same model and the same problem, correctness splits according to how the question is asked.
+In Chapter 1, the model selected actions toward a goal. The quality of each selection depends on the input to the model. This chapter shows how the prompt changes the reply. It also shows how more computation at answer time can give better answers.
 
-> **Q.** A cafeteria has 23 apples. They use 20 for lunch and buy 6 more. How many apples do they have?
->
-> Method A — demand only the answer: "Answer: 27" (wrong)
-> Method B — elicit the worked solution: "23 − 20 = 3, 3 + 6 = 9. Answer: 9" (correct)
+## 2.1 Prompt {#task-and-prompt}
 
-This is a measured case from Figure 1 of the original CoT paper (Wei et al., 2022 — on the large models of that time). Today's large models solve a problem of this size even by direct answering, but the same failure reappears on any model once the number of steps and the number of digits grow (the lab reproduces it on harder multi-step problems). The weights are identical, yet correctness splits; the cause therefore lies not in the weights but in the computational process by which the model produces the answer.
+The same model can give different replies to the same question when the input changes.
 
-## 2.2 The Cause — A Workspace Made Only of Text
+::: {.callout-tip icon=false}
+## Prompting
 
-An LLM has no workspace outside the text. When the model produces the next token it only reads the text so far; between one token and the next there is no separate train of thought continuing outside the text. A person can pause mid-sentence and carry a calculation forward in their head, but the only place a model can hold an intermediate result is the text it is writing.
+The design of the model input to guide the reply. A prompt changes the input of one call. It does not change the **parameters** of the model, the numbers that training sets.
+:::
 
-Placing this fact against the apple problem exposes the difference between the two methods. Reaching the answer requires computing 23 − 20 = 3 and then adding 6 to that 3. The intermediate value 3 must be kept somewhere. Method B writes it into the text: the moment "23 − 20 = 3" is written, the 3 is preserved in the text, and from then on the model only has to read the written value and use it. Method A demanded only the answer, so there is nowhere to write. Then the single prediction that emits the answer digit must handle both calculations in succession. The difference between A and B is therefore not a few tokens. B's additional tokens are not decoration but the storage site of intermediate values, and A is the condition that forbids that storage.
+A prompt can contain four parts:
 
-![Figure 2.1 — answer-only versus worked solution](figures/fig-2-1-cot-workspace.svg)
+1. **An instruction:** what to do, for example "Reply with only the number."
+2. **Information:** the facts that the task needs.
+3. **Examples:** questions with their answers.
+4. **An output format:** the form of the reply, for example a last line `ANSWER: <number>`.
 
-*Figure 2.1 — In A, nothing stores the intermediate value, so one prediction must carry both calculations; in B, the written "3" is read back from the text and each step advances alone.*
+The number of examples gives a name to the prompt. A **zero-shot** prompt has no examples. A **few-shot** prompt has a small number of examples. The model adapts its reply to the examples in the prompt. This is **in-context learning**. It differs from **fine-tuning**, which changes the parameters with training data.
 
-There is a limit on how many steps a single prediction can handle, and the existence of that limit is an established empirical fact. The wrong answer 27 in §2.1 is the evidence, and failure becomes more frequent as steps and digits grow. The shape of the wrong answers agrees with this account: prediction emits the most plausible token regardless of whether the computation finished, so where processing could not complete, an answer-shaped value assembled from the numbers in the problem (23, 6) appears. Why the limit exists, however, is an open question. One analysis holds that the internal computation of a single prediction is bounded by the model's layer count, imposing a ceiling on chaining ordered steps (Feng et al., 2023; Merrill & Sabharwal, 2023); another explanation is that answer-only solution text is rare in the training data; the two are not mutually exclusive. Settling the cause is not needed for what follows. What is needed is the fact that the limit is measured, and the fact that having a place to write intermediate values circumvents it.
+## 2.2 Intermediate steps {#intermediate-steps}
 
-**Hallucination** is the phenomenon of generating content that is not factual but plausible. The cause is the same as above: even when processing has not finished, even when no relevant fact is known, prediction does not stop — it emits the most plausible token.
+Some questions need several calculations, and each calculation uses the result of the one before it. For example: a cafeteria has 23 apples, uses 20, and buys 6. The first step gives 3, and the second step gives 9.
 
-## 2.3 The Remedy — Using Chain-of-Thought
+A model generates text one token at a time. Each new token depends on all tokens before it. This is **autoregressive generation**. For this reason, a value that the model writes becomes part of the input for the next step.
 
-The remedy is to give the model a place to write intermediate values. If the model is made to write out the solution instead of going straight to the answer, each token only needs to read the previously written values and advance one step. The structure is the same as a person solving a hard calculation on paper instead of in their head. The only means of making the model write a solution is text placed in the prompt, and that text takes one of two forms: an instruction or examples.
+![Answer only: one prediction must do both calculations. Worked solution: each step reads a value that is already in the text.](figures/fig-2-1-cot-workspace.svg){#fig-cot-workspace width="100%" fig-alt="A, answer only: the question goes directly to one answer. B, worked solution: 23 minus 20 equals 3, then 3 plus 6 equals 9, then ANSWER: 9. The value 3 is read back from the text."}
 
-Method 1 — instruction. Append one line after the question demanding a worked solution (zero-shot CoT, Kojima et al., 2022). The lab's zero-shot section uses this form.
+The steps must come before the answer. If the model writes the answer first, the answer cannot use the steps.
 
-```
-There are 23 apples. 20 are used and 6 more are bought. How many are there?
-Write the solution step by step, then give the answer on the last line as "ANSWER: <number>".
-```
+## 2.3 Chain-of-thought prompting {#cot}
 
-Method 2 — examples. Prepend worked question–answer examples before the question. An LLM generates by following the format and procedure of the examples inside the prompt (**in-context learning, few-shot** = the property that examples in the prompt specify the output without any weight update), and when the examples contain worked solutions, the model generates a solution first.
+::: {.callout-tip icon=false}
+## Chain-of-thought (CoT) prompting
 
-```
-Q: Roger has 5 tennis balls. He buys 2 more cans of 3 balls each. How many balls does he have?
-A: He starts with 5 balls. 2 cans of 3 balls is 3 × 2 = 6 balls. 5 + 6 = 11. ANSWER: 11
+A prompt that makes the model write intermediate reasoning steps before the final answer.
+:::
 
-Q: There are 23 apples. 20 are used and 6 more are bought. How many are there?
-A:
-```
+There are two methods to get these steps:
 
-With either prompt, the model's output comes out like Method B ("23 − 20 = 3. 3 + 6 = 9. ANSWER: 9"). The instruction is convenient; the examples additionally control the procedure and format of the solution. An instruction alone underspecifies both — "solve step by step" fixes neither how fine the steps should be nor how the final answer is written — and a worked example pins down exactly what the instruction leaves open. This specifying role of examples is why the lab's measured task is exemplar writing.
+1. **An instruction (zero-shot CoT).** Add one sentence to the question (Kojima et al., 2022). For example: `Write the solution step by step, then give the answer on the last line as ANSWER: <number>.`
+2. **Worked examples (few-shot CoT).** Put two or three solved questions into the prompt. Each example shows the steps and the answer line. (Wei et al., 2022)
 
-**Chain-of-Thought (CoT)** designates this family of prompting techniques that induce the model to generate its solution process, and the original paper uses the example form (Wei et al., 2022). The reason both forms work is the same: at the moment the final "9" is produced, the text already contains "23 − 20 = 3" and "3 + 6 =", so the model finishes by reading the written values instead of performing both calculations from scratch.
+The number of examples and the steps are two different properties. A prompt with labeled examples and no steps is few-shot, but it is not CoT.
 
-The effect of CoT is conditional. **Emergence** designates the phenomenon in which a capability absent at small scale appears above a certain scale, and the effect of CoT is emergent: only in sufficiently large models does solution generation translate into accuracy, while in small models it is ineffective or even harmful. The concrete improvement magnitudes (GSM8K and others) and the scale curves are examined in this week's presented paper.
+A fixed answer line or answer tags, such as `<answer>…</answer>`, let code find the final answer in the reply.
 
-## 2.4 The Limit of CoT — Dependence on Internal Knowledge
+CoT organizes calculations on the information in the prompt. It does not add a fact that the prompt does not contain.
 
-What CoT repairs is the computation limit of §2.2 — one of the two defects. Hallucination remains. The following is a measured case from Figure 1 of the ReAct paper (Yao et al., 2022 — the question is from HotpotQA; the correct answer is "keyboard function keys").
+::: {.checkpoint}
+### Check 1 · Classify two prompts
 
-> Q: Aside from the Apple Remote, what other device can control the program the Apple Remote was originally designed to interact with?
->
-> Solution (CoT): Let's think step by step. The Apple Remote was originally designed to interact with Apple TV. Apple TV can be controlled by iPhone, iPad, and iPod Touch. So the answer is iPhone, iPad, and iPod Touch. (wrong)
+Prompt A gives three emails with the labels "urgent" or "routine", and then a new email. Prompt B gives no examples and asks for a short calculation before the number. Which prompt is few-shot? Which prompt is CoT?
 
-The form of the solution is impeccable: steps connect from premise to conclusion. But the first premise is false. What the Apple Remote was designed to control is not Apple TV but a piece of software called Front Row, and the model — with no path to verify that fact — generated a plausible premise and then reasoned coherently on top of it. The same paper identifies this as a structural problem of CoT: the reasoning is not grounded in the external world, so fact hallucination and error propagation occur (Figure 1 (1b)).
+<details class="answer">
+<summary>Read the answer</summary>
 
-CoT's reasoning depends only on the internal knowledge stored in the parameters and has no path for checking external facts. When a premise is a hallucination, coherent reasoning ends in a wrong conclusion. Coherence of the reasoning structure does not guarantee factuality. Repairing hallucination requires a step that checks external facts, and that requires tools (→ Ch. 3) and the agent loop (→ Ch. 4). How the question above is solved by a loop holding a search tool is examined in Ch. 4 through the same paper's trace.
+Prompt A is few-shot, because it has examples. It is not CoT, because the examples show no steps. Prompt B is zero-shot CoT.
 
-On the computation side there is still room left. CoT made the model predict more within one response — every token of the solution is one prediction. The other direction for adding predictions is to produce the response itself multiple times.
+</details>
+:::
 
-## 2.5 Repetition and Majority Voting — Self-Consistency
+## 2.4 Self-consistency {#self-consistency}
 
-CoT writes the solution down a single path. If any step on that path is wrong the conclusion is wrong, but the model, unaware of this, commits to that one answer. The difficulty is that the robustness of that answer cannot be judged from the answer alone.
+One generated solution can contain an error. Another generation of the same question can take a different path. **Sampling** selects each token from the probabilities of the model. The **temperature** controls the variation: at temperature 0, the replies are almost the same, and at a higher temperature, they vary more.
 
-Robustness shows itself when the same question is asked several times. An LLM **samples** tokens from a probability distribution, so raising the temperature (the generation parameter controlling sampling randomness) and asking again makes each run follow a different solution path and produce a different answer. A single response is thus one sample drawn from the set of possible paths, and the fact that this sample is wrong means another draw might be right.
+::: {.callout-tip icon=false}
+## Self-consistency
 
-There is then no reason to stake everything on one sample. Sample several times and take the majority vote of the final answers. This is **Self-Consistency** (Wang et al., 2022). Why majority voting works is explained in probability. What we want is the probability of answer $a$ given question $q$; since the answer arrives through an intermediate reasoning path $r$, the true probability of the answer is obtained by summing over all possible paths rather than any single one:
+A method that generates several reasoning paths for the same question and selects the final answer that most paths give (Wang et al., 2022).
+:::
 
-$$P(a \mid q) = \sum_{r} P(a \mid r, q)\, P(r \mid q)$$
+Self-consistency has four steps:
 
-Asking once shows only the answer of the single most plausible path — one term of this sum — and if that path is wrong, the result is simply wrong. Majority voting over multiple samples approximates this whole sum with a sample estimate. Correct answers are reached by different paths converging on the same conclusion, while wrong answers scatter across paths, each wrong in its own way; counting votes therefore brings the correct answer to the front.
+1. Generate N solutions at a temperature above 0.
+2. Extract the final answer from each solution.
+3. Count the solutions for each answer.
+4. Select the answer with the most votes.
 
-![Figure 2.2 — self-consistency](figures/fig-2-2-self-consistency.svg)
+![Five reasoning paths give the answers 9, 27, 9, 8, and 9. The vote selects 9.](figures/fig-2-2-self-consistency.svg){#fig-self-consistency width="100%" fig-alt="A question q leads to five sampled paths with final answers 9, 27, 9, 8, 9. A bar chart shows 3 votes for 9, 1 for 27, and 1 for 8. The majority answer is 9."}
 
-*Figure 2.2 — Sampled paths from the same question: correct paths converge on one value, wrong paths scatter, and the vote surfaces the convergent answer.*
+The vote counts final answers, not the words of the solutions. The selected answer is the answer with the most agreement.
 
-Majority voting presupposes that answers can be compared and counted — a discrete final answer (a number, a choice, a short string) that can be extracted from each sample. On open-ended outputs such as free-form prose, where no two samples are literally equal, the vote cannot be tallied as is; selecting among such outputs requires a separate scoring device, which the next section names.
+## 2.5 Test-time compute {#test-time-compute}
 
-## 2.6 Generalization — Test-Time Compute
+CoT and self-consistency both spend more computation when the model answers. They do not change the model.
 
-What self-consistency increased is the number of predictions. Where CoT lengthened one response (adding as many predictions as solution tokens), self-consistency produces N responses (N times the predictions). The cost of one prediction is roughly constant, so the number of predictions is the bill. The family of approaches that leaves training (the weights) untouched and buys accuracy by increasing the number of predictions at answer time is collectively called **test-time compute**, and its methods are as follows.
+::: {.callout-tip icon=false}
+## Test-time compute
 
-| Method | How predictions are increased |
-|---|---|
-| CoT | one response made longer — predictions added per solution token |
-| Self-consistency | N responses — N× predictions → majority vote |
-| Best-of-N | N responses → a verifier selects the best |
-| Tree search | branch, evaluate, backtrack (→ Ch. 7 planning & search) |
+The computation that a model uses to make a reply after training. It is also called **inference-time compute**.
+:::
 
-The common principle is the exchange of inference computation for accuracy, called **inference-time scaling**. Unlike majority voting, Best-of-N and tree search additionally require a **verifier** — a device that scores answers against each other — which is also what replaces voting when answers are not discrete (→ §2.5).
+| Method | Extra work | How it gets the answer |
+|--|----|-----|
+| CoT prompting | Generate intermediate steps | Continue from the steps to the final answer |
+| Self-consistency | Generate several solutions | Select the most frequent final answer |
+| Best-of-N | Generate N candidates | A **verifier** examines each candidate and selects the best one |
 
-The exchange is now visible on product price lists, not only in papers. The "thinking" modes of current chat products (OpenAI's o-series, Claude's extended thinking, Gemini's thinking models) are the written solution of 2.2 moved into the model and billed by the token (→ Ch. 11). The tiers above them — o1 pro mode, Gemini Deep Think, Grok's Heavy tier — are documented by their vendors as exploring several lines of reasoning in parallel on each question: the sampling and selection of 2.5–2.6, sold as a subscription level.
+More computation uses more tokens, so it costs more. Use it when it makes the answers better.
 
-The exchange is not free. Repeating N times multiplies cost and latency by N as well. In practice the decision variable is not the size of N but the selection of which questions deserve N > 1 (→ Ch. 12, routing in inference economics).
+## 2.6 Compare prompts {#lab-connection}
 
-## 2.7 Summary
+To know if a prompt helps, measure it. An **evaluation set** is a set of test questions with their correct answers. Code compares each reply with the correct answer. **Accuracy** is the number of correct replies divided by the number of questions.
 
-The chapter departed from the measured fact that the same model gives different answers depending on how it is asked. A model has no workspace outside the text, so demanding only the answer forces every intermediate calculation into a single prediction, while eliciting a written solution preserves intermediate values in the text and lets the model advance one step at a time. The limit on steps per prediction is an established measurement; its cause remains open (→ 2.2). The means of inducing the writing are an instruction (zero-shot) and worked examples (few-shot), the latter being the original form of CoT; examples additionally specify the procedure and format that instructions leave open. The defect CoT leaves — dependence on internal knowledge — calls for an external checking step, that is, tools (→ Ch. 3) and the loop (→ Ch. 4). On the computation side, the stochastic nature of sampling makes repetition and majority voting (self-consistency) valid, and the general form of buying accuracy with prediction count is test-time compute. None of these procedures reads the answer after it is written; adding that reading step — critique and revision — is the subject of Ch. 5, reflection. Moving the whole exchange from the caller's procedure into the model's own weights returns in Ch. 11, reasoning models.
+To compare two prompts, use the same model, the same questions, and the same settings. Change only the prompt. Then compare the accuracy and the number of tokens.
 
-## 2.8 Discussion
+::: {.checkpoint}
+### Check 2 · The vote
 
-Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
+Five samples give the answers 29, 19, 29, 5, and 29. Which answer does self-consistency select, and why?
 
-1. A teammate concludes "our model cannot do arithmetic" after it answers 27 in the cafeteria problem. State what that run actually measured, and design the smallest two-prompt experiment that separates a limitation of the weights from a limitation of the prompt condition (2.1–2.2).
-2. An output must always end with a date line formatted "2026-03-02 (Mon)". Name two properties of that requirement a "think step by step" instruction leaves unspecified but three worked exemplars would pin down (2.3).
-3. Self-consistency lifts accuracy on this week's math evalset but fails outright on "write a 200-word abstract of this paper." Say exactly where the procedure breaks (2.5), and name the device that replaces the vote (2.6).
-4. The Apple Remote failure of 2.4 keeps its flawless step structure even when the prompt adds "verify each step before continuing." Why can no added instruction fix this failure class, and what is the smallest addition to the system — not to the prompt — that can (→ Ch. 3)?
-5. Your chat product's thinking toggle makes answers slower and costlier, and a product manager asks whether it should be on by default. Using 2.2 and 2.6, state what the toggle buys, for which question types it buys nothing, and what measurement would settle the default (→ 5.8).
+<details class="answer">
+<summary>Read the answer</summary>
 
-**Presentation.** First student presentation week; two papers. CoT (Wei et al., 2022) — the improvement obtainable by prompting alone, and the emergence curve across model scales. Self-Consistency (Wang et al., 2022) — sampling several reasoning paths and voting (§2.5): the measured accuracy gains, and what N samples cost.
+It selects 29, because three of the five samples give 29.
 
-**Lab.** `W2_lab_prompting.ipynb` — every call written out as in W1 with no helper functions. It opens by reproducing the measurement of §2.1 with code: the apple problem, then six warehouse problems with two-digit products where answer-only fails and the worked solution recovers, followed by the silent-thinking and answer-first controls of §2.2. The rest adapts Anthropic's *Prompt Engineering Interactive Tutorial* (ch. 6–8) and *Prompt Evaluations* course (lesson 3) nearly as given: a code-graded eval improved from baseline through a format fix to your own chain-of-thought prompt (target ≥ 11/12), the few-shot email-classification exercise (4/4), self-consistency on the hardest eval item, and the hallucination limit of §2.4. The lab is in-class practice and is not collected.
+</details>
+:::
 
-**Homework.** `W2_hw_prompting.ipynb` — collected via the LMS and auto-graded from the saved outputs: four assignments in the lab's structure with new tasks (chain-of-thought by instruction on two word problems, an exemplar that pins a `DATE:` output format, your own chain-of-thought prompt with a five-sample vote, few-shot chain-of-thought exemplars on a Roman-numeral evalset, ≥ 5/6). Due date: see the LMS.
+## Summary {#recap}
+
+- A prompt changes the input of one call. It does not change the model.
+- Written intermediate steps become input for the next steps, so they come before the answer.
+- CoT prompting gets these steps with an instruction (zero-shot) or with worked examples (few-shot).
+- Self-consistency generates several solutions and selects the most frequent final answer.
+- To compare prompts, use the same evaluation set and settings, and change only the prompt.
+
+## Lab preparation: from concept to code {#implementation}
+
+The lab uses the `aisuite` client from Week 1. Each prompt goes into the content of a user message.
+
+| Concept | Lab code (short form) |
+|--|-------|
+| Answer only | `APPLES + " Reply with only the number."` |
+| Zero-shot CoT | `APPLES + " Write the solution step by step, then give the answer on the last line as ANSWER: <number>."` |
+| Answer tags | `re.search(r"<answer>(.*?)</answer>", output, re.DOTALL)` |
+| Code grade | `output.strip() == item["golden_answer"]`, then `score / 12` |
+| Few-shot examples | Solved `Q:` and `A:` lines in the prompt, then the new question |
+| Sampling | `temperature=1.0`, five calls with the same prompt |
+| Vote | `Counter(samples).most_common(1)` |
+| Cost | `response.usage.completion_tokens` |
+
+## Lab {#lab-guide}
+
+1. Compare an answer-only prompt and a worked-solution prompt, and grade both with code.
+2. Change the order: reason without written steps, and give the answer before the steps.
+3. Improve a prompt on an evaluation set: fix the format, then add chain of thought.
+4. Add worked examples to a prompt.
+5. Run self-consistency: five samples and a vote.
+
+[Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_lab_prompting.ipynb) · [Homework notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week02/W2_hw_prompting.ipynb): four prompting assignments. Submit the homework on the LMS.
+
+## Materials and sources {#readings}
+
+- Wei et al., [Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903) (2022): CoT with worked examples.
+- Kojima et al., [Large Language Models are Zero-Shot Reasoners](https://arxiv.org/abs/2205.11916) (2022): CoT with an instruction.
+- Wang et al., [Self-Consistency Improves Chain of Thought Reasoning in Language Models](https://arxiv.org/abs/2203.11171) (2022): a vote over sampled reasoning paths.
+- Brown et al., [Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165) (2020): in-context learning with examples in the prompt.
+
+<!-- course-pagination:start -->
+<nav class="chapter-pagination" aria-label="Previous and next chapters">
+<a href="../week01/notes.html" rel="prev">← Previous: 1 · What is an Agent?</a>
+<a href="../week03/notes.html" rel="next">Next →: 3 · Tool Use</a>
+</nav>
+<!-- course-pagination:end -->

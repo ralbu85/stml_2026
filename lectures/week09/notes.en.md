@@ -1,97 +1,200 @@
-# Chapter 8. Retrieval-Augmented Generation
+---
+title: "Chapter 8. Retrieval-Augmented Generation"
+subtitle: "Find information in documents and use it to answer"
+---
 
-Some material never appears in a model's training data: a lab's internal documents, the papers of this course, a file updated yesterday. A model's knowledge is exactly what was stored in its parameters during training, so questions about such material cannot be answered from the model alone. The agent of Chapter 4 is in the same position, because its search tool reaches only Wikipedia — a store that someone else has already made searchable. Answering requires making our own documents searchable: building a store from the documents and, for each question, selecting the relevant parts into the prompt. That construction is RAG, and the construction that delegates the retrieval decisions to the agent is agentic RAG.
+<!-- course-navigation:start -->
+<nav class="chapter-nav" aria-label="Course navigation">
+<a href="../../index.html">Home</a>
+<a href="../reading.html">All chapters</a>
+<a href="../../week09.html">Week 9 materials</a>
+</nav>
+<!-- course-navigation:end -->
+<div class="reading-tools" role="group" aria-label="Reading options">
+<button id="classroom-toggle" type="button" aria-pressed="false">Larger text</button>
+<button id="answers-toggle" type="button" aria-pressed="false">Show all answers</button>
+</div>
 
-## 8.1 The Problem — Knowledge Confined to Parameters
+::: {.callout-note appearance="minimal"}
+## Learning objectives
 
-Knowledge stored in the weights is called **parametric knowledge**. Parametric knowledge contains no facts from after training, and no private material that was absent from the training data; the boundary of training is called the **knowledge cutoff**. The model also cannot mark what it does not contain. This last deficiency makes the first two dangerous: prediction does not stop for lack of a stored fact but produces the most plausible next token anyway (→ 2.2), so asked for this course's week-8 presentation paper, the model invents a plausible paper title instead of answering that it does not know.
+- Explain why a model needs retrieval to answer from documents.
+- Explain the three steps that prepare documents for search.
+- Explain how a question becomes a grounded answer.
+- Find the stage that caused a wrong answer: retrieval or generation.
+- Explain what agentic RAG and Self-RAG add to basic RAG.
+:::
 
-There are two routes for supplying knowledge. The first is to put it into the weights — fine-tuning on the documents. This route requires retraining whenever the documents change, is expensive, and cannot point to the source of an answer. The second is to put it into the input. Text placed in the prompt conditions the next generation (in-context learning → 2.3), so a document placed in the prompt is read and used. There is no retraining, a replaced document takes effect immediately, and the answer can cite the passage it rests on.
+In Chapter 7, an agent made a plan and used tools to get the information for each step. A search over documents is one such tool. This chapter explains how that search works and how the model uses the text that it finds.
 
-The problem with the input route is capacity. The entire document pile cannot be placed in the prompt for every question: input length has a ceiling, input tokens are billed, and injecting more text has been measured to make answers worse (→ Ch. 9). Only the parts relevant to the question should therefore be selected, and the act of selecting is retrieval. The construction that retrieves question-relevant document fragments from an external store, attaches them to the prompt, and generates is called **RAG (retrieval-augmented generation)** (Lewis et al., 2020). The original paper named a model architecture that trains retriever and generator jointly; the name has since widened to any construction that composes retrieval and generation without training. The correspondence to the original is examined in the presentation.
+## Part 1. RAG {#concepts}
 
-## 8.2 Judging Relevance — Embeddings and Cosine Similarity
+### 1.1 Why retrieval is needed {#purpose}
 
-The central problem of retrieval is the judgment of "relevant." The naive judgment is string matching: find the fragments that contain the question's words. This judgment fails whenever the wording differs. The question "the part about models cheating the reward" and the document passage "reward hacking is the phenomenon of optimizing an unstated objective" share not a single content word, yet they are about the same thing. What is needed is a comparison of meaning, not of wording.
+A model gets general knowledge from its training data. This knowledge is in the weights of the model, and it is **parametric knowledge**. It does not contain the rules of a specific course or a rule that changed last week. Documents outside the model contain this information. It is **non-parametric knowledge**. You can update it, and you do not train the model again.
 
-An **embedding** is a function that maps text to a fixed-dimension real vector, trained so that texts closer in meaning become closer vectors. The model that computes embeddings is separate from the generative LLM and usually far smaller. Closeness between vectors is measured by cosine similarity:
+A short document can go directly into the prompt. Many long documents do not fit in the prompt. The system must first find the parts that the question needs. This step is retrieval.
 
-$$\text{sim}(\mathbf{u}, \mathbf{v}) = \frac{\mathbf{u} \cdot \mathbf{v}}{\lVert \mathbf{u} \rVert \, \lVert \mathbf{v} \rVert}$$
+### 1.2 Retrieval-augmented generation {#definition}
 
-This is the cosine of the angle between the two vectors — the dot product divided by the two lengths. It approaches 1 as the directions align and 0 as they become unrelated. Because length is divided out, what is compared is the direction of the content, not the amount of text. On this measure, retrieval is sorting: order the fragments by cosine similarity to the question vector and take the top k.
+::: {.callout-tip icon=false}
+## Retrieval-augmented generation (RAG)
 
-The property that embeddings translate closeness of meaning into closeness of vectors comes from the training objective. **Contrastive learning** trains the vectors of related pairs (a question and a passage containing its answer, adjacent sentences of one document) to be close and the vectors of unrelated pairs to be far. A retrieval embedding model is an encoder trained with this objective, and it vectorizes questions and documents independently of each other. This structure is called a bi-encoder. Document vectors are precomputed at indexing time and only one question vector is computed per query, which makes it fast; but because question and document are each compressed without seeing the other, precise mutual comparison is beyond it. That limit is compensated by re-ranking, which re-scores candidates (→ 8.5).
+A method in which a system retrieves relevant text from external documents and gives it to a language model. The model then generates an answer from that text.
+:::
 
-Two practical details. Storing vectors normalized to unit length makes cosine similarity equal the dot product, simplifying computation. And once chunks number in the hundreds of thousands, exhaustive comparison of the question against every chunk gives way to an approximate nearest-neighbor index (ANN; HNSW and peers) — a trade of a little recall for logarithmic search time.
+RAG has two stages:
 
-## 8.3 The Pipeline — Indexing and Query
+1. **Prepare the documents.** Before questions arrive, the system divides the documents into passages and makes them searchable.
+2. **Process each question.** The system retrieves the passages that the question needs. The model generates an answer from those passages.
 
-The RAG procedure divides into an indexing stage that prepares documents and a query stage that handles questions. Indexing runs once when documents arrive; the query stage runs per question. The implementation of this procedure is the subject of the Week 9 lab.
+![The documents are prepared once. Each question then goes through retrieval and generation.](figures/rag/pipeline.svg){#fig-rag-pipeline fig-alt="Preparation: documents become chunks with source metadata and then a search index. Question processing: the question goes to a retriever, which reads the index and returns passages with sources; the generator receives the passages and the original question and writes the answer."}
 
-Indexing:
+Part 2 explains the first stage. Part 3 explains the second stage.
 
-1. **Chunking** — cut documents into retrieval-unit fragments (chunks). The cutting criterion is treated in 8.4. Output: a list of chunks.
-2. **Embedding** — convert each chunk to a vector.
-3. **Storage** — store the (chunk, vector) pairs in an index.
+## Part 2. Document preparation {#preparation}
 
-Query:
+Search must be fast when a question arrives. For this reason, the system prepares the documents before the questions. Preparation has three steps: chunking, embedding, and indexing.
 
-4. **Question embedding** — convert the question to a vector with the same embedding function used for indexing. A different function would place it in a different coordinate system, making similarity meaningless.
-5. **Retrieval** — compute cosine similarity between the question vector and the chunk vectors; take the top-k chunks.
-6. **Assembly** — attach the selected chunks to the prompt as evidence, with the instruction to answer from the evidence.
-7. **Generation** — the model reads the evidence and generates the answer.
+### 2.1 Chunking {#chunking}
 
-> **[Figure 8.1]** A two-lane pipeline sharing one index. The upper indexing lane (documents → chunking → embedding → index storage) runs once when documents arrive; the lower query lane (question → question embedding → top-k retrieval from the index → prompt assembly → generation) runs per question. Drawn so that two facts are visible at a glance: both lanes map into the same vector space through the same embedding function, and indexing is offline while querying is online.
+A long document covers many topics, but a question needs only one part. **Chunking** divides a document into passages that the system can retrieve separately. Each passage is a **chunk**. The system then gives the model only the relevant part, not the full document.
 
-The assembled prompt takes the following form.
+A good chunk contains connected text that has a meaning by itself. **Chunk size** is the length limit of a chunk, in characters or tokens. A small chunk can lose its context. A large chunk can mix different topics. **Overlap** repeats some text at the boundary of two adjacent chunks, so that a sentence keeps its context.
 
-> Answer the question using only the evidence below. If the evidence does not contain the answer, say you do not know.
->
-> [Evidence 1] Reflexion summarizes the cause of a failure in language and injects it into the next attempt's input …
-> [Evidence 2] …
->
-> Question: How does Reflexion obtain improvement without weight updates?
+### 2.2 Embeddings {#embeddings}
 
-The instruction "say you do not know if it is not in the evidence" does its work when retrieval misses and irrelevant chunks arrive. Without it, the model does not stop predicting for lack of a stored fact and fills the gap from parametric knowledge and hallucination (→ 8.1). The instruction enforces grounding — keeping the premises of reasoning on externally verified fact (→ 4.3) — and the evidence markers double as source citations.
+A question and a passage can use different words for the same meaning. For example, "hand in the report" and "submit the report" have the same meaning. A search for equal words does not find this match.
 
-## 8.4 Chunking and top-k
+An **embedding** is a vector of numbers that represents a text. An **embedding model** gives similar vectors to texts with related meanings. During preparation, the embedding model changes each chunk into a vector.
 
-The choices that decide the pipeline's accuracy are not code but the granularity of chunking and the value of k.
+### 2.3 Indexing {#indexing}
 
-The need for chunking lies in the nature of embeddings. An embedding compresses the meaning of one fragment into one vector. Embedding a whole document as one fragment averages several topics into a vector distinctly close to no question; cutting into single sentences sharpens each vector but strips the retrieved fragment of context, leaving it too thin to serve as evidence. The practical starting point is a natural boundary such as the paragraph, with adjacent chunks overlapping slightly to soften context loss at the cut.
+The system must find the relevant vectors quickly, and it must return readable text. **Indexing** puts the chunk vectors into a structure for fast search. Each entry keeps a link to the text of its chunk and to its source. The source details, such as the title, section, and page, are the **metadata**. A **vector store** keeps the vectors, the text, and the metadata together.
 
-k is a trade of the same structure. A small k cuts off needed evidence; a large k admits noise chunks, raises cost, and invites the long-input degradation (→ Ch. 9). Neither choice has a predetermined correct value, so both are set by measurement: vary the setting and score it on the small evaluation set built earlier (→ Ch. 5).
+The result of preparation is a searchable collection. The system uses it again for each question. When a document changes, update only the entries of the changed chunks.
 
-## 8.5 Improving Retrieval — Hybrid Search and Re-ranking
+## Part 3. Answer a question {#question-processing}
 
-Embedding retrieval has its own blind spot. Where keyword matching failed on differences of wording (→ 8.2), embeddings fail from the opposite side: proper nouns, function and model names, and exact quoted strings (the literal string "ReWOO") blur into their neighbors in meaning space, and the chunk containing exactly that string can fail to reach the top. Classical word-match retrieval — BM25, a score combining a word's frequency within a document with its rarity across documents — is strong in exactly this case. The two are complementary, so practical retrievers run both and merge the results; this is **hybrid search**. The standard merging method is **RRF (reciprocal rank fusion)**. The two retrievers' scores are on different scales and cannot be added directly, so only ranks are used:
+The collection is ready. When a question arrives, the system finds the relevant chunks and gives their text to the model.
 
-$$\text{RRF}(d) = \sum_{r \in \text{retrievers}} \frac{1}{k_0 + \text{rank}_r(d)}$$
+### 3.1 Similarity search {#similarity}
 
-A document adds a larger term the higher it ranks (the smaller $\text{rank}_r(d)$ is) in each retriever, and the constant $k_0$ (conventionally 60) flattens the gap between first place and the lower ranks.
+The system changes the question into a vector $q$. It uses the same embedding model that encoded the chunks. Then it compares $q$ with each chunk vector $d$. **Cosine similarity** measures how closely two vectors point in the same direction:
 
-When more precision is needed, retrieval splits into two stages. **Re-ranking** is the stage in which the few dozen candidates from stage one are re-scored by a model that reads question and chunk together in one input (a cross-encoder), selecting the final k. A cross-encoder compares question and document mutually and is therefore more precise than the bi-encoder (→ 8.2), but each pair costs a model call, so it cannot be used for exhaustive search. The result is a division of labor: stage one (bi-encoder, BM25) is responsible for not missing (recall); stage two (cross-encoder) is responsible for choosing exactly (precision).
+$$
+\operatorname{sim}(q,d)=\frac{q\cdot d}{\lVert q\rVert\,\lVert d\rVert}
+$$
 
-> **[Figure 8.2]** Two-stage retrieval drawn as a funnel, wide at the top and narrow at the bottom. From the full chunk pile at the top, stage one (bi-encoder + BM25, recall-oriented) narrows to a few dozen candidates, and stage two (cross-encoder re-ranking, precision-oriented) narrows to the final k. On the stage-one arrow, question and document are vectorized separately; on the stage-two arrow, question and chunk enter as one input — contrasted so the order of the recall/precision division is visible.
+A high score shows a related meaning. It does not prove that the chunk contains the fact that the question needs.
 
-Retriever quality is measured separately, without going through generation. The standard metric is **recall@k** — the fraction of questions for which a correct evidence chunk appears in the top k. If retrieval fails to bring the correct evidence at all, the generation stage cannot repair it (errors propagate downstream), so pipeline improvement starts from measuring recall@k. Query-transformation techniques such as HyDE — generating a hypothetical answer and embedding that for retrieval instead of the question — are directed to optional reading.
+### 3.2 Top-k retrieval {#top-k}
 
-## 8.6 Retrieval as a Tool — Agentic RAG
+**Top-k retrieval** selects the $k$ chunks with the highest scores. A small $k$ can leave out useful text. A large $k$ adds unrelated text to the model input. The retriever returns the original text of each chunk and its source, not the vector.
 
-By the distinction of Chapter 1, the pipeline of 8.3 is a workflow: whether to retrieve, with what query, and how many times are all fixed in code. This fixing produces three failures. First, it retrieves on every input: a greeting or an arithmetic question still triggers retrieval, spending cost and attaching noise evidence. Second, it uses the question sentence verbatim as the query: when the question's wording is far from the document's wording, even the embeddings of 8.2 miss, and nothing exists to rewrite the query. Third, it retrieves exactly once: a multi-hop question — one whose next query is determined only by reading the first retrieval's result (the structure of the Apple Remote question → 4.2) — cannot be answered by a single retrieval.
+### 3.3 Grounded generation {#generation}
 
-The common cause of the three failures is that the retrieval decisions sit in code that cannot read execution results, and the prescription is that of Chapter 4: delegate the decisions to the model. Concretely, the query stage of 8.3 is detached from the pipeline and registered as a tool in the registry of Chapter 3. The search_papers tool used in 3.4 as the example of a good schema is this tool. Its schema description ("do not use for general knowledge or arithmetic; the input is one sentence describing what to find") supplies the basis for routing — judging whether to retrieve — and for query writing, and the loop of Chapter 4 makes re-retrieval, and with it multi-hop search, possible. The construction in which an agent holding retrieval as a tool decides the timing, query, and count of retrieval is called **agentic RAG**. The question closing 2.6 — which questions deserve more compute — appears here as which questions deserve retrieval, and the prompt and the schema carry that selection.
+The model input has three parts:
 
-> **[Figure 8.3]** Fixed pipeline and agentic RAG contrasted side by side. On the left, a straight flow fixed in code (every input → always retrieve once → generate). On the right, a loop with the model at the center: the model judges whether retrieval is needed and calls the search_papers tool (not calling it for greetings or arithmetic), and a returning arrow shows it reading the result and re-calling with a rewritten query. The difference to expose: the authority over whether/what/how many times has moved from code to model.
+1. The question.
+2. The retrieved chunks, each with its source.
+3. An instruction: answer from the supplied text, cite the source, and say which information the text does not contain.
 
-Putting this judgment into the weights instead of the prompt is this week's presentation paper. **Self-RAG** (Asai et al., 2023) trains the model to judge for itself — with special tokens called reflection tokens — whether retrieval is needed, whether a retrieved passage is relevant to the question, and whether the generated answer is supported by the passage. It is the prompt-versus-weights framing again (→ 3.8); critic training and the generation procedure are detailed in the presentation.
+The model then generates the answer. An answer is **grounded** when the retrieved text supports each of its factual claims.
 
-## 8.7 Summary
+::: {.checkpoint}
+### Check 1 · What goes to the model?
 
-The deficiencies of parametric knowledge (cutoff, private material, hallucination) are compensated by putting knowledge into the input, and the capacity limit makes retrieval — selecting only the relevant parts — necessary. Relevance is judged by cosine similarity in embedding space, and the procedure standardizes into indexing (chunking → embedding → storage) and query (embedding → top-k → assembly → generation). Quality is set by measuring chunk granularity and k; the embedding blind spot (proper nouns, identifiers) is covered by hybrid search with keyword retrieval, the bi-encoder's precision limit by cross-encoder re-ranking, and the retriever itself is measured apart from generation with recall@k. The failures of the fixed pipeline (always retrieving, rigid queries, single-shot retrieval) are prescribed agentic RAG — registering the query stage as a tool and delegating the retrieval decisions to the model — and the learned form of that judgment is Self-RAG.
+The retriever finds the best chunk for a question. What does the model receive from the retriever: the vector of the chunk, or its text?
 
-With this chapter the agent has a standing ingress for external input: documents. That retrieved chunks are attached verbatim to the prompt means instructions written inside documents also enter as prompt text; this ingress becoming an attack path is treated in Chapter 14 (indirect prompt injection). Multi-hop questions that no single retrieval settles are taken up as planning in Chapter 7.
+<details class="answer">
+<summary>Read the answer</summary>
 
-**Presentation.** RAG (Lewis et al., 2020) — the original combination of parametric and non-parametric knowledge, with jointly trained retriever. Self-RAG (Asai et al., 2023) — internalizing the retrieval judgment via reflection tokens. Both are heard through one question: where does the retrieval decision (whether to retrieve, whether to trust) reside? Optional reading: HyDE (Gao et al., 2022), Adaptive-RAG (Jeong et al., 2024).
+The text of the chunk and its source. The vector only helps to find the chunk. The model reads the text.
 
-**Lab.** Retriever for the final project (planned): build the search index over the course's paper corpus that the final research-assistant agent will use — chunking, embedding, and top-k retrieval as in 8.3–8.4. Details are finalized in the post-midterm lab rework.
+</details>
+:::
+
+## Part 4. Retrieval errors and grounding errors {#errors}
+
+A RAG answer comes from two stages. If the answer is wrong, first find the stage that failed.
+
+### 4.1 Retrieval errors {#retrieval-errors}
+
+In a **retrieval error**, the retrieved chunks do not contain the necessary text. The document is not in the collection, chunking cut the fact apart, or the search ranked the chunk too low. Correct the collection, the chunks, or the search.
+
+Two methods make the search better:
+
+- **Hybrid search** combines keyword search and embedding search. Keyword search finds exact names and codes. Embedding search finds related meanings.
+- **Reranking** examines each candidate chunk again together with the question, and it puts the candidates in a new order. It changes only the order of chunks that the search already found.
+
+### 4.2 Grounding errors {#grounding}
+
+In a **grounding error**, the model receives the necessary text, but the answer does not agree with it. More retrieved text does not correct this error. Correct the instruction to the model, and compare each claim of the answer with the text.
+
+::: {.checkpoint}
+### Check 2 · Which stage failed?
+
+The correct chunk is in the model input, but the answer is wrong. Which stage failed?
+
+<details class="answer">
+<summary>Read the answer</summary>
+
+Generation. Retrieval supplied the necessary text, so this is a grounding error.
+
+</details>
+:::
+
+## Part 5. Agentic RAG and Self-RAG {#agentic-rag}
+
+### 5.1 Agentic RAG {#retrieval-control}
+
+Basic RAG searches one time and then answers. Sometimes the first result shows that another search is necessary. For example, a passage says: "For the submission procedure, consult the assignment instructions."
+
+::: {.callout-tip icon=false}
+## Agentic RAG
+
+RAG in which an agent uses the retriever as a tool. The model reads each result and selects the next action: another search, or the answer.
+:::
+
+This is the agent loop of Chapter 4 with a retrieval tool. The query goes in, and passages with sources come back as the observation.
+
+![Basic RAG retrieves one time and then generates. In agentic RAG, the agent uses each observation to select the next search or the answer.](figures/rag/control.svg){#fig-rag-control fig-alt="Top: a fixed workflow, Question, Retrieve, Generate, Answer. Bottom: an agent receives the request, sends search queries to a retrieval tool, receives passages with sources, and then selects another search or the answer."}
+
+### 5.2 Self-RAG {#self-rag}
+
+A RAG system can make three decisions: Is retrieval necessary now? Is this passage relevant? Does the passage support the answer? **Self-RAG** trains a language model to make these decisions during generation. The model learns to write **reflection tokens**: special tokens that express each decision. The system uses these tokens to control retrieval and to select the generated text.
+
+Agentic RAG describes how a system selects retrieval actions. Self-RAG trains the model to make these decisions.
+
+## Summary {#recap}
+
+- RAG retrieves text from external documents and gives it to the model, which generates an answer from it.
+- Preparation has three steps: chunking, embedding, and indexing.
+- To answer a question, embed it, retrieve the top-k chunks, and generate a grounded answer from their text.
+- A wrong answer comes from a retrieval error or a grounding error. Find the stage first.
+- Agentic RAG lets the model select the next search. Self-RAG trains the model to make retrieval decisions.
+
+## Lab {#lab-guide}
+
+1. Divide a document into chunks, and examine the chunks.
+2. Embed and index the chunks. Retrieve the top-k chunks for a question.
+3. Generate an answer from the retrieved text. Examine the model input and the cited answer.
+4. Apply the same steps to the RAG paper. Change $k$, and compare the retrieved chunks and the answers.
+
+[Lab page](lab.html) · [Download the notebook](W9_lab_rag.ipynb). Upload the notebook to [Google Colab](https://colab.research.google.com/) to run it.
+
+## Materials and sources {.unnumbered #sources}
+
+- Lewis et al., [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401) (2020): RAG, and parametric and non-parametric knowledge.
+- Asai et al., [Self-RAG](https://arxiv.org/abs/2310.11511) (2023): reflection tokens for retrieval and self-evaluation.
+- Manning et al., [Introduction to Information Retrieval](https://nlp.stanford.edu/IR-book/): keyword retrieval.
+- Sentence Transformers, [semantic search](https://www.sbert.net/examples/sentence_transformer/applications/semantic-search/README.html) and [retrieve and rerank](https://www.sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html): embedding search and reranking.
+- [Diagram sources](figures/rag/SOURCES.md).
+
+<!-- course-pagination:start -->
+<nav class="chapter-pagination" aria-label="Previous and next chapters">
+<a href="../week07/notes.html" rel="prev">← Previous: 7 · Planning &amp; Search</a>
+<a href="../week10/notes.html" rel="next">Next →: 9 · Context Engineering</a>
+</nav>
+<!-- course-pagination:end -->

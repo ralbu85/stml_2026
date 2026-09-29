@@ -1,103 +1,196 @@
-# Chapter 6. Multi-Agent Systems
-
-With measurement in hand (Chapter 5), the system itself can grow. So far every configuration has been one agent: one standing prompt, one accumulating context, one set of tools, one loop deciding call by call (Chapter 4). Some work outgrows that unit — not because the model is too weak, but because one context is being asked to hold too many roles at once. This chapter splits the work: several agents, each with its own instructions, context, and tools, cooperating through handoffs or a shared store.
-
-In this chapter an **agent** is exactly the unit Chapter 4 built — a loop that receives a task, calls its tools as it judges, and returns a result, carrying its own prompt and its own context. At the orchestration level, that inner machinery is deliberately out of view: each agent is treated as a box with an input and an output, and this chapter arranges the boxes.
-
-## 6.1 The Problem — One Agent, One Context
-
-Three pressures push against the single-agent design as tasks grow.
-
-**Role interference.** A prompt that says "research the topic, then criticize your research, then write the report" carries three roles whose instructions compete. The critic role is the clearest casualty: a critique generated in the same context that produced the draft inherits the draft's framing, and Chapter 5 established that critique works best when it stands apart from generation. Separate agents give each role a prompt that says one thing.
-
-**Context growth.** One agent doing everything accumulates everything: every observation, every draft, every tool result lands in a single context that is re-sent on every call. Cost grows with the square of the accumulated length, and long contexts degrade retrieval of what matters (treated fully in Chapter 9). Splitting the work partitions the context: the researcher's sources never enter the writer's window — only the findings do.
-
-**No independent perspective.** One agent is one sampling of one model conditioned one way. Several agents prompted differently produce genuinely different readings of the same task, and disagreement between them is signal — the same principle that made self-consistency work (→ 2.5), applied at the level of roles instead of samples.
-
-A **multi-agent system** = a configuration of several agents whose cooperation is arranged by an orchestration layer — code or a designated agent — that routes tasks and results between them.
-
-## 6.2 Division-of-Labor Patterns
-
-The workflow patterns of Chapter 1 reappear here with agents as the parts. Four cover most systems in use.
-
-| Pattern | Arrangement | Fits |
-|---|---|---|
-| Pipeline | A → B → C, each output the next input | stages with a natural order (research → write → edit) |
-| Parallel + aggregate | A₁ … Aₙ work independently; an aggregator merges | divisible work (sections, files); independent votes |
-| Orchestrator–workers | a lead agent decomposes the task at run time and dispatches workers | subtasks unknown until the input arrives |
-| Evaluator–optimizer | a generator agent and a critic agent alternate | quality gates; Chapter 5's reflection with the critic externalized |
-
-![four division-of-labor patterns](figures/fig-6-1-division-patterns.svg)
-
-*Figure 6.1 — The four division-of-labor patterns and what each arrangement buys.*
-
-Two of these are old acquaintances in new form. Evaluator–optimizer is Self-Refine (→ 5.2) with generator and critic given separate contexts, which removes the shared-framing weakness of self-critique. Orchestrator–workers is planning (→ Ch. 7) with the plan's steps executed by dispatched agents instead of a single loop.
-
-The choice among patterns follows the task's structure, and the fallback is always the simplest arrangement that fits: a fixed pipeline where stages are known, dynamic orchestration only where they are not.
-
-Every row is in production somewhere: Anthropic's research feature runs orchestrator–workers — a lead agent decomposes the question and spawns parallel searchers; Claude Code dispatches subtasks to subagents holding their own contexts; and the OpenAI Agents SDK ships handoffs — one agent passing a task to another — as a first-class primitive.
-
-## 6.3 Communication and Shared State
-
-Agents cooperate through two channels, and the choice shapes the system's failure modes.
-
-**Message passing** — one agent's output becomes another's input, usually as a structured handoff (the JSON discipline of Chapter 3 applied between agents). The properties: explicit, inspectable, and lossy by design — the receiver knows only what the message carries. A researcher-to-writer handoff in a report pipeline looks like this:
-
-```
-{ "topic":    "test-time compute",
-  "findings": [
-    "Self-consistency: N samples + majority vote (Wang et al., 2022)",
-    "Snell et al. 2024: compute-optimal allocation beats fixed N"
-  ],
-  "sources":  ["arxiv.org/abs/2203.11171", "arxiv.org/abs/2408.03314"] }
-```
-
-The writer's context receives these three fields and nothing else. That is the point — and the risk. If the researcher also learned that the two papers disagree on when extra samples stop paying, but the schema has no field for caveats, the writer will present both results as if they compose cleanly. The message was well-formed; the omission is invisible; the report is confidently wrong. Whatever the researcher fails to put into the findings, the writer does not know.
-
-**Shared store** — agents read and write a common substrate: files, a database, a scratch document. The properties are inverted: nothing is lost, but nothing is scoped either — every agent must know the store's conventions, and two agents writing the same record need coordination.
-
-Both channels exist to buy **context isolation**, the central payoff of the split: each agent's window holds only its role's material, so prompts stay short, attention stays on-task, and cost stays linear. The price is that information no longer travels implicitly. In a single agent, everything seen is available; in a multi-agent system, an agent cannot use what no handoff gave it, and the characteristic failure is the one above — a downstream agent working confidently from an upstream omission. Debugging therefore starts from the handoffs: the messages and store records between agents are the trace to read (→ 5.10, error analysis applied per component; → 4.6, trace reading inside a single agent).
-
-## 6.4 Frameworks and Protocols
-
-The orchestration layer is ordinary code, and frameworks package its recurring shapes. Graph orchestrators (LangGraph is the current representative) express a system as a graph: nodes are agents or steps, edges are control flow, and a typed shared state moves along the edges — the patterns of 6.2 become graph topologies. The lab track uses plain code for orchestration — the patterns are visible without a framework — and the graph formulation returns with the final-project labs.
-
-The seam between agents and their tools has a standard of its own. Function calling (→ 3.3) standardized the call format between one application and one model API; it did not standardize where tools come from. Every agent wires its own — a research agent, a coding agent, and a pipeline that each want GitHub access implement GitHub tools three times. M agents × N services = M×N private integrations, and the multiplication is felt precisely when a system grows to many agents.
-
-**MCP (Model Context Protocol)** = an open protocol, released by Anthropic in November 2024, that standardizes how applications connect models to tools and data sources. An **MCP server** wraps one service and exposes its tools over the protocol; the application (the **host**) runs an **MCP client** per connection, discovers what a server offers at connection time (`tools/list`), and calls by name (`tools/call`). A service wrapped once serves every agent that speaks the protocol: M×N becomes M+N, and a server-side change reaches every connected agent without a code change. MCP does not replace function calling — at the model boundary schemas still travel in `tools` and calls return in `tool_calls`; what it standardizes is where the schemas come from. Prebuilt servers exist for common services (GitHub, Google Drive, Slack, PostgreSQL), clients ship in editors and chat applications, and major vendors beyond the protocol's origin announced support in 2025.
-
-![M×N integrations versus MCP](figures/fig-6-2-mcp.svg)
-
-*Figure 6.2 — Without a protocol, M agents × N services multiply private integrations; with MCP, each side connects once and M×N collapses to M+N.*
-
-The caution restates the capability boundary (→ 3.6): a server's tool list is capability granted to the agent, and its descriptions and results are third-party text entering the context — connect servers as deliberately as you register tools. In a multi-agent system the deliberation is per agent: the researcher may hold the search server, and the writer none at all.
-
-## 6.5 Adoption Criteria
-
-The split is not free, and its costs are the mirror of its benefits. Every handoff adds latency and tokens; total cost multiplies with agent count. Handoff schemas are interfaces that must be designed and kept stable. And errors propagate: one wrong handoff poisons every agent downstream, so a many-agent system without per-component evaluation (→ Ch. 5) fails as a whole with no indication of where.
-
-The default is therefore one agent. The split is justified when a measured bottleneck names the seam: a role whose instructions conflict with another's, a context that a partition would keep small, a stage that needs an independent check. Splitting on architecture-diagram aesthetics, with no bottleneck in evidence, buys cost and debugging surface with no return.
-
-## 6.6 Summary
-
-One agent, one context reaches its limits by role interference, context growth, and the absence of independent perspective. The remedy arranges several agents — each with its own prompt, context, and tools, each a Chapter 4 loop inside — under an orchestration layer, in four recurring patterns: pipeline, parallel-aggregate, orchestrator–workers, evaluator–optimizer. Cooperation runs over explicit messages or a shared store, and both exist to buy context isolation, whose price is that nothing travels implicitly — the characteristic failure is a downstream agent confident on an upstream omission. Frameworks package the orchestration shapes as graphs, and MCP standardizes the agent–tool seam, turning M×N private integrations into M+N. The split is adopted against a measured bottleneck, never by default, and per-component evaluation is what keeps the assembled system debuggable.
-
-Every arrangement in this chapter took its step sequence from somewhere: the pipeline's stages were fixed by us, and the orchestrator decomposed tasks at run time by judgment alone. What it means to produce that decomposition well — to draw the whole path before walking it, and to search among paths instead of committing to one — is planning, the subject of Chapter 7.
-
-## 6.7 Discussion
-
-Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
-
-1. A team proposes researcher / writer / critic / formatter — four agents — "because the roles are cleaner." Which of 6.1's three pressures actually justify a split, and at which of these four seams would you expect a measured bottleneck to appear first?
-2. The researcher→writer handoff of 6.3 carries topic, findings, and sources, and the reports keep presenting two disagreeing sources as if they compose. Name what is missing, and explain why improving the writer's prompt cannot fix it.
-3. After a change, the pipeline's end-to-end score drops. Describe the reading order that locates the fault — which records, in what sequence (6.3) — and how per-component evaluation shortens it (→ 5.10).
-4. Connecting a community MCP server adds thirty tools to your researcher agent (6.4). Name the two distinct risks this creates (the capability boundary of 3.6; third-party text entering the context) and state a per-agent connection policy that addresses both.
-5. A nightly job must turn forty new papers into one digest. Choose among the four patterns of 6.2, justify the choice with the table's "fits" column, and name the input change that would force an upgrade to orchestrator–workers.
-
+---
+title: "Chapter 6. Multi-Agent Systems"
+subtitle: "Divide a task among agents · Connect their results"
 ---
 
-**Presentation.** AutoGen (Wu et al., 2023) — multi-agent cooperation as conversation, and what the conversation protocol buys; MetaGPT (Hong et al., 2023) — roles fixed by standard operating procedures, and structured handoffs as the error-control device. Both are heard through one question: what does the split cost, and what does each paper's coordination device buy back?
+<!-- course-navigation:start -->
+<nav class="chapter-nav" aria-label="Course navigation">
+<a href="../../index.html">Home</a>
+<a href="../reading.html">All chapters</a>
+<a href="../../week06.html">Week 6 materials</a>
+</nav>
+<!-- course-navigation:end -->
+<div class="reading-tools" role="group" aria-label="Reading options">
+<button id="classroom-toggle" type="button" aria-pressed="false">Larger text</button>
+<button id="answers-toggle" type="button" aria-pressed="false">Show all answers</button>
+</div>
 
-**Lab.** `W6_lab_multiagent.ipynb` — this chapter's patterns run end to end, from Andrew Ng's *Agentic AI* Module 5: a plan → reflect → execute → explain pipeline over an inventory store, with tool-only plans, a reflection review step, and a scored task set. Reference answers: `labs/checkpoints/week06/solution.py`.
+::: {.callout-note appearance="minimal"}
+## Learning objectives
 
-**Homework.** `W6_hw_new_intent.ipynb` — push a new intent (an exchange) through a condensed pipeline end to end: the tool, its docstring, the planner extension, and a scored request, with the original three intents still passing (target 4/4). Due before W7.
+- Explain what a multi-agent system is and why a task can use one.
+- Explain roles, handoffs, and coordination.
+- Name four communication structures and the situation for each structure.
+- Build a team of `Agent` objects, with a coordinator agent.
+:::
+
+In Chapter 5, a reviewer model examined the result of a writer. That system already had two roles. This chapter uses several agents for one task. It explains how to divide the task and how to connect the results.
+
+## Part 1. Multi-agent systems {#concepts}
+
+### 1.1 Why use several agents {#introduction}
+
+One agent can do a large task. But its instructions, tools, and history must then cover all parts of the task. A travel plan, for example, needs transport, a hotel, and a schedule. If one agent does all three parts, its instructions become long, and its history mixes all three parts. We can divide the work among several agents instead.
+
+### 1.2 Multi-agent system {#definition}
+
+::: {.callout-tip icon=false}
+## Multi-agent system
+
+A system in which several agents do parts of one task and exchange their results to complete the task.
+:::
+
+Each agent has a **role**: the responsibility of that agent. An agent in a role has its own instructions, its own tools, and its own history. Two agents can use the same model. Their roles make them different.
+
+A simple travel team has three roles:
+
+| Agent | Contribution |
+|---|---|
+| Transport researcher | Finds a train, with its times and fare |
+| Lodging researcher | Finds a hotel, with its price and distance from the station |
+| Itinerary writer | Combines the two results into a schedule and a budget |
+
+### 1.3 What a division gives {#purpose}
+
+A division of the task gives three possible advantages:
+
+1. **Specialization.** Each agent receives only the instructions and tools for its part.
+2. **Parallel work.** Parts that do not depend on each other can run at the same time.
+3. **Review.** Another agent can examine a result against the task, as the reviewer did in Chapter 5.
+
+Each agent adds model calls. For this reason, use several agents when the division makes the task easier to do or to examine.
+
+## Part 2. Collaboration {#collaboration}
+
+### 2.1 Roles {#role-assignment}
+
+A role has three parts:
+
+1. **A task:** the part of the work that the agent does.
+2. **Information and tools:** what the agent needs for that task.
+3. **An output:** a result that another agent or the user uses.
+
+In code, the system message gives the task, the tool list gives the tools, and the returned answer is the output.
+
+### 2.2 Handoff {#information-exchange}
+
+Agents exchange messages: tasks, findings, questions, and feedback.
+
+::: {.callout-tip icon=false}
+## Handoff
+
+The transfer of a task and the information that is necessary to continue it.
+:::
+
+An agent knows only what is in its messages. For this reason, a handoff must carry the findings, not only a report that the work is done. "Transport: done" does not help the writer. "The train arrives at 10:00, and the fare is $90" lets the writer plan the first day.
+
+Some systems also keep a **shared state**: a common record that several agents can read. Then a message can point to the record and not copy all of it.
+
+### 2.3 Coordination {#coordination}
+
+**Coordination** decides which agent works next and what it receives. **Integration** combines the results into one result.
+
+The order of the work comes from the dependencies. An agent that needs the output of another agent must wait for it. Agents that do not need each other's output can work in parallel. In the travel team, the two researchers can start at the same time. The writer waits for both results.
+
+::: {.diagram-scroll tabindex="0" role="region" aria-label="Travel task dependencies"}
+![The two researchers work in parallel. The writer needs both results.](figures/travel/dependencies.svg){fig-alt="The travel request goes to transport and lodging researchers. Their findings both go to the itinerary writer, which produces one plan."}
+:::
+
+Code can do the coordination with a fixed order. An agent can also do it: it reads each result and decides the next task. These two choices lead to different communication structures.
+
+::: {.checkpoint}
+### Check 1 · A handoff
+
+The writer receives only this message: "Transport and hotel: sorted." Which information is not in the message, and where must it come from?
+
+<details class="answer">
+<summary>Read the answer</summary>
+
+The message does not give the train times, the fare, the hotel, or its price. This information must come from the results of the two researchers, in the message to the writer.
+
+</details>
+:::
+
+## Part 3. Communication structures {#structures}
+
+### 3.1 Four structures {#comparison}
+
+A **communication structure** describes which agents send messages to which agents.
+
+| Structure | How work passes | Use it when |
+|--|-----|----|
+| Sequential | Each agent gives its output to the next agent, in a fixed order. | The order of the work is known before the run. |
+| Manager | A coordinator gives tasks to agents and receives their results. | The next task depends on the results. |
+| Hierarchical | A manager gives large parts to leads. Each lead manages its own agents. | Each large part needs its own team. |
+| All-to-all | Each agent can send messages to each other agent. | Agents must frequently agree on details. |
+
+A system can combine these structures. For example, a manager can run two researchers in parallel. Select the structure that matches the dependencies of the task.
+
+### 3.2 A coordinator agent {#manager}
+
+In the manager structure, an agent is the coordinator. The coordinator uses the other agents as its tools. To make an agent into a tool, put it in a function. The argument of the function is the task. The function returns the answer of the agent. The loop of the coordinator then calls these functions, as the agent loop of Chapter 4 calls tools.
+
+::: {.diagram-scroll tabindex="0" role="region" aria-label="Travel-planning agent system"}
+![The coordinator gives tasks to the four roles and receives their results.](figures/travel/system.svg){fig-alt="The user sends a request to the coordinator. The coordinator exchanges assignments and results with transport researcher, lodging researcher, itinerary writer, and reviewer, then returns a final plan to the user."}
+:::
+
+Is a team better than one agent? To find out, use an evaluation from Chapter 5. Give both systems the same requests, and grade both with the same criteria. Also compare the model calls.
+
+::: {.checkpoint}
+### Check 2 · Choose a structure
+
+The hotel price changes the next task: if the total is too high, the lodging researcher must search again. Which structure fits, sequential or manager?
+
+<details class="answer">
+<summary>Read the answer</summary>
+
+The manager structure. The coordinator reads the result and then decides the next task. A sequential structure has a fixed order before the run.
+
+</details>
+:::
+
+## Summary {#recap}
+
+- A multi-agent system divides one task among agents and connects their results.
+- A role has a task, information and tools, and an output.
+- A handoff carries the task and the findings. An agent knows only what is in its messages.
+- Coordination follows the dependencies. Code or a coordinator agent can do it.
+- The four structures are sequential, manager, hierarchical, and all-to-all.
+
+## Lab preparation: from concept to code {#implementation}
+
+The lab uses the `Agent` class from the practice notebook. Each role is one `Agent` object. A handoff is a user message to the next object.
+
+| Concept | Lab code (short form) |
+|--|-------|
+| Role | `lodging = Agent(LODGING_SYSTEM, [find_hotels])` |
+| Task for a role | `lodging_result = lodging.ask(REQUEST)` |
+| Handoff | `writer.ask(handoff)`: `handoff` contains the request and the results of the two researchers |
+| Review | `reviewer.ask("Request:\n" + REQUEST + ... + "Draft:\n" + draft)` |
+| Targeted revision | `lodging.ask("Find a hotel costing at most $120 ...")`, then `writer.ask(review + new_hotel)` |
+| Agent as a tool | `def ask_lodging(task: str): return lodging_team.ask(task)` |
+| Coordinator agent | `Agent(COORDINATOR_SYSTEM, [ask_transport, ask_lodging, ask_writer, ask_reviewer])` |
+| Cost of the team | The sum of `total_tokens` of all objects |
+
+## Lab {#lab-guide}
+
+1. Make one `Agent` object for each role, with its own tools.
+2. Compare a handoff that says only "sorted" with a handoff that carries the findings.
+3. Write the instructions of the reviewer. Then revise only the affected work.
+4. Let a coordinator agent assign the work, with the roles as its tools.
+5. Examine the final plan with code, and compare the cost of the two runs.
+
+[Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week06/W6_lab_multiagent.ipynb) · [Download the lab](W6_lab_multiagent.ipynb) · [Homework notebook](W6_hw_new_intent.ipynb).
+
+## Materials and sources {.unnumbered #sources}
+
+- Wu et al., [AutoGen](https://arxiv.org/abs/2308.08155) (2023): agents that collaborate through conversations.
+- Hong et al., [MetaGPT](https://arxiv.org/abs/2308.00352) (2023): roles that follow set procedures and exchange work products.
+- Anthropic, [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) (2024): workflow patterns, such as orchestrator and workers.
+
+<!-- course-pagination:start -->
+<nav class="chapter-pagination" aria-label="Previous and next chapters">
+<a href="../week05/notes.html" rel="prev">← Previous: 5 · Reflection &amp; Evaluation</a>
+<a href="../week07/notes.html" rel="next">Next →: 7 · Planning &amp; Search</a>
+</nav>
+<!-- course-pagination:end -->

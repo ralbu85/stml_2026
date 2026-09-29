@@ -1,157 +1,172 @@
-# Chapter 4. The Agent Loop (ReAct)
-
-Chapter 3 ended on an admission: the email assistant completed multi-step work because tool-call round trips repeated, with the model choosing each call and the stopping point — and the loop that carried this repetition belonged to the lab's client library, not to us. A borrowed loop runs, but it cannot be shaped. Its record shows calls and results, never the judgment between them; its termination rule is fixed inside the library; when it ends in a wrong answer, there is nothing to read that says where the run went wrong.
-
-There is also a class of tasks that makes the loop unavoidable rather than convenient. Bug fixing is one. Until the tests run, there is no way to know what is broken; only after the failing point is confirmed does the next edit become determined; and whether that edit passes can only be confirmed by running again. What to do next depends each time on the immediately preceding result, so no fixed sequence of round trips, written in advance, can cover the task. The decisions of how many times, in what order, and when to stop belong to the party that can read the results — the model.
-
-This chapter therefore builds the loop by hand: its anatomy as a procedure (4.1), the measured failure of the obvious protocol (4.2), the convention that fixes it — ReAct (4.3) — its limits (4.4), why today's tool-calling models run it without being told (4.5), and how to read a finished run when it fails (4.6).
-
-## 4.1 The Agent Loop
-
-The **agent loop** = the iterative structure of tool-call round trips in which the next action and the termination are decided by the model's output. Where Chapter 3's procedure treated one round trip at a time, the loop parses every model output into a branch: another call request, or a final answer that ends the run.
-
-Marking an output as final follows one of two conventions, and both are in use. Under **function calling**, a response that contains no tool call is the final answer — this implicit convention is what Chapter 3's client used, and why its loop could remain invisible. Under a **text protocol**, the model marks the answer explicitly with a designated form (Final Answer), and the code detects that form. This chapter's lab uses the explicit form, because the point here is to own every branch; the two conventions carry the same information.
-
-The procedure is as follows. The input is the user question and a system prompt listing each tool's name, function, and input format, together with the output format to follow when calling. The state is the conversation record (initialized with the input) and the iteration count (initialized to 0). If the model never produces a final answer, the iteration does not end on its own, so an upper bound on iterations, **max_steps**, is fixed in advance and checked in the Call step — the same bound the client library exposed as `max_turns`, now ours to enforce and report. The only exit paths are the answer return in the Judge step and the bound being reached in the Call step.
-
-1. **Call** (code) — Increment the iteration count by 1. If it exceeds max_steps, return an answer that states the failure explicitly and terminate. Otherwise, call the model with the entire conversation record as input and receive its output.
-2. **Judge** (code) — Parse the output into three branches.
-   - Termination: if it is in Final Answer format, return that answer and terminate.
-   - Execution request: if it is in tool-call format, pass it to the Execute step.
-   - Format error: if it is in neither format, construct a result string stating what is wrong and pass it to the Reinject step.
-3. **Execute** (code) — Call the requested tool function and obtain a result string. An unregistered tool or an exception during execution does not abort the procedure; it, too, becomes a result string stating what went wrong (→ 3.5).
-4. **Reinject** (code) — Append the model output and the result string to the conversation record and return to the Call step.
-
-On the bug-fixing task, this procedure runs as follows. The model requests a test run; when the failure log is reinjected, the model reads the failing point in the log and requests an edit to the corresponding file. When the edit result is reinjected, it requests the test run again, and only after the passing log is reinjected does it finalize completion with a Final Answer. Which iteration the loop ends on is determined by the test results and is written nowhere in the code.
-
-By Chapter 1's definition — a system whose control flow is decided by the LLM's output — the email assistant of 3.6 already qualified as an agent; what this procedure changes is ownership, not status. The loop is now our code, and with it three things become ours: the protocol, meaning what the model must write on each turn (4.2–4.3); the bound, meaning when the loop stops and how failure is reported (above, and the guards of 4.6); and the record, meaning what to read when a run goes wrong (4.6). The rest of the chapter takes these up in turn.
-
-![the agent loop](figures/fig-4-1-agent-loop.svg)
-
-*Figure 4.1 — One revolution of the loop: Call → Judge → Execute → Reinject, with the Judge's three branches and the bound's failure exit.*
-
-## 4.2 The Failure of Act-Only
-
-The first question of ownership is the protocol: what must the model write on each turn? The round-trip convention of Chapter 3 demanded only the call-request JSON or the final answer; nothing asked the model to write judgments or reasons. Putting that convention unchanged into the loop, one turn's record consists of two elements: the action (Action) the model outputs and the observation (Observation) the system fills in with the execution result. This configuration is called **Act-only**, and the ReAct paper measured it as a contrast condition (Yao et al., 2022). One of the questions used in the measurement reads: "Aside from the Apple Remote, what other device can control the program Apple Remote was originally designed to interact with?" Answering requires first searching to find out what the Apple Remote controls, then searching that program again to find the other devices that control it. The following is the Act-only trace on this question (Figure 1 of the paper). Following the paper's experimental environment, an action is written as tool[input], and termination is likewise an action of the form finish[answer].
-
-> Action 1: search[Apple Remote] → Observation: … designed to control the Front Row media center …
-> Action 2: search[Front Row] → Observation: could not find. Similar: [Front Row (software), …]
-> Action 3: search[Front Row (software)] → Observation: discontinued media center software …
-> Action 4: finish[yes] (wrong)
-
-The searches were performed in the correct order. Yet at the end, the model finalized an answer ("yes") whose form is unrelated to the question.
-
-The basis of the diagnosis is the model's computational structure. The model has no workspace outside text, and what is not written in text does not exist for the next prediction (→ 2.2). In the record above, what is written is only the sequence of actions and observations. Under this condition, the three correct query choices and the collapsed termination come apart. The cue for the next query lies on the surface of the immediately preceding observation: the name Front Row appears in Observation 1 and the alternative title Front Row (software) in Observation 2, so reading only the preceding observation yields the next action. The termination judgment has no such cue. It must integrate what the question demanded, what has been confirmed so far, and whether that suffices for an answer — and none of those judgments is written in any observation. At the moment of termination, the model must reconstruct the state of the task from the bare sequence, and when that reconstruction fails, an answer unrelated to the question, like "yes," comes out. The structure is the same as a calculation collapsing when intermediate values are not written down; here, task execution collapses when intermediate judgments are not written down.
-
-## 4.3 ReAct
-
-To remove the failure of 4.2, the model is made to write its judgment before every action. The two Act-only elements, action and observation, remain; reasoning (Thought) is added.
-
-**ReAct** = a prompt convention that structures each iteration as a bundle of Thought, Action, and Observation (Yao et al., 2022). The loop procedure of 4.1 is unchanged, and the three elements correspond to its steps: Action is the call request that the Judge step passes to Execute, and Observation is the result string that the Execute step constructs and reinjects. Both already existed in Act-only. Only Thought is new, added to the model's output as a record of judgment. What the convention specifies is the format of what the model outputs on each turn.
-
-The principle of the convention is that reasoning and action support each other. In one direction, a Thought writes down the facts confirmed in the preceding Observation and the task remaining before an answer, and the next Action is decided on top of that text. In the other direction, the Observation an Action brings back supports the premises of the next Thought with externally confirmed fact rather than the model's internal knowledge. Making reasoning's premises rest on confirmed fact is called **grounding**.
-
-Specified precisely, the model's output on every turn must be one of two formats.
-
-1. **Action turn** — Output one Thought paragraph (facts confirmed, task remaining, reason for this action) and one Action line (tool-call JSON), then stop generating.
-2. **Termination turn** — Output one Thought paragraph (grounds for the answer) and one Final Answer line.
-
-The Observation is not written by the model. The Execute step attaches the result string as the Observation and reinjects it. If the model were allowed to generate an Observation following its Action, an unexecuted result — an unconfirmed fact — would enter the record and become a premise of later reasoning. The full system prompt used in the lab is an implementation of this specification.
-
-```
-You are an agent that thinks and acts step by step. On every turn, answer in exactly one of the two formats below.
-
-When a tool is needed:
-Thought: <your reasoning so far>
-Action: {"tool": "<tool name>", "input": "<input>"}
-
-When finalizing the answer:
-Thought: <final reasoning>
-Final Answer: <answer>
-
-Observation: is filled in by the system — never write it yourself. Write nothing after Action.
-```
-
-The following is the measured ReAct trace on the same question (Yao et al., 2022, Figure 1). The notation is the paper's, as in the 4.2 trace: search[…] corresponds to the Action JSON of the prompt above, and finish[…] to the Final Answer.
-
-> Thought 1: I need to search Apple Remote and find the program it was originally designed to control.
-> Action 1: search[Apple Remote]
-> Observation 1: The Apple Remote is a remote control introduced by Apple in October 2005 … designed to control the Front Row media center program …
->
-> Thought 2: Apple Remote was designed to control Front Row. I need to search Front Row next and find the other devices that control it.
-> Action 2: search[Front Row]
-> Observation 2: Could not find [Front Row]. Similar: ['Front Row Seat to Earth', 'Front Row Motorsports', 'Front Row (software)', …]
->
-> Thought 3: Front Row is not found. I need to search Front Row (software).
-> Action 3: search[Front Row (software)]
-> Observation 3: Front Row is a discontinued media center software … controlled by an Apple Remote or the keyboard function keys …
->
-> Thought 4: Front Row (software) is controlled by an Apple Remote or the keyboard function keys. So the answer is keyboard function keys.
-> Action 4: finish[keyboard function keys] (correct)
-
-The difference from Act-only is the Thought before each action, and this resolves the diagnosis of 4.2. Thought 2 wrote down the fact confirmed from the observation ("designed to control Front Row") and the remaining task ("the other devices that control it"), and the second query was decided on top of that text. Thought 4 restated the confirmed facts immediately before termination, and as a result the termination became a conclusion from fact rather than a formulaic answer like Act-only's "yes."
-
-This trace also resolves the failure of CoT. CoT, which makes the model write out its solution, fabricated the premise "Apple TV" from internal knowledge on this same question (→ 2.4). Here the premise in the same position came from a search result — Observation 1. Failed actions contribute in the same way: the "could not find" of Observation 2 led to the query correction of Thought 3. This is why failures are designed to be reinjected as result strings rather than raised as exceptions (→ 3.5).
-
-ReAct predates function calling, and the two are the same skeleton in different notation. The Action line and the Final Answer marker are the Judge step's two branches carried in plain text; function calling carries the same two branches in structured fields (`tool_calls` present, or absent). What ReAct adds beyond notation is the content requirement — a written judgment before every action — and that requirement is what the measurement above shows to matter.
-
-![Act-only versus ReAct traces](figures/fig-4-2-actonly-vs-react.svg)
-
-*Figure 4.2 — The same question under two protocols: without written judgments the termination collapses; with a Thought before every action, the answer concludes from confirmed fact.*
-
-## 4.4 Limits
-
-ReAct is not uniformly superior. In the same paper's measurements, on question types answerable from internal knowledge alone, CoT beats ReAct: for that type, search results act as noise instead. The paper reports the best results from a configuration that combines the two methods and selects by question. Per-task outcomes and figures are examined in the presentation.
-
-The structural limits that remain in the agent loop are treated in turn in later chapters. It commits its Final Answer without verifying it — every Thought looks forward to the next action, and nothing reads the finished answer (→ Ch. 5, reflection; how that reading differs from the Thought is drawn precisely in 5.4). The loop picks one action per turn and only moves forward; it cannot compare multiple paths or backtrack (→ Ch. 7, planning and search). Knowledge is locked in the model's parameters, so every knowledge question depends on search (→ Ch. 8, retrieval augmentation). As iterations lengthen, observations accumulate and the input grows (→ Ch. 9, context).
-
-## 4.5 The Protocol, Internalized
-
-A fair question at this point: the loop of Chapter 3's lab ran without any ReAct prompt — no Thought was demanded, yet the email assistant chose sensible calls and stopped correctly. Did the protocol not matter there?
-
-It mattered — but it had already been paid for, during training. Models offered behind a function-calling API are trained on tool-use episodes of exactly this shape — reason, call, read the result, continue — so the convention that ReAct imposed by prompt in 2022 now sits, in tool-calling models, in the weights. Reasoning models go one step further and internalize the Thought itself: the deliberation ReAct forced into the visible record runs as **thinking tokens** before the answer, budgeted and billed but not prompted (→ Ch. 11). The migration is the same one Chapter 2 flagged for test-time compute: a procedure the caller once orchestrated — write your reasoning, then act — moves into the model, and the caller's protocol survives as the model's habit.
-
-The practical consequence runs in both directions. Because the protocol is internalized, production systems mostly run function-calling loops and get grounded, interleaved reasoning without a ReAct prompt. But internalized does not mean guaranteed: the habit falls short on smaller models, unfamiliar tools, and long horizons, and then the remedy is the 2022 one — put the requirement back into the prompt and read what the model writes. The lab does both on the same questions and measures the difference.
-
-The loop is also the part of shipped software you can watch. Claude Code and Cursor's agent mode stream exactly this record — a line of judgment, a tool call, its result — so a session transcript there is the trace of 4.6; agent frameworks expose the bound as a parameter (`max_turns` in the OpenAI Agents SDK, a recursion limit in LangGraph), the same max_steps this chapter makes ours to set and report.
-
-## 4.6 Operations — Trace Reading
-
-A **trace** = the complete execution record of the loop, the sequence of Thoughts, Actions, and Observations. In practitioner vocabulary, the accumulated record that the model reads and extends each turn is also called the scratchpad. Debugging an agent starts from the trace, not from the code — owning the loop means the full record of every run is ours to read. The procedure is as follows. The input is the trace of a run that ended in a wrong answer or a failure; the output is the location of what to fix.
-
-1. **Locate the first error** — Read the trace from the beginning and find the first point that conflicts with fact or with the task. Do not search backward from the final answer: later errors are mostly propagations of the first one.
-2. **Classify the error** — Determine which element the first error lies in. The branch determines what to fix.
-   - An error in a Thought (wrong judgment) → fix the prompt.
-   - An error in an Action (wrong call) → fix the tool's schema — its name, function description, and input format.
-   - An error in an Observation (wrong or corrupted result) → fix the tool implementation.
-3. **Reproduce and verify** — Rerun with the conversation record up to just before the first error point as input, and confirm that the fix actually removes the error.
-
-Applying this procedure to the Act-only trace of 4.2: the first error point is the termination at Action 4. The call formats and the tool results are all normal, so the error class is judgment, and the fix target is the prompt. That fix is the convention of 4.3.
-
-Two loop guards belong in the same operational kit. A **repetition guard** detects the loop's characteristic stall — the same Action with the same input recurring turn after turn, each reinjection returning the same Observation — and interrupts it (or injects a notice that the action was already tried), because a model that ignored the first identical result will ignore the fifth. And the **bound report**: when max_steps is exhausted, the returned answer must say so and carry the trace, never a fabricated best guess — a run that failed by budget is diagnosable, a disguised one is not.
-
-The effect of a fix is confirmed by measurement, not by a single reproduction. A small evaluation set of fixed questions is kept, and every change to prompts or code is scored against the same set — the lab introduces a five-question set this week, and the homework re-scores it after the guard is added. Chapter 5's second half turns this practice into its own subject, and Chapter 13 extends it into a full benchmark harness.
-
-## 4.7 Summary
-
-Chapter 3's client repeated round trips under a hidden bound; this chapter took the loop into our own code, and with it the protocol, the bound, and the record. The protocol is ours to set: repeating actions without any requirement to write judgments (Act-only) fails in measurement, because for a model whose only workspace is text, the record retains no judgments — the prescription is ReAct, a written judgment before every action, under which the next query is decided on facts confirmed in the preceding observation (grounding) and even failed actions become input for course correction. The bound is ours to enforce: max_steps with an explicit failure report, plus a guard against repeated actions. The record is ours to read: trace reading locates the first error and classifies it into prompt, schema, or tool. Today's tool-calling models carry the ReAct convention in their weights, which is why the borrowed loop worked without it and why the explicit form returns when the internalized habit falls short.
-
-The loop commits its Final Answer and stops; nothing reads the answer after it is written, and every fix so far was justified by a score we have not yet examined critically. Chapter 5 takes up both halves of that gap in one week: feeding outputs and attempts back to be improved (reflection), and making "it improved" a measured claim (evaluation).
-
-## 4.8 Discussion
-
-Each question is answerable with this chapter's concepts; section numbers point at the relevant part.
-
-1. By Chapter 1's definition, the email assistant of 3.6 was already an agent — so what did this chapter change? Name the three things ownership bought (4.1) and, for each, one failure that cannot be diagnosed or fixed without it.
-2. In the Act-only trace of 4.2 every search was correct, and the final answer was still unrelated to the question. Explain why "the model is weak" is the wrong diagnosis, and state exactly what was missing from the record at the moment of termination.
-3. An agent of yours answers correctly, but its Thoughts merely paraphrase the last observation and never restate the remaining task. Using the diagnosis of 4.2, predict the failure this foreshadows and the question type that will trigger it.
-4. A production run returns "(no Final Answer within max_steps=6)" and a colleague proposes raising the bound to 20. Using 4.6, state the investigation order before touching the bound, and what raising it costs if the run was spinning.
-5. Tool-calling models carry the ReAct convention in their weights (4.5). Name two conditions under which you would still pin the protocol in the prompt, and the measurement that would show the internalized habit falling short (→ 5.8).
-
+---
+title: "Chapter 4. The Agent Loop and ReAct"
+subtitle: "Repeat the tool round trip · Write a reasoning step before each action"
 ---
 
-**Presentation.** ReAct (Yao et al., 2022) — why reasoning and acting are interleaved, the Act-only and CoT contrast conditions, and per-task outcomes. Listen with the question: what exactly does the written Thought buy, and on which tasks does it buy nothing?
+<!-- course-navigation:start -->
+<nav class="chapter-nav" aria-label="Course navigation">
+<a href="../../index.html">Home</a>
+<a href="../reading.html">All chapters</a>
+<a href="../../week04.html">Week 4 materials</a>
+</nav>
+<!-- course-navigation:end -->
 
-**Lab.** `W4_lab_loop.ipynb` — the loop built by hand, self-contained. First, rerun one Week-3 tool chain and read the client's trace — the hidden loop made visible. Then implement the loop of 4.1 in about twenty-five lines: the ReAct system prompt of 4.3, the Judge parser as the fill-in, execution, reinjection, max_steps with an explicit failure report. Act-only and ReAct run on the same five multi-hop questions over a course-paper catalog tool — the mini evalset (`labs/data/mini_evalset.jsonl`), re-scored in this week's homework — and the lab closes with trace reading on a failing run and the step bound as an honest exit. The from-scratch construction follows the pattern of Hugging Face's *Agents Course* unit 1 (the dummy-agent notebook). Reference answers: `labs/checkpoints/week04/solution.py`.
 
-**Homework.** `W4_hw_loop_guard.ipynb` — add the repetition guard of 4.6 to the hand-built loop, show it converting a spinning run into a finished answer, and grow the mini evalset with two multi-hop questions of your own. Due before W5.
+<div class="reading-tools" role="group" aria-label="Reading options">
+<button id="classroom-toggle" type="button" aria-pressed="false">Larger text</button>
+<button id="answers-toggle" type="button" aria-pressed="false">Show all answers</button>
+</div>
+
+::: {.callout-note appearance="minimal"}
+## Learning objectives
+
+- Explain the steps of the agent loop.
+- Explain why the program saves each request and each result.
+- Name the stop conditions of an agent loop.
+- Explain what ReAct adds with Thought, Action, and Observation.
+:::
+
+In Chapter 3, the program ran one tool and returned its result to the model. Some questions need several tool calls. The model can select the next call only after it sees a result. This chapter shows two methods:
+
+- The **agent loop** repeats the tool round trip until the model gives an answer.
+- **ReAct** adds a written reasoning step before each action.
+
+## Part 1. The agent loop {#agent-loop}
+
+### 1.1 Why a loop {#why-loop}
+
+One round trip gives one result. But one result can give only part of the answer. For example: "Where was the author of the novel born?" The first search gives the name of the author. The second search gives the birthplace. The model can write the second request only after it sees the first result. For this, the program must repeat the round trip.
+
+::: {.callout-tip icon=false}
+## Agent loop
+
+A repeated process. In each round, the model selects the next action from the task and the results so far. The program runs the action and adds the result to the next model input.
+:::
+
+### 1.2 How the loop works {#loop-steps}
+
+1. **Call the model.** The program sends the conversation: the instructions, the question, and all earlier requests and results.
+2. **Read the response.** The response is a tool request or a final answer.
+3. **Run the tool.** If the response is a request, the program runs the tool.
+4. **Save both.** The program adds the request and the result to the conversation. Then it goes back to step 1.
+
+![The input goes to the LLM. A request goes to Python, which runs the tool. The response and the result go back into the next input. An answer ends the loop.](figures/slides/loop-basic.svg){#fig-agent-loop fig-alt="1. Input to LLM: question, earlier responses, and results. 2. LLM response: a search request or a final answer. 3. Python executes the request. The response and the returned text go back into the input. An answer returns and stops the loop."}
+
+The result of a tool is an **observation**. The saved observation is the important part of the loop. Without it, the next model call does not know what the tool returned.
+
+The model selects each action, but it does not run the tools. The program runs the tools and keeps the conversation.
+
+### 1.3 Stop conditions {#stop}
+
+A loop needs a stop condition. It stops in one of two ways:
+
+1. **The model gives a final answer.** In the lab, the model selects the operation `finish` with its answer.
+2. **The number of model calls gets to a limit.** Then the program reports that there is no answer.
+
+::: {.checkpoint}
+### Check 1 · Save the observation
+
+The program runs the tool but saves only the request of the model. What does the next model call not receive?
+
+<details class="answer">
+<summary>Read the answer</summary>
+
+The observation: the result of the tool. Without it, the model cannot use that result to select the next action or to answer.
+
+</details>
+:::
+
+## Part 2. ReAct {#react}
+
+### 2.1 Why write a reasoning step {#why-react}
+
+In the basic loop, the model writes only the next action. The response does not show why the model selects that action. A written assessment helps the model keep track of what it knows and what it does not know yet. ReAct adds this assessment before each action.
+
+::: {.callout-tip icon=false}
+## ReAct
+
+A method in which the model writes a short reasoning step, the **Thought**, before each action. The Thought uses the observations so far to select the next action (Yao et al., 2022).
+:::
+
+### 2.2 Thought, Action, Observation {#react-steps}
+
+Each round of ReAct has three parts:
+
+| Part | Meaning | Who writes it |
+|---|-----|---|
+| **Thought** | An assessment: what the evidence shows, what is not known yet, and what to do next | The model |
+| **Action** | The tool request | The model |
+| **Observation** | The result of the action | The program, which runs the tool |
+
+The Thought and the Action are in one model response. The Observation comes after the program runs the tool. The program saves all three parts. The next Thought can then use the new observation.
+
+![In both versions, the LLM response goes to the tool, and the reply goes back into the next input. In ReAct, the response also contains a Thought, and the next input also contains it.](figures/slides/loop-comparison.svg){#fig-react fig-alt="Basic: the LLM response contains an action; the next input adds the request and the reply. ReAct: the LLM response contains a Thought and an action; the next input adds the Thought, the request, and the reply."}
+
+### 2.3 What ReAct changes {#react-vs-basic}
+
+ReAct does not change the loop. The program still runs the tools, saves the results, and stops at the same conditions. Only the model response changes: it contains a Thought and an Action.
+
+In the lab, ReAct adds two things: one paragraph in the instructions, and a `thought` field in the tool request. A Thought is text that the model writes. Compare it with the observations.
+
+::: {.checkpoint}
+### Check 2 · Basic and ReAct
+
+What does a ReAct response contain that a basic response does not contain?
+
+<details class="answer">
+<summary>Read the answer</summary>
+
+A Thought: a written assessment of the evidence so far and of the next action.
+
+</details>
+:::
+
+## Summary {#recap}
+
+- The agent loop repeats the round trip: call the model, run the requested tool, and save the request and the result.
+- The saved observation lets the next model call use the result.
+- The loop stops at a final answer or at a call limit.
+- ReAct adds a Thought before each Action.
+- ReAct does not change the loop. It changes only the content of the model response.
+
+## Lab preparation: from concept to code {#implementation}
+
+The lab uses the OpenAI SDK and a shop database. The model has one tool, `act`. Its field `action` names an operation: `run_sql`, `calculate`, or `finish`. Its field `action_input` holds the input.
+
+| Concept | Lab code (short form) |
+|--|-------|
+| Call the model | `response = client.chat.completions.create(model=MODEL, messages=messages, tools=tools, tool_choice="required")` |
+| Read the request | `request = json.loads(message.tool_calls[0].function.arguments)` |
+| Run the tool | `result = operations[request["action"]](request["action_input"])` |
+| Save the request | `messages.append(message.model_dump(exclude_none=True))` |
+| Save the observation | `messages.append({"role": "tool", "tool_call_id": call.id, "content": json.dumps(result)})` |
+| Stop at an answer | `if request["action"] == "finish" and "answer" in result: return ...` |
+| Stop at a limit | `for turn in range(max_calls):` |
+| ReAct | `run_loop(question, instructions=BASE + REACT, tools=action_tools(react=True))` |
+
+<span id="sql-example"></span>
+
+## Lab {#lab-guide}
+
+1. Do one exchange by hand: request, run, and save.
+2. Run the same steps as a loop with `run_loop`. Find where the loop stops.
+3. Add ReAct to the same question. Read how each Thought uses the last observation.
+4. Change the question to the average value of a completed order.
+5. Compare sales in February and March. Use the first result to select the next question.
+
+[Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week04/W4_lab_sql_manual.ipynb) · [Download the notebook](W4_lab_sql_manual.ipynb) · [Local Jupyter bundle](W4_lab_bundle.zip)
+
+[Homework: Follow the Evidence in a Sales Investigation](W4_hw_sales_investigation.ipynb) uses the same loop on sales in January and February. See the [Week 4 homework and submission instructions](../../week04.html#homework).
+
+## Materials and sources {#sources}
+
+- Yao et al., [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629) (2022) · [Author project](https://react-lm.github.io/): reasoning steps and actions in one loop.
+- [OpenAI — Function calling guide](https://developers.openai.com/api/docs/guides/function-calling): the message pattern for tool requests and tool results.
+- [Lab notebook](W4_lab_sql_manual.ipynb) · [Lab bundle](W4_lab_bundle.zip).
+
+<!-- course-pagination:start -->
+<nav class="chapter-pagination" aria-label="Previous and next chapters">
+<a href="../week03/notes.html" rel="prev">← Previous: 3 · Tool Use</a>
+<a href="../week05/notes.html" rel="next">Next →: 5 · Reflection &amp; Evaluation</a>
+</nav>
+<!-- course-pagination:end -->
