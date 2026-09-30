@@ -19,8 +19,8 @@ subtitle: "Divide a task among agents · Connect their results"
 ## Learning objectives
 
 - Explain what a multi-agent system is and why a task can use one.
-- Explain roles, handoffs, and coordination.
-- Name four communication structures and the situation for each structure.
+- Define a role, a handoff, and coordination.
+- Define a communication structure, and name the four structures and the situation for each.
 - Build a team of `Agent` objects, with a coordinator agent.
 :::
 
@@ -40,7 +40,15 @@ One agent can do a large task. But its instructions, tools, and history must the
 A system in which several agents do parts of one task and exchange their results to complete the task.
 :::
 
-Each agent has a **role**: the responsibility of that agent. An agent in a role has its own instructions, its own tools, and its own history. Two agents can use the same model. Their roles make them different.
+Each agent in the system has a role.
+
+::: {.callout-tip icon=false}
+## Role
+
+The responsibility of one agent in a multi-agent system. An agent in a role has its own instructions, its own tools, and its own history.
+:::
+
+Two agents can use the same model. Their roles make them different.
 
 A simple travel team has three roles:
 
@@ -84,13 +92,15 @@ The transfer of a task and the information that is necessary to continue it.
 
 An agent knows only what is in its messages. For this reason, a handoff must carry the findings, not only a report that the work is done. "Transport: done" does not help the writer. "The train arrives at 10:00, and the fare is $90" lets the writer plan the first day.
 
-Some systems also keep a **shared state**: a common record that several agents can read. Then a message can point to the record and not copy all of it.
-
-An error also passes on in a handoff. If a finding is wrong, the next agent builds on it. A review or a check with code can stop the error before the next agent uses it.
-
 ### 2.3 Coordination {#coordination}
 
-**Coordination** decides which agent works next and what it receives. **Integration** combines the results into one result.
+::: {.callout-tip icon=false}
+## Coordination
+
+The decision of which agent works next and what it receives.
+:::
+
+**Integration** combines the results of the agents into one result.
 
 The order of the work comes from the dependencies. An agent that needs the output of another agent must wait for it. Agents that do not need each other's output can work in parallel. In the travel team, the two researchers can start at the same time. The writer waits for both results.
 
@@ -117,7 +127,11 @@ The message does not give the train times, the fare, the hotel, or its price. Th
 
 ### 3.1 Four structures {#comparison}
 
-A **communication structure** describes which agents send messages to which agents.
+::: {.callout-tip icon=false}
+## Communication structure
+
+The pattern of which agents send messages to which agents.
+:::
 
 | Structure | How work passes | Use it when |
 |--|-----|----|
@@ -157,7 +171,7 @@ The manager structure. The coordinator reads the result and then decides the nex
 - A role has a task, information and tools, and an output.
 - A handoff carries the task and the findings. An agent knows only what is in its messages.
 - Coordination follows the dependencies. Code or a coordinator agent can do it.
-- The four structures are sequential, manager, hierarchical, and all-to-all.
+- A communication structure is the pattern of messages between agents: sequential, manager, hierarchical, or all-to-all.
 
 ## Lab preparation: from concept to code {#implementation}
 

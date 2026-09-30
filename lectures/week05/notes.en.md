@@ -21,6 +21,7 @@ subtitle: "Correct a result with feedback · Measure a system on fixed cases"
 - Explain the three steps of reflection.
 - Explain what external feedback adds to a critique.
 - Name the parts of an evaluation.
+- Define an LLM judge, and select code or an LLM judge for a criterion.
 - Compare two versions of a system with an evaluation.
 :::
 
@@ -61,7 +62,13 @@ The same model can do all three steps. Each step is only a different prompt, and
 
 The critique is one type of **feedback**: information about a result that the next step uses. A model writes the critique from the text of the draft. But some errors are not visible in the text. For example, a SQL query can look correct and still return wrong rows.
 
-**External feedback** comes from outside the model. A program runs the result or draws it, and it gives the output:
+::: {.callout-tip icon=false}
+## External feedback
+
+Feedback that comes from outside the model: the output of a program that runs or draws the result.
+:::
+
+Examples of external feedback:
 
 - the rows that a query returns,
 - an error message,
@@ -124,7 +131,15 @@ A **grader** applies the criterion to each output and gives a grade. A **metric*
 
 Some criteria are exact. A date is equal to the reference date, or it is not. Code can grade these criteria, for example with `pred == ref`.
 
-Other criteria need an interpretation of meaning. For example: "The summary keeps the three main facts." Two summaries can use different words for the same fact. For these criteria, a model grades the output. This model is an **LLM judge**. It receives the task, the output, and a **rubric**: the criteria and the rules for the score. An LLM judge is also a model, so it can make errors. Known errors include a preference for the first answer in a comparison, for longer answers, and for answers in its own style (Zheng et al., 2023). Before you use it, compare its grades with the grades of a person on some cases.
+Other criteria need an interpretation of meaning. For example: "The summary keeps the three main facts." Two summaries can use different words for the same fact. For these criteria, a model grades the output.
+
+::: {.callout-tip icon=false}
+## LLM judge
+
+A model that grades an output against written criteria. It receives the task, the output, and a **rubric**: the criteria and the rules for the score.
+:::
+
+An LLM judge is also a model, so it can make errors. Before you use it, compare its grades with the grades of a person on some cases.
 
 ### 2.4 Compare two versions {#compare}
 
