@@ -20,6 +20,7 @@ lang: en
 ::: {.callout-note appearance="minimal"}
 ## Learning objectives
 
+- Define a token and a large language model (LLM), and explain how an LLM generates text.
 - Explain what one model call receives and returns.
 - Define an agent, and explain the roles of the model and the program.
 - Name the four components of an agent.
@@ -29,15 +30,38 @@ lang: en
 
 A language model receives text and returns text. Many tasks need more than text. For example, "Reserve a study room" needs a change in a reservation system, and a written reply cannot make that change. This chapter explains how a system around the model can act and use the results.
 
-## 1.1 One model call {#model-call}
+## 1.1 Language models and model calls {#model-call}
 
-A **large language model (LLM)** is a model that receives a sequence of tokens and generates more tokens. A **token** is a unit of text, such as a word or a part of a word.
+An agent uses a language model to read a task and to write its next step. This section defines the model and the unit of text that it uses.
+
+::: {.callout-tip icon=false}
+## Token
+
+The unit of text that a language model reads and writes. A **tokenizer** divides text into tokens. A token can be a word, a part of a word, a number, or a punctuation mark.
+:::
+
+A frequent word is usually one token. A long or rare word can become several tokens. In English text, 100 tokens are about 75 words.
+
+::: {.callout-tip icon=false}
+## Large language model (LLM)
+
+A neural network that predicts the next token of a text. It learns this prediction from a very large amount of text.
+:::
+
+An LLM generates text one token at a time:
+
+1. The tokenizer divides the input text into tokens.
+2. The model calculates a probability for each possible next token.
+3. The model selects one token and adds it to the input.
+4. Steps 2 and 3 repeat until the model writes an end token or the output gets to a length limit.
+
+A **chat model** is an LLM with more training to follow instructions and to reply in a conversation. The models in this course are chat models.
 
 The input to one call is the **prompt**. It can contain instructions, the request of the user, documents, and earlier messages. The information that one call receives is its **context**.
 
 A chat model receives the prompt as a list of **messages**. Each message has a **role** that shows who wrote it:
 
-- A **system** message gives the standing instructions for the whole conversation.
+- A **system** message gives the instructions for the whole conversation.
 - A **user** message gives a request.
 - An **assistant** message is an earlier reply of the model.
 
@@ -49,7 +73,7 @@ A model call has four properties:
 
 1. **It writes text only.** The model can write an explanation, a plan, or a request for an operation. It cannot do the operation.
 2. **It keeps no memory between calls.** A second call does not know the first call. To continue a conversation, the program sends the earlier messages again.
-3. **Its output can vary.** An option called **temperature** controls how much the output changes from one call to the next.
+3. **Its output can vary.** In step 3, the model can select a token that is not the most probable one. An option called **temperature** controls this variation.
 4. **It can be wrong with confidence.** The model can write a fluent statement that is false. This is a **hallucination**. For this reason, an agent checks important facts with tools, with documents, and with evaluation (Chapters 3, 5, and 8).
 
 For this reason, a model call alone cannot complete a task that needs actions. The next section adds the parts that do the actions.
@@ -148,6 +172,7 @@ A workflow. Code selects each step. The model only writes the message at a fixed
 
 ## Summary {#recap}
 
+- A token is a unit of text. An LLM generates text one token at a time: it predicts the next token from the tokens before it.
 - One model call receives a list of messages with roles and returns text. It keeps no memory between calls, and its output can be wrong.
 - An agent is a system in which the model selects actions and the program runs them and returns the results.
 - An agent has four components: a model, instructions, tools, and memory.
