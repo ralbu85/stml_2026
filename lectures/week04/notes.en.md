@@ -20,9 +20,9 @@ subtitle: "Repeat the tool round trip · Write a reasoning step before each acti
 ::: {.callout-note appearance="minimal"}
 ## Learning objectives
 
-- Explain the steps of the agent loop.
-- Explain why the program saves each request and each result.
-- Name the stop conditions of an agent loop.
+- Define the agent loop, and explain its four steps.
+- Define an observation, and explain why the program saves it.
+- Define a stop condition, and name the two stop conditions.
 - Explain what ReAct adds with Thought, Action, and Observation.
 :::
 
@@ -52,20 +52,28 @@ A repeated process. In each round, the model selects the next action from the ta
 
 ![The input goes to the LLM. A request goes to Python, which runs the tool. The response and the result go back into the next input. An answer ends the loop.](figures/slides/loop-basic.svg){#fig-agent-loop fig-alt="1. Input to LLM: question, earlier responses, and results. 2. LLM response: a search request or a final answer. 3. Python executes the request. The response and the returned text go back into the input. An answer returns and stops the loop."}
 
-The result of a tool is an **observation**. The saved observation is the important part of the loop. Without it, the next model call does not know what the tool returned.
+::: {.callout-tip icon=false}
+## Observation
 
-One response can contain several requests. The program runs each request and saves each result. If a tool fails, the program saves the error message as the observation. The model can then correct its request.
+The result of a tool that the program adds to the conversation. The next model call reads it.
+:::
+
+The saved observation connects one round to the next. Without it, the next model call does not know what the tool returned.
 
 The model selects each action, but it does not run the tools. The program runs the tools and keeps the conversation.
 
 ### 1.3 Stop conditions {#stop}
 
-A loop needs a stop condition. It stops in one of two ways:
+::: {.callout-tip icon=false}
+## Stop condition
+
+A rule that ends the loop.
+:::
+
+An agent loop has two stop conditions:
 
 1. **The model gives a final answer.** In the lab, the model selects the operation `finish` with its answer.
 2. **The number of model calls gets to a limit.** Then the program reports that there is no answer.
-
-The limit also controls the cost. The conversation grows in each round, so each call sends more tokens than the call before it.
 
 ::: {.checkpoint}
 ### Check 1 · Save the observation
@@ -110,8 +118,6 @@ The Thought and the Action are in one model response. The Observation comes afte
 
 ReAct does not change the loop. The program still runs the tools, saves the results, and stops at the same conditions. Only the model response changes: it contains a Thought and an Action.
 
-In the lab, ReAct adds two things: one paragraph in the instructions, and a `thought` field in the tool request. A Thought is text that the model writes. Compare it with the observations.
-
 ::: {.checkpoint}
 ### Check 2 · Basic and ReAct
 
@@ -128,14 +134,14 @@ A Thought: a written assessment of the evidence so far and of the next action.
 ## Summary {#recap}
 
 - The agent loop repeats the round trip: call the model, run the requested tool, and save the request and the result.
-- The saved observation lets the next model call use the result.
-- The loop stops at a final answer or at a call limit.
+- An observation is the result of a tool that the program saves. The next model call reads it.
+- A stop condition ends the loop: a final answer or a call limit.
 - ReAct adds a Thought before each Action.
 - ReAct does not change the loop. It changes only the content of the model response.
 
 ## Lab preparation: from concept to code {#implementation}
 
-The lab uses the OpenAI SDK and a shop database. The model has one tool, `act`. Its field `action` names an operation: `run_sql`, `calculate`, or `finish`. Its field `action_input` holds the input.
+The lab uses the OpenAI SDK and a shop database. The model has one tool, `act`. Its field `action` names an operation: `run_sql`, `calculate`, or `finish`. Its field `action_input` holds the input. For ReAct, the lab adds one paragraph to the instructions and a `thought` field to the tool request.
 
 | Concept | Lab code (short form) |
 |--|-------|
