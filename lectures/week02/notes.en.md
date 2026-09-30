@@ -21,6 +21,7 @@ lang: en
 ## Learning objectives
 
 - Explain what a prompt changes, and what it does not change.
+- Define in-context learning, and explain how it differs from fine-tuning.
 - Explain why written intermediate steps can help a model.
 - Write a chain-of-thought prompt with an instruction and with worked examples.
 - Explain the steps of self-consistency.
@@ -46,9 +47,32 @@ A prompt can contain four parts:
 3. **Examples:** questions with their answers.
 4. **An output format:** the form of the reply, for example a last line `ANSWER: <number>`. When code must read several fields, ask for **JSON**. Some APIs have a JSON mode that guarantees a valid JSON reply.
 
-The number of examples gives a name to the prompt. A **zero-shot** prompt has no examples. A **few-shot** prompt has a small number of examples. The model adapts its reply to the examples in the prompt. This is **in-context learning**. It differs from **fine-tuning**, which changes the parameters with training data.
+## 2.2 In-context learning {#in-context-learning}
 
-## 2.2 Intermediate steps {#intermediate-steps}
+A prompt can teach the model a task without training.
+
+::: {.callout-tip icon=false}
+## In-context learning
+
+The ability of a model to learn a task from the instruction and the examples in the prompt, without a change to its parameters.
+:::
+
+The number of examples gives a name to the prompt:
+
+- A **zero-shot** prompt gives only the instruction.
+- A **few-shot** prompt also gives a small number of examples: inputs with their correct outputs.
+
+The model continues the pattern of the examples for the new input (Brown et al., 2020). This learning lasts for one call only. A later call without the examples does not keep it.
+
+In-context learning is different from **fine-tuning**:
+
+| | In-context learning | Fine-tuning |
+|--|----|----|
+| What changes | The prompt | The parameters of the model |
+| How long the change lasts | One call | All later calls |
+| What it needs | Examples in the prompt | Training data and a training run |
+
+## 2.3 Intermediate steps {#intermediate-steps}
 
 Some questions need several calculations, and each calculation uses the result of the one before it. For example: a cafeteria has 23 apples, uses 20, and buys 6. The first step gives 3, and the second step gives 9.
 
@@ -58,7 +82,7 @@ A model generates text one token at a time. Each new token depends on all tokens
 
 The steps must come before the answer. If the model writes the answer first, the answer cannot use the steps.
 
-## 2.3 Chain-of-thought prompting {#cot}
+## 2.4 Chain-of-thought prompting {#cot}
 
 ::: {.callout-tip icon=false}
 ## Chain-of-thought (CoT) prompting
@@ -90,7 +114,7 @@ Prompt A is few-shot, because it has examples. It is not CoT, because the exampl
 </details>
 :::
 
-## 2.4 Self-consistency {#self-consistency}
+## 2.5 Self-consistency {#self-consistency}
 
 One generated solution can contain an error. Another generation of the same question can take a different path. **Sampling** selects each token from the probabilities of the model. The **temperature** controls the variation: at temperature 0, the replies are almost the same, and at a higher temperature, they vary more.
 
@@ -111,7 +135,7 @@ Self-consistency has four steps:
 
 The vote counts final answers, not the words of the solutions. The selected answer is the answer with the most agreement.
 
-## 2.5 Test-time compute {#test-time-compute}
+## 2.6 Test-time compute {#test-time-compute}
 
 CoT and self-consistency both spend more computation when the model answers. They do not change the model.
 
@@ -131,7 +155,7 @@ Some models, called **reasoning models**, are trained to generate long intermedi
 
 More computation uses more tokens, so it costs more. Use it when it makes the answers better.
 
-## 2.6 Compare prompts {#lab-connection}
+## 2.7 Compare prompts {#lab-connection}
 
 To know if a prompt helps, measure it. An **evaluation set** is a set of test questions with their correct answers. Code compares each reply with the correct answer. **Accuracy** is the number of correct replies divided by the number of questions.
 
@@ -153,6 +177,7 @@ It selects 29, because three of the five samples give 29.
 ## Summary {#recap}
 
 - A prompt changes the input of one call. It does not change the model.
+- In-context learning: the model learns a task from the instruction and the examples in the prompt (zero-shot or few-shot). Fine-tuning changes the parameters.
 - Written intermediate steps become input for the next steps, so they come before the answer.
 - CoT prompting gets these steps with an instruction (zero-shot) or with worked examples (few-shot).
 - Self-consistency generates several solutions and selects the most frequent final answer.
