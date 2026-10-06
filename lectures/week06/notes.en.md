@@ -30,7 +30,7 @@ In Chapter 5, a reviewer model examined the result of a writer. That system alre
 
 ### 1.1 Why use several agents {#introduction}
 
-One agent can do a large task. But its instructions, tools, and history must then cover all parts of the task. A travel plan, for example, needs transport, a hotel, and a schedule. If one agent does all three parts, its instructions become long, and its history mixes all three parts. We can divide the work among several agents instead.
+One agent can do a large task. But its instructions, tools, and history must then cover all parts of the task. An academic essay, for example, needs research on two questions, a draft, and a check of the sources. If one agent does all these parts, its instructions become long, and its history mixes all of them. We can divide the work among several agents instead.
 
 ### 1.2 Multi-agent system {#definition}
 
@@ -50,13 +50,14 @@ The responsibility of one agent in a multi-agent system. An agent in a role has 
 
 Two agents can use the same model. Their roles make them different.
 
-A simple travel team has three roles:
+A small essay team has four roles:
 
 | Agent | Contribution |
 |---|---|
-| Transport researcher | Finds a train, with its times and fare |
-| Lodging researcher | Finds a hotel, with its price and distance from the station |
-| Itinerary writer | Combines the two results into a schedule and a budget |
+| Researcher A | Searches for facts on the first question, and reports each fact with its source |
+| Researcher B | Searches for facts on the second question, and reports each fact with its source |
+| Writer | Combines the two sets of notes into an essay with citations |
+| Reviewer | Checks each citation of the draft against the notes |
 
 ### 1.3 What a division gives {#purpose}
 
@@ -90,7 +91,7 @@ Agents exchange messages: tasks, findings, questions, and feedback.
 The transfer of a task and the information that is necessary to continue it.
 :::
 
-An agent knows only what is in its messages. For this reason, a handoff must carry the findings, not only a report that the work is done. "Transport: done" does not help the writer. "The train arrives at 10:00, and the fare is $90" lets the writer plan the first day.
+An agent knows only what is in its messages. For this reason, a handoff must carry the findings, not only a report that the work is done. "Research: done" does not help the writer. A note such as "Large language models are trained on vast amounts of text [Large language model]" gives the writer a fact and its source.
 
 ### 2.3 Coordination {#coordination}
 
@@ -102,10 +103,10 @@ The decision of which agent works next and what it receives.
 
 **Integration** combines the results of the agents into one result.
 
-The order of the work comes from the dependencies. An agent that needs the output of another agent must wait for it. Agents that do not need each other's output can work in parallel. In the travel team, the two researchers can start at the same time. The writer waits for both results.
+The order of the work comes from the dependencies. An agent that needs the output of another agent must wait for it. Agents that do not need each other's output can work in parallel. In the essay team, the two researchers can start at the same time. The writer waits for both sets of notes, and the reviewer waits for the draft.
 
-::: {.diagram-scroll tabindex="0" role="region" aria-label="Travel task dependencies"}
-![The two researchers work in parallel. The writer needs both results.](figures/travel/dependencies.svg){fig-alt="The travel request goes to transport and lodging researchers. Their findings both go to the itinerary writer, which produces one plan."}
+::: {.diagram-scroll tabindex="0" role="region" aria-label="Essay task dependencies"}
+![The two researchers work in parallel. The writer needs both sets of notes.](figures/essay/dependencies.svg){fig-alt="The essay question goes to researcher A and researcher B. Their notes both go to the writer, and the draft goes to the reviewer."}
 :::
 
 Code can do the coordination with a fixed order. An agent can also do it: it reads each result and decides the next task. These two choices lead to different communication structures.
@@ -113,12 +114,12 @@ Code can do the coordination with a fixed order. An agent can also do it: it rea
 ::: {.checkpoint}
 ### Check 1 · A handoff
 
-The writer receives only this message: "Transport and hotel: sorted." Which information is not in the message, and where must it come from?
+The writer receives only this message: "Research: done." Which information is not in the message, and where must it come from?
 
 <details class="answer">
 <summary>Read the answer</summary>
 
-The message does not give the train times, the fare, the hotel, or its price. This information must come from the results of the two researchers, in the message to the writer.
+The message gives no facts and no sources. They must come from the notes of the two researchers, in the message to the writer. Without them, the writer uses its own knowledge and can cite sources that no researcher found.
 
 </details>
 :::
@@ -146,8 +147,8 @@ A system can combine these structures. For example, a manager can run two resear
 
 In the manager structure, an agent is the coordinator. The coordinator uses the other agents as its tools. To make an agent into a tool, put it in a function. The argument of the function is the task. The function returns the answer of the agent. The loop of the coordinator then calls these functions, as the agent loop of Chapter 4 calls tools.
 
-::: {.diagram-scroll tabindex="0" role="region" aria-label="Travel-planning agent system"}
-![The coordinator gives tasks to the four roles and receives their results.](figures/travel/system.svg){fig-alt="The user sends a request to the coordinator. The coordinator exchanges assignments and results with transport researcher, lodging researcher, itinerary writer, and reviewer, then returns a final plan to the user."}
+::: {.diagram-scroll tabindex="0" role="region" aria-label="Essay team with a coordinator"}
+![The coordinator gives tasks to the four roles and receives their results.](figures/essay/system.svg){fig-alt="The user sends the essay question to the coordinator. The coordinator exchanges tasks and results with researcher A, researcher B, the writer, and the reviewer, then returns the final essay to the user."}
 :::
 
 Is a team better than one agent? To find out, use an evaluation from Chapter 5. Give both systems the same requests, and grade both with the same criteria. Also compare the model calls.
@@ -155,12 +156,12 @@ Is a team better than one agent? To find out, use an evaluation from Chapter 5. 
 ::: {.checkpoint}
 ### Check 2 · Choose a structure
 
-The hotel price changes the next task: if the total is too high, the lodging researcher must search again. Which structure fits, sequential or manager?
+The review changes the next task: if the reviewer finds a claim that no note supports, the writer must revise. Which structure fits, sequential or manager?
 
 <details class="answer">
 <summary>Read the answer</summary>
 
-The manager structure. The coordinator reads the result and then decides the next task. A sequential structure has a fixed order before the run.
+The manager structure. The coordinator reads the review and then decides the next task. A sequential structure has a fixed order before the run.
 
 </details>
 :::
@@ -179,22 +180,22 @@ The lab uses the `Agent` class from the practice notebook. Each role is one `Age
 
 | Concept | Lab code (short form) |
 |--|-------|
-| Role | `lodging = Agent(LODGING_SYSTEM, [find_hotels])` |
-| Task for a role | `lodging_result = lodging.ask(REQUEST)` |
-| Handoff | `writer.ask(handoff)`: `handoff` contains the request and the results of the two researchers |
-| Review | `reviewer.ask("Request:\n" + REQUEST + ... + "Draft:\n" + draft)` |
-| Targeted revision | `lodging.ask("Find a hotel costing at most $120 ...")`, then `writer.ask(review + new_hotel)` |
-| Agent as a tool | `def ask_lodging(task: str): return lodging_team.ask(task)` |
-| Coordinator agent | `Agent(COORDINATOR_SYSTEM, [ask_transport, ask_lodging, ask_writer, ask_reviewer])` |
+| Role | `researcher_a = Agent(RESEARCHER_SYSTEM, [wikipedia_search])` |
+| Task for a role | `notes_a = researcher_a.ask(QUESTION_A)` |
+| Handoff | `writer.ask(handoff)`: `handoff` contains the essay question and the notes of both researchers |
+| Review | `reviewer.ask(review_request(notes_a + "\n" + notes_b, draft))` |
+| Targeted revision | `writer.ask("A reviewer found:\n" + review + ...)`, only when the review lists a problem |
+| Agent as a tool | `def ask_researcher_b(task: str): return researcher_b_team.ask(task)` |
+| Coordinator agent | `Agent(COORDINATOR_SYSTEM, [ask_researcher_a, ask_researcher_b, ask_writer, ask_reviewer])` |
 | Cost of the team | The sum of `total_tokens` of all objects |
 
 ## Lab {#lab-guide}
 
-1. Make one `Agent` object for each role, with its own tools.
-2. Compare a handoff that says only "sorted" with a handoff that carries the findings.
-3. Write the instructions of the reviewer. Then revise only the affected work.
+1. Make one `Agent` object for each role: two researchers with Wikipedia search, a writer, and a reviewer.
+2. Compare a handoff that says only "Research: done" with a handoff that carries the notes. Check the citations with code.
+3. Write the instructions of the reviewer. Revise only when the review lists a problem.
 4. Let a coordinator agent assign the work, with the roles as its tools.
-5. Examine the final plan with code, and compare the cost of the two runs.
+5. Check the final essay with code, and compare the cost of the two runs.
 
 [Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week06/W6_lab_multiagent.ipynb) · [Download the lab](W6_lab_multiagent.ipynb) · [Homework notebook](W6_hw_new_intent.ipynb).
 
