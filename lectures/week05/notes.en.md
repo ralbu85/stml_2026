@@ -72,7 +72,6 @@ Examples of external feedback:
 
 - the rows that a query returns,
 - an error message,
-- a number that code computes, such as the word count of a draft,
 - a chart that code draws.
 
 The program gives this output to the model together with the draft. Then the critique can use facts about the result, not only its text. For this reason, reflection is most useful when a program can run or examine the result.
@@ -183,11 +182,11 @@ The lab uses the `Agent` class from the practice notebook. Each call to `ask` ad
 
 | Concept | Lab code (short form) |
 |--|-------|
-| Generate | `draft = writer.ask(f"Write an essay of at most 150 words on this question: {TOPIC}")` |
-| External feedback | `len(draft.split())`: the word count from code, put into the reviewer's message |
-| Critique | `critique = reviewer.ask(...)` with the essay question, the word count, and the draft |
-| Revise | `writer.ask(...)` with the critique, only if the critique lists something |
-| Reflection loop | up to three rounds; stop when the reviewer replies `No problems` |
+| Generate | `draft = writer.ask(f"Write an essay of about 150 words on this question: {TOPIC}")` |
+| Critique | `critique = reviewer.ask(...)`: comments on the claim, the evidence, and the other side |
+| Revise | `writer.ask(...)` with the critique |
+| Measure the change | `judge_essay(TOPIC, essay)`: scores from 1 to 5 on the same three points, for the draft and for the revision |
+| Reflection loop | `reflect(...)`: up to three rounds; stop when every score is 5 |
 | Run one case | `json.loads(Agent(EXTRACT_SYSTEM, json_mode=True).ask(invoice))["due_date"]`: a new object for each case; the JSON field is compared with the reference |
 | Code grader | `date_matches(pred, ref)` |
 | LLM judge | `Agent(JUDGE_SYSTEM, json_mode=True)`: the rubric is its system message |
@@ -195,9 +194,9 @@ The lab uses the `Agent` class from the practice notebook. Each call to `ask` ad
 ## Lab {#lab-guide}
 
 1. Do the practice notebook first.
-2. Part 1: improve a short essay with reflection: draft, critique, revision, and the reflection loop.
+2. Part 1: improve a short essay with reflection (draft, critique, revision, loop), and measure the change with a judge.
 3. Part 2: measure the accuracy on ten invoices with code.
-4. Part 3: grade short essays with an LLM judge and a rubric, and compare the judge with the scores of a person.
+4. Part 3: check the judge of Part 1 against the scores of a person.
 
 [Practice notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_practice_core_patterns.ipynb) · [Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [Homework notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb): reflection on a rendered chart. Submit the homework on the LMS.
 
