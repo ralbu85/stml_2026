@@ -72,6 +72,7 @@ Examples of external feedback:
 
 - the rows that a query returns,
 - an error message,
+- a number that code computes, such as the word count of a draft,
 - a chart that code draws.
 
 The program gives this output to the model together with the draft. Then the critique can use facts about the result, not only its text. For this reason, reflection is most useful when a program can run or examine the result.
@@ -131,7 +132,7 @@ A **grader** applies the criterion to each output and gives a grade. A **metric*
 
 Some criteria are exact. A date is equal to the reference date, or it is not. Code can grade these criteria, for example with `pred == ref`.
 
-Other criteria need an interpretation of meaning. For example: "The summary keeps the three main facts." Two summaries can use different words for the same fact. For these criteria, a model grades the output.
+Other criteria need an interpretation of meaning. For example: "The essay answers an argument from the other side." Two essays can do this in very different words. For these criteria, a model grades the output.
 
 ::: {.callout-tip icon=false}
 ## LLM judge
@@ -182,20 +183,21 @@ The lab uses the `Agent` class from the practice notebook. Each call to `ask` ad
 
 | Concept | Lab code (short form) |
 |--|-------|
-| Generate | `query = writer.ask(QUESTION)` |
-| External feedback | `rows = run_sql(query)` |
-| Critique | `feedback = reviewer.ask(question + query + rows)` |
-| Revise | `writer.ask("A reviewer wrote: " + feedback + " Revise the query if needed.")` |
-| Run one case | `Agent(EXTRACT_SYSTEM).ask(invoice)`: a new object for each case, so each case starts with an empty list |
+| Generate | `draft = writer.ask(f"Write an essay of at most 150 words on this question: {TOPIC}")` |
+| External feedback | `len(draft.split())`: the word count from code, put into the reviewer's message |
+| Critique | `critique = reviewer.ask(...)` with the essay question, the word count, and the draft |
+| Revise | `writer.ask(...)` with the critique, only if the critique lists something |
+| Reflection loop | up to three rounds; stop when the reviewer replies `No problems` |
+| Run one case | `json.loads(Agent(EXTRACT_SYSTEM, json_mode=True).ask(invoice))["due_date"]`: a new object for each case; the JSON field is compared with the reference |
 | Code grader | `date_matches(pred, ref)` |
 | LLM judge | `Agent(JUDGE_SYSTEM, json_mode=True)`: the rubric is its system message |
 
 ## Lab {#lab-guide}
 
 1. Do the practice notebook first.
-2. Part 1: correct a SQL query with reflection. Then use a database error message as feedback.
+2. Part 1: improve a short essay with reflection: draft, critique, revision, and the reflection loop.
 3. Part 2: measure the accuracy on ten invoices with code.
-4. Part 3: grade summaries with an LLM judge, and compare the judge with human labels.
+4. Part 3: grade short essays with an LLM judge and a rubric, and compare the judge with the scores of a person.
 
 [Practice notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_practice_core_patterns.ipynb) · [Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [Homework notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb): reflection on a rendered chart. Submit the homework on the LMS.
 
