@@ -24,13 +24,13 @@ subtitle: "Divide a task among agents · Connect their results"
 - Build a team of `Agent` objects, with a coordinator agent.
 :::
 
-In Chapter 5, a reviewer model examined the result of a writer. That system already had two roles. This chapter uses several agents for one task. It explains how to divide the task and how to connect the results.
+In Chapter 5, one agent wrote an essay, evaluated it, and improved it. This chapter divides one task among several agents, and each agent does its own part of the work. It explains how to divide the task and how to connect the results.
 
 ## Part 1. Multi-agent systems {#concepts}
 
 ### 1.1 Why use several agents {#introduction}
 
-One agent can do a large task. But its instructions, tools, and history must then cover all parts of the task. An academic essay, for example, needs research on two questions, a draft, and a check of the sources. If one agent does all these parts, its instructions become long, and its history mixes all of them. We can divide the work among several agents instead.
+One agent can do a large task. But its instructions, tools, and history must then cover all parts of the task. The essay agent of Chapter 5 is an example. It searched for facts, wrote the essay, and evaluated the essay. Its one system message described all these parts, and its one history held each search result, each draft, and each evaluation. We can divide the work among several agents instead.
 
 ### 1.2 Multi-agent system {#definition}
 
@@ -50,14 +50,13 @@ The responsibility of one agent in a multi-agent system. An agent in a role has 
 
 Two agents can use the same model. Their roles make them different.
 
-A small essay team has four roles:
+A small essay team does the work of the Chapter 5 agent with three roles:
 
 | Agent | Contribution |
 |---|---|
-| Researcher A | Searches for facts on the first question, and reports each fact with its source |
-| Researcher B | Searches for facts on the second question, and reports each fact with its source |
-| Writer | Combines the two sets of notes into an essay with citations |
-| Reviewer | Checks each citation of the draft against the notes |
+| Writer | Searches for facts, and writes or improves the essay |
+| Evaluator | Examines the essay against its own searches, and writes an evaluation |
+| Coordinator | Decides which agent works next, and when the essay is finished (Section 3.2) |
 
 ### 1.3 What a division gives {#purpose}
 
@@ -65,7 +64,7 @@ A division of the task gives three possible advantages:
 
 1. **Specialization.** Each agent receives only the instructions and tools for its part.
 2. **Parallel work.** Parts that do not depend on each other can run at the same time.
-3. **Review.** Another agent can examine a result against the task, as the reviewer did in Chapter 5.
+3. **Review.** Another agent can examine a result with its own instructions and its own history. In Chapter 5, the agent that wrote the essay also evaluated it.
 
 Each agent adds model calls. For this reason, use several agents when the division makes the task easier to do or to examine.
 
@@ -91,7 +90,7 @@ Agents exchange messages: tasks, findings, questions, and feedback.
 The transfer of a task and the information that is necessary to continue it.
 :::
 
-An agent knows only what is in its messages. For this reason, a handoff must carry the findings, not only a report that the work is done. "Research: done" does not help the writer. A note such as "Large language models are trained on vast amounts of text [Large language model]" gives the writer a fact and its source.
+An agent knows only what is in its messages. For this reason, a handoff must carry the findings, not only a report that the work is done. "The essay is ready. Evaluate it." does not help the evaluator, because the message carries no essay. A message with the question and the essay gives the evaluator the text that it must examine.
 
 ### 2.3 Coordination {#coordination}
 
@@ -103,10 +102,10 @@ The decision of which agent works next and what it receives.
 
 **Integration** combines the results of the agents into one result.
 
-The order of the work comes from the dependencies. An agent that needs the output of another agent must wait for it. Agents that do not need each other's output can work in parallel. In the essay team, the two researchers can start at the same time. The writer waits for both sets of notes, and the reviewer waits for the draft.
+The order of the work comes from the dependencies. An agent that needs the output of another agent must wait for it. Agents that do not need each other's output can work in parallel. In the essay team, the evaluator needs the essay, so it waits for the writer. The writer needs the evaluation to improve the essay, so it then waits for the evaluator. No two steps of this team can run in parallel. Two evaluators that examine different points of the same essay could work in parallel.
 
 ::: {.diagram-scroll tabindex="0" role="region" aria-label="Essay task dependencies"}
-![The two researchers work in parallel. The writer needs both sets of notes.](figures/essay/dependencies.svg){fig-alt="The essay question goes to researcher A and researcher B. Their notes both go to the writer, and the draft goes to the reviewer."}
+![The evaluator needs the essay. The writer needs the evaluation.](figures/team/dependencies.svg){fig-alt="The essay question goes to the writer. The essay goes to the evaluator. The evaluation goes back to the writer."}
 :::
 
 Code can do the coordination with a fixed order. An agent can also do it: it reads each result and decides the next task. These two choices lead to different communication structures.
@@ -114,12 +113,12 @@ Code can do the coordination with a fixed order. An agent can also do it: it rea
 ::: {.checkpoint}
 ### Check 1 · A handoff
 
-The writer receives only this message: "Research: done." Which information is not in the message, and where must it come from?
+The evaluator receives only this message: "The essay is ready. Evaluate it." Which information is not in the message, and where must it come from?
 
 <details class="answer">
 <summary>Read the answer</summary>
 
-The message gives no facts and no sources. They must come from the notes of the two researchers, in the message to the writer. Without them, the writer uses its own knowledge and can cite sources that no researcher found.
+The message gives no essay and no question. The essay must come from the output of the writer, in the message to the evaluator. The evaluator has its own history, so it cannot read the list of the writer.
 
 </details>
 :::
@@ -141,14 +140,14 @@ The pattern of which agents send messages to which agents.
 | Hierarchical | A manager gives large parts to leads. Each lead manages its own agents. | Each large part needs its own team. |
 | All-to-all | Each agent can send messages to each other agent. | Agents must frequently agree on details. |
 
-A system can combine these structures. For example, a manager can run two researchers in parallel. Select the structure that matches the dependencies of the task.
+A system can combine these structures. For example, a manager can run several writers in parallel, one for each part of a long report. Select the structure that matches the dependencies of the task.
 
 ### 3.2 A coordinator agent {#manager}
 
 In the manager structure, an agent is the coordinator. The coordinator uses the other agents as its tools. To make an agent into a tool, put it in a function. The argument of the function is the task. The function returns the answer of the agent. The loop of the coordinator then calls these functions, as the agent loop of Chapter 4 calls tools.
 
 ::: {.diagram-scroll tabindex="0" role="region" aria-label="Essay team with a coordinator"}
-![The coordinator gives tasks to the four roles and receives their results.](figures/essay/system.svg){fig-alt="The user sends the essay question to the coordinator. The coordinator exchanges tasks and results with researcher A, researcher B, the writer, and the reviewer, then returns the final essay to the user."}
+![The coordinator gives tasks to the writer and the evaluator, and receives their results.](figures/team/system.svg){fig-alt="The user sends the question to the coordinator. The coordinator exchanges tasks and results with the writer and the evaluator, then returns the final essay to the user."}
 :::
 
 Is a team better than one agent? To find out, use an evaluation from Chapter 5. Give both systems the same requests, and grade both with the same criteria. Also compare the model calls.
@@ -156,12 +155,12 @@ Is a team better than one agent? To find out, use an evaluation from Chapter 5. 
 ::: {.checkpoint}
 ### Check 2 · Choose a structure
 
-The review changes the next task: if the reviewer finds a claim that no note supports, the writer must revise. Which structure fits, sequential or manager?
+The number of revisions that an essay needs is not known before the run: the next step depends on what the evaluation finds. Which structure fits, sequential or manager?
 
 <details class="answer">
 <summary>Read the answer</summary>
 
-The manager structure. The coordinator reads the review and then decides the next task. A sequential structure has a fixed order before the run.
+The manager structure. The coordinator reads each evaluation and decides the next task: one more revision, or the final essay. A sequential structure has fixed tasks in a fixed order before the run. A coordinator agent adds model calls, and its handoffs can lose information, so measure the result.
 
 </details>
 :::
@@ -180,22 +179,19 @@ The lab uses the `Agent` class from the practice notebook. Each role is one `Age
 
 | Concept | Lab code (short form) |
 |--|-------|
-| Role | `researcher_a = Agent(RESEARCHER_SYSTEM, [wikipedia_search])` |
-| Task for a role | `notes_a = researcher_a.ask(QUESTION_A)` |
-| Handoff | `writer.ask(handoff)`: `handoff` contains the essay question and the notes of both researchers |
-| Review | `reviewer.ask(review_request(notes_a + "\n" + notes_b, draft))` |
-| Targeted revision | `writer.ask("A reviewer found:\n" + review + ...)`, only when the review lists a problem |
-| Agent as a tool | `def ask_researcher_b(task: str): return researcher_b_team.ask(task)` |
-| Coordinator agent | `Agent(COORDINATOR_SYSTEM, [ask_researcher_a, ask_researcher_b, ask_writer, ask_reviewer])` |
-| Cost of the team | The sum of `total_tokens` of all objects |
+| One agent (Chapter 5) | `single = Agent(REFLECT_SYSTEM, [wikipedia_search])`: one object writes and evaluates |
+| Role | `writer = Agent(WRITER_SYSTEM, [wikipedia_search])` and `evaluator = Agent(EVALUATOR_SYSTEM, [wikipedia_search])` |
+| Handoff | `evaluator.ask(handoff)`: `handoff` holds the question and the essay; then `writer.ask(...)` with the evaluation |
+| Agent as a tool | `def ask_evaluator(task: str): return evaluator_team.ask(task)` |
+| Coordinator agent | `Agent(COORDINATOR_SYSTEM, [ask_writer, ask_evaluator])` |
+| Compare the systems | `judge_essay(QUESTION, essay)` of Chapter 5, a code check of the citations, and the sum of `total_tokens` |
 
 ## Lab {#lab-guide}
 
-1. Make one `Agent` object for each role: two researchers with Wikipedia search, a writer, and a reviewer.
-2. Compare a handoff that says only "Research: done" with a handoff that carries the notes. Check the citations with code.
-3. Write the instructions of the reviewer. Revise only when the review lists a problem.
-4. Let a coordinator agent assign the work, with the roles as its tools.
-5. Check the final essay with code, and compare the cost of the two runs.
+1. Run the single agent of the Week 5 lab again: one object writes, evaluates, and improves the essay.
+2. Divide the work between a writer and an evaluator, and write the handoff between them.
+3. Let a coordinator agent run the two roles as its tools.
+4. Compare the three systems on the same question: the scores of the judge, the citations, and the tokens.
 
 [Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week06/W6_lab_multiagent.ipynb) · [Download the lab](W6_lab_multiagent.ipynb) · [Homework notebook](W6_hw_new_intent.ipynb).
 
