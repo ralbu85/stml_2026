@@ -182,21 +182,21 @@ The lab uses the `Agent` class from the practice notebook. Each call to `ask` ad
 
 | Concept | Lab code (short form) |
 |--|-------|
-| Generate | `draft = writer.ask(f"Write an essay of about 150 words on this question: {TOPIC}")` |
-| Critique | `critique = reviewer.ask(...)`: comments on the claim, the evidence, and the other side |
-| Revise | `writer.ask(...)` with the critique |
-| Measure the change | `judge_essay(TOPIC, essay)`: scores from 1 to 5 on the same three points, for the draft and for the revision |
-| Reflection loop | `reflect(...)`: up to three rounds; stop when every score is 5 |
+| One agent for all steps | `agent = Agent(REFLECT_SYSTEM, [wikipedia_search])`: the system message gives the role and the steps of reflection |
+| Generate | `reply = agent.ask(TASK)`: the first reply is the draft |
+| Critique and revise | `reply = agent.ask("Continue.")`: each reply is the next step, an evaluation or an improved essay |
+| External feedback | The results of `wikipedia_search` enter the list before the next version |
+| Reflection loop | Repeat `agent.ask("Continue.")` until the reply holds the heading `FINAL ESSAY`, with a limit of 8 rounds |
 | Run one case | `json.loads(Agent(EXTRACT_SYSTEM, json_mode=True).ask(invoice))["due_date"]`: a new object for each case; the JSON field is compared with the reference |
 | Code grader | `date_matches(pred, ref)` |
-| LLM judge | `Agent(JUDGE_SYSTEM, json_mode=True)`: the rubric is its system message |
+| LLM judge | `judge_essay(QUESTION, essay)`: a new `Agent(JUDGE_SYSTEM, json_mode=True)`; the rubric is its system message |
 
 ## Lab {#lab-guide}
 
 1. Do the practice notebook first.
-2. Part 1: improve a short essay with reflection (draft, critique, revision, loop), and measure the change with a judge.
-3. Part 2: measure the accuracy on ten invoices with code.
-4. Part 3: check the judge of Part 1 against the scores of a person.
+2. Part 1: one agent writes a short science essay with Wikipedia citations, evaluates it, and improves it until it writes the final essay.
+3. Part 2: measure the accuracy on ten invoices with code, and test one change on the same cases.
+4. Part 3: check an LLM judge against the scores of a person, then measure the essays of Part 1.
 
 [Practice notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_practice_core_patterns.ipynb) · [Lab notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_lab_reflection_evals.ipynb) · [Homework notebook in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week05/W5_hw_chart_reflection.ipynb): reflection on a rendered chart. Submit the homework on the LMS.
 
