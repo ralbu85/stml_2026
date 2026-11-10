@@ -1,14 +1,19 @@
 ---
-title: "Week 10 — Context Engineering · Memory"
+title: "Week 10 — Context Engineering"
 ---
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
-| Slides | published before class |
-| Lab | published before class |
+| Lecture slides | [Chapter 9 · Context Engineering — slides](lectures/week10/slides.html) |
+| Practice 1 (before class) | **LangChain core patterns** (moved from Week 9): [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week10/W10_practice_langchain_core.ipynb) · [Download notebook](lectures/week10/W10_practice_langchain_core.ipynb){download="W10_practice_langchain_core.ipynb"} — `invoke` and message objects, structured output, `@tool`, `create_agent` and a thread; exercises at the end |
+| Practice 2 | **Agentic RAG over the EU AI Act:** [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week10/W10_practice_agentic_rag.ipynb) · [Download notebook](lectures/week10/W10_practice_agentic_rag.ipynb){download="W10_practice_agentic_rag.ipynb"} — the Week 9 retriever as a tool of an agent: the model decides when and how to search (no search for a greeting, a second search after reading a result), `recursion_limit`, a thread |
+| Lab (graded) | **Agentic RAG over the EU AI Act:** [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week10/W10_lab_agentic_rag.ipynb) · [Download notebook](lectures/week10/W10_lab_agentic_rag.ipynb){download="W10_lab_agentic_rag.ipynb"} — submit on the LMS; due date on the LMS |
 | Papers | [Lost in the Middle (Liu et al., 2023)](https://arxiv.org/abs/2307.03172) ([PDF](https://arxiv.org/pdf/2307.03172)) · [LLMLingua (Jiang et al., 2023)](https://arxiv.org/abs/2310.05736) ([PDF](https://arxiv.org/pdf/2310.05736)) · [MemGPT (Packer et al., 2023)](https://arxiv.org/abs/2310.08560) ([PDF](https://arxiv.org/pdf/2310.08560)) · [Mem0 (2025)](https://arxiv.org/abs/2504.19413) ([PDF](https://arxiv.org/pdf/2504.19413)) |
 
 ## This week
 
-The context window as a finite, priced, position-biased resource: Lost in the Middle, budget management by selection, ordering, and compression, and the harness. Then memory beyond the session: storage, retrieval, and update (MemGPT paging, Mem0 update operations).
+The slides start from one question: an agent calls the model many times for one task, so what should the model see at each call? Part 1 defines the context and the trajectory, shows three ways a context makes the output worse (length: context rot; position: lost in the middle; content: context failures), and defines context engineering with its four strategies. Part 2 writes information outside the context: a scratchpad within a task, long-term memory across tasks, and memory updates. Part 3 selects what goes in: just-in-time retrieval, tool selection, memory retrieval, and the order of the parts. Part 4 compresses the context: tool-result clearing, trimming, compaction, and prompt compression. Part 5 isolates work in sub-agents and shows when that fits.
+
+## Practice and lab
+
+Practice 1 (above) is to be done before class. It introduces LangChain: a model call with `invoke` and message objects, structured output, tools with `@tool`, and an agent with `create_agent` that continues a conversation in a thread; it ends with exercises. Practice 2 turns the RAG program of Week 9 into agentic RAG: the retriever becomes a tool, and the model decides when and how to search. The agent answers a greeting without a search, searches again when a first result is not enough, stops at `recursion_limit`, and keeps a thread for a follow-up question. The lab is the program of Practice 2 with five blocks for you to write between `FILL IN` lines; a check cell follows each block, and the last cell prints LAB COMPLETE when all checks pass.
