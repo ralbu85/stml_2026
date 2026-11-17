@@ -37,9 +37,9 @@ website:
           - href: week10.qmd
             text: "W10 · Context engineering · Memory"
           - href: week11.qmd
-            text: "W11 · Reasoning models & RL"
+            text: "W11 · Model Context Protocol"
           - href: week12.qmd
-            text: "W12 · Inference economics · Benchmarks"
+            text: "W12 · Reasoning models & RL"
           - href: week13.qmd
             text: "W13 · Safety & security · Retrospective"
           - href: week14.qmd

@@ -1,14 +1,18 @@
 ---
-title: "Week 11 — Reasoning Models & RL"
+title: "Week 11 — Model Context Protocol"
 ---
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
-| Slides | published before class |
-| Lab | published before class |
+| Lecture slides | [Chapter 11 · Model Context Protocol — slides](lectures/week12/slides.html) |
+| Practice | **MCP servers in a LangChain agent:** [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week11/W11_practice_mcp.ipynb) · [Download notebook](lectures/week11/W11_practice_mcp.ipynb){download="W11_practice_mcp.ipynb"} — the MCP server of the Korean Statistical Information Service (KOSIS): the tool definitions that the server sends, one tool call without a model, the tools in an agent made with `create_agent`, and a tool of our own next to the tools of the server |
+| Lab (graded) | **The Korean Law MCP server:** [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week11/W11_lab_mcp.ipynb) · [Download notebook](lectures/week11/W11_lab_mcp.ipynb){download="W11_lab_mcp.ipynb"} — submit on the LMS; due date on the LMS |
 | Papers | [STaR (Zelikman et al., 2022)](https://arxiv.org/abs/2203.14465) ([PDF](https://arxiv.org/pdf/2203.14465)) · [DeepSeek-R1 (2025)](https://arxiv.org/abs/2501.12948) ([PDF](https://arxiv.org/pdf/2501.12948)) |
 
 ## This week
 
-Reasoning models internalize the caller-side procedures of W2: thinking budgets as a billable resource, the training problem (no process labels), STaR bootstrapping, reinforcement learning fundamentals (policy, reward, RLHF vs. RLVR), and DeepSeek-R1 with GRPO.
+Tool calling lets a model use the tools of one application, so every application writes its own connector to the same systems. The Model Context Protocol (MCP) is an open standard for that connection: a host keeps one MCP client for each MCP server, and a server offers tools, resources, and prompts. The chapter follows one tool call through MCP, builds a small server with the Python SDK, compares tool calling and MCP, and ends with three servers in use: GitHub MCP Server, GovInfo MCP of the U.S. Government Publishing Office, and Korean Law MCP.
+
+## Practice and lab
+
+The practice gives an agent the tools of an MCP server. The notebook connects to the public MCP server of the Korean Statistical Information Service (KOSIS), gets the definitions of its tools, calls one tool without a model, and gives the tools to an agent made with `create_agent`. At the end the agent also gets a tool of our own that saves a file. The lab does the same steps on a second server, Korean Law MCP: the agent answers a question about a statute and a question about a court decision, and then calculates overtime pay with a calculator tool and saves the result to a file. The lab has four blocks for you to write between `FILL IN` lines, and the last cell prints LAB COMPLETE when all checks pass. Both servers are public and need no key.

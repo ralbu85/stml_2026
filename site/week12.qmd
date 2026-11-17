@@ -1,14 +1,17 @@
 ---
-title: "Week 12 — Inference Economics · Benchmarks"
+title: "Week 12 — Reasoning Models & RL"
 ---
 
 | Material | Where |
 |---|---|
-| Lecture notes | published before class |
-| Slides | published before class |
+| Lecture slides | [Chapter 12 · Reasoning Models and Reinforcement Learning — slides](lectures/week11/slides.html) |
 | Lab | published before class |
 | Papers | [Scaling LLM Test-Time Compute Optimally (Snell et al., 2024)](https://arxiv.org/abs/2408.03314) ([PDF](https://arxiv.org/pdf/2408.03314)) · [FrugalGPT (Chen et al., 2023)](https://arxiv.org/abs/2305.05176) ([PDF](https://arxiv.org/pdf/2305.05176)) · [AI Agents That Matter (Kapoor et al., 2024)](https://arxiv.org/abs/2407.01502) ([PDF](https://arxiv.org/pdf/2407.01502)) · [τ-bench (Yao et al., 2024)](https://arxiv.org/abs/2406.12045) ([PDF](https://arxiv.org/pdf/2406.12045)) |
 
 ## This week
 
-The inference an agent consumes — calls × tokens × model tier — placed on the same axis as accuracy: the cost–accuracy trade, compute-optimal allocation, and the levers (routing, cascades, caching, budgets). Then agent-level benchmarks on top of W5's component evaluation: the AI-Agents-That-Matter critique, cost–accuracy Pareto curves, and consistency metrics (τ-bench, pass^k). The course eval harness that final presentations must defend against.
+Three parts. Part 1 defines reasoning, intermediate steps before the answer, and the two ways to add it: test-time compute that our prompt and code set in advance, and a reasoning model that writes its own steps and thinks longer on harder problems, which raises accuracy (test-time scaling) on tasks whose answers can be checked. Part 2 is how such a model is trained when no one has written its long solutions: reinforcement learning on the model's own solutions, scored on the final answer only; rewards from a program (RLVR) or from a model of human preferences (RLHF); the reasoning that emerged in DeepSeek-R1-Zero; distillation into smaller models; and the limits of a reward. Part 3 puts a reasoning model into an agent: reasoning effort, interleaved thinking between tool calls, planner and executor, and the faithfulness of its thinking.
+
+## Practice and lab
+
+The Week 12 practice builds an MCP server. It is added to this table before class.
