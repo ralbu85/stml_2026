@@ -4,7 +4,7 @@ title: "Week 11 — Model Context Protocol"
 
 | Material | Where |
 |---|---|
-| Lecture slides | [Chapter 11 · Model Context Protocol — slides](lectures/week12/slides.html) |
+| Lecture slides | [Chapter 11 · Model Context Protocol — slides](lectures/week11/slides.html) |
 | Practice | **MCP servers in a LangChain agent:** [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week11/W11_practice_mcp.ipynb) · [Download notebook](lectures/week11/W11_practice_mcp.ipynb){download="W11_practice_mcp.ipynb"} — the MCP server of the Korean Statistical Information Service (KOSIS): the tool definitions that the server sends, one tool call without a model, the tools in an agent made with `create_agent`, and a tool of our own next to the tools of the server |
 | Lab (graded) | **The Korean Law MCP server:** [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week11/W11_lab_mcp.ipynb) · [Download notebook](lectures/week11/W11_lab_mcp.ipynb){download="W11_lab_mcp.ipynb"} — submit on the LMS; due date on the LMS |
 | Papers | [STaR (Zelikman et al., 2022)](https://arxiv.org/abs/2203.14465) ([PDF](https://arxiv.org/pdf/2203.14465)) · [DeepSeek-R1 (2025)](https://arxiv.org/abs/2501.12948) ([PDF](https://arxiv.org/pdf/2501.12948)) |
