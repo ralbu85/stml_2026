@@ -5,6 +5,7 @@ title: "Week 12 — Reasoning Models & RL"
 | Material | Where |
 |---|---|
 | Lecture slides | [Chapter 12 · Reasoning Models and Reinforcement Learning — slides](lectures/week11/slides.html) |
+| Practice | **An MCP server of our own:** [Open in Colab](https://colab.research.google.com/github/ralbu85/stml_2026/blob/main/lectures/week12/W12_practice_mcp_server.ipynb) · [Download notebook](lectures/week12/W12_practice_mcp_server.ipynb){download="W12_practice_mcp_server.ipynb"} — an MCP server over the web API of a recipe database, written with the MCP Python SDK; its tools in an agent made with `create_agent`; a discussion of how the tools of a server should be defined |
 | Lab | published before class |
 | Papers | [Scaling LLM Test-Time Compute Optimally (Snell et al., 2024)](https://arxiv.org/abs/2408.03314) ([PDF](https://arxiv.org/pdf/2408.03314)) · [FrugalGPT (Chen et al., 2023)](https://arxiv.org/abs/2305.05176) ([PDF](https://arxiv.org/pdf/2305.05176)) · [AI Agents That Matter (Kapoor et al., 2024)](https://arxiv.org/abs/2407.01502) ([PDF](https://arxiv.org/pdf/2407.01502)) · [τ-bench (Yao et al., 2024)](https://arxiv.org/abs/2406.12045) ([PDF](https://arxiv.org/pdf/2406.12045)) |
 
@@ -14,4 +15,4 @@ Three parts. Part 1 defines reasoning, intermediate steps before the answer, and
 
 ## Practice and lab
 
-The Week 12 practice builds an MCP server. It is added to this table before class.
+The practice builds an MCP server of our own. TheMealDB is a public web API of recipes. The server offers two of its requests to a model as tools, a search by ingredient and the recipe of one meal, and it is written in five steps with the MCP Python SDK. The notebook starts the server over stdio, gives its tools to an agent made with `create_agent`, and asks for two meals that use chicken breast and garlic: the agent decides which requests to make and uses the reply of one request in the next. The last part is a discussion task: define the tools of the recipe server again, build one of them, and present it in class. The API needs no key.
